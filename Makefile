@@ -22,7 +22,6 @@ OBJCOPY = $(TCHAIN_PREFIX)objcopy
 OBJDUMP = $(TCHAIN_PREFIX)objdump
 SIZE    = $(TCHAIN_PREFIX)size
 NM      = $(TCHAIN_PREFIX)nm
-RM  	  = rm -f
 
 ###########################################################################
 # Target name and input/output path definitions
@@ -36,15 +35,10 @@ OUTLSTDIR = $(OUTDIR)/lst
 # Add all subfolders with source codes and includes to the makefile path
 VPATH = $(SUBDIRS)
 
-# List of all source files without directory and file-extension.
-ALLSRCBASE = $(notdir $(basename $(SRCS_ALL)))
-
-# Define all object files
-OBJECTS     = $(addprefix $(OUTOBJDIR)/, $(addsuffix .o, $(ALLSRCBASE)))
-
-#OBJECTS = $(CSRCS:.c=.o) $(CSRCARM:.c=.o) $(CPPSRC:.cpp=.o)
-
-# SRCS_ALL = $(CSRC) $(SRCARM) $(CPPSRC) $(CPPSRCARM) $(ASRC) $(ASRCARM)
+# Define all object files based on source files to be compiled
+OBJS = $(addprefix $(OUTOBJDIR)/, $(CSRCS:.c=.o) $(CSRCSARM:.c=.o) \
+	   $(CPPSRCS:.cpp=.o) $(CPPSRCSARM:.cpp=.o) $(ASRCS:.s=.o) \
+	   $(ASRCSARM:.s=.o))
 
 # Target file name
 TARGET = lpc1769
@@ -177,8 +171,6 @@ createdirs:
 	-@mkdir $(OUTDEPDIR) 2>/dev/null || echo "" >/dev/null
 	-@mkdir $(OUTLSTDIR) 2>/dev/null || echo "" >/dev/null
 	-@mkdir $(OUTOBJDIR) 2>/dev/null || echo "" >/dev/null
-	@echo $(OBJECTS)
-	@echo $(ALLSRCBASE)
 	
 # Begin message
 begin:
@@ -215,9 +207,9 @@ clean:
 	$(RM) $(OUTDEPDIR)/*.o.d >nul 2>&1
 	@echo '!!!!!!!!!!!!!!!!!!! Target removed !!!!!!!!!!!!!!!!!!!'
 	
-# TBD: program
-program: #$(OUTDIR)/$(TARGET).elf
-	@echo "Programming with OPENOCD"
+# TBD: flash
+flash: #$(OUTDIR)/$(TARGET).elf
+	@echo "Flashing with OPENOCD"
 	#$(OOCD_EXE) $(OOCD_CL)
 
 ###########################################################################
@@ -250,15 +242,15 @@ program: #$(OUTDIR)/$(TARGET).elf
 
 # Link: create ELF output file from object files.
 .SECONDARY : $(TARGET).elf
-.PRECIOUS : $(OBJECTS)
-%.elf:  $(OBJECTS)
+.PRECIOUS : $(OBJS)
+%.elf:  $(OBJS)
 	@echo ' '
 	@echo '---- Linking, creating ELF file: ' $@
 # use $(CC) for C-only projects or $(CPP) for C++-projects:
-ifeq "$(strip $(CPPSRC)$(CPPSRCARM))" ""
-	$(CC)  $(CFLAGS) $(OBJECTS) --output $@ -nostartfiles $(LDFLAGS)
+ifeq "$(strip $(CPPSRCS)$(CPPSRCSARM))" ""
+	$(CC)  $(CFLAGS) $(OBJS) --output $@ -nostartfiles $(LDFLAGS)
 else
-	$(CPP)  $(CFLAGS) $(OBJECTS) --output $@ $(LDFLAGS)
+	$(CPP)  $(CFLAGS) $(OBJS) --output $@ $(LDFLAGS)
 endif
 
 ###########################################################################
@@ -271,7 +263,7 @@ $(OUTOBJDIR)/$(notdir $(basename $(1))).o : $(1)
 	@echo '---- Assembling: ' $$< to $$@
 	$(CC) -c -mthumb -mthumb-interwork $$(ASFLAGS) $$< -o $$@ 
 endef
-$(foreach src, $(ASRC), $(eval $(call ASSEMBLE_TEMPLATE, $(src)))) 
+$(foreach src, $(ASRCS), $(eval $(call ASSEMBLE_TEMPLATE, $(src)))) 
 
 # Assemble: create object files from assembler source files. ARM-only
 define ASSEMBLE_ARM_TEMPLATE
@@ -280,7 +272,7 @@ $(OUTOBJDIR)/$(notdir $(basename $(1))).o : $(1)
 	@echo '---- Assembling ARM-only: ' $$< to $$@
 	$(CC) -c $$(ASFLAGS) $$< -o $$@ 
 endef
-$(foreach src, $(ASRCARM), $(eval $(call ASSEMBLE_ARM_TEMPLATE, $(src)))) 
+$(foreach src, $(ASRCSARM), $(eval $(call ASSEMBLE_ARM_TEMPLATE, $(src)))) 
 
 # Compile: create object files from C source files.
 define COMPILE_C_TEMPLATE
@@ -289,7 +281,7 @@ $(OUTOBJDIR)/$(notdir $(basename $(1))).o : $(1)
 	@echo '---- Compiling C: ' $$< to $$@
 	$(CC) -c -mthumb $$(CFLAGS) $$(CONLYFLAGS) $$< -o $$@ 
 endef
-$(foreach src, $(CSRC), $(eval $(call COMPILE_C_TEMPLATE, $(src)))) 
+$(foreach src, $(CSRCS), $(eval $(call COMPILE_C_TEMPLATE, $(src)))) 
 
 # Compile: create object files from C source files. ARM-only
 define COMPILE_C_ARM_TEMPLATE
@@ -298,7 +290,7 @@ $(OUTOBJDIR)/$(notdir $(basename $(1))).o : $(1)
 	@echo '---- Compiling C ARM-only: ' $$< to $$@
 	$(CC) -c $$(CFLAGS) $$(CONLYFLAGS) $$< -o $$@ 
 endef
-$(foreach src, $(CSRCARM), $(eval $(call COMPILE_C_ARM_TEMPLATE, $(src)))) 
+$(foreach src, $(CSRCSARM), $(eval $(call COMPILE_C_ARM_TEMPLATE, $(src)))) 
 
 
 # Compile: create object files from C++ source files.
@@ -308,7 +300,7 @@ $(OUTOBJDIR)/$(notdir $(basename $(1))).o : $(1)
 	@echo '---- Compiling C++: ' $$< to $$@
 	$(CC) -c -mthumb $$(CFLAGS) $$(CPPFLAGS) $$< -o $$@ 
 endef
-$(foreach src, $(CPPSRC), $(eval $(call COMPILE_CPP_TEMPLATE, $(src)))) 
+$(foreach src, $(CPPSRCS), $(eval $(call COMPILE_CPP_TEMPLATE, $(src)))) 
 
 # Compile: create object files from C++ source files. ARM-only
 define COMPILE_CPP_ARM_TEMPLATE
@@ -317,7 +309,7 @@ $(OUTOBJDIR)/$(notdir $(basename $(1))).o : $(1)
 	@echo '---- Compiling C++ ARM-only: ' $$< to $$@
 	$(CC) -c $$(CFLAGS) $$(CPPFLAGS) $$< -o $$@ 
 endef
-$(foreach src, $(CPPSRCARM), $(eval $(call COMPILE_CPP_ARM_TEMPLATE, $(src)))) 
+$(foreach src, $(CPPSRCSARM), $(eval $(call COMPILE_CPP_ARM_TEMPLATE, $(src)))) 
 
 # Compile: create assembler files from C source files. ARM/Thumb
 $(CSRC:.c=.s) : %.s : %.c
