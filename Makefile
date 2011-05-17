@@ -51,7 +51,7 @@ TARGET = lpc1769
 .PHONY : all begin end size gccversion build elf hex bin lss sym clean createdirs
 
 # Default target.
-all: begin createdirs gccversion build size end
+all: begin createdirs gccversion $(CFLAGS_SUB) build size end
 	
 # Output files to be build
 elf: $(OUTDIR)/$(TARGET).elf
@@ -62,6 +62,8 @@ bin: $(OUTDIR)/$(TARGET).bin
 
 # Build all outputs
 build: elf hex bin lss sym
+
+rules: $(CFLAGS_SUB)
 
 # Create output directories.
 createdirs:
@@ -103,6 +105,7 @@ clean:
 	$(RM) $(OUTOBJDIR)/*.o >nul 2>&1
 	$(RM) $(OUTLSTDIR)/*.lst >nul 2>&1
 	$(RM) $(OUTDEPDIR)/*.o.d >nul 2>&1
+	$(RM) $(CFLAGS_SUB) 
 	@echo '!!!!!!!!!!!!!!!!!!! Target removed !!!!!!!!!!!!!!!!!!!'
 	
 # TBD: flash
