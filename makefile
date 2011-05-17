@@ -49,22 +49,17 @@ TARGET = lpc1769
 # Targets
 ###########################################################################
 # Listing of phony targets.
-.PHONY : all begin end size gccversion build elf hex bin lss sym clean createdirs
+.PHONY : all begin size gccversion build elf hex bin lss sym clean createdirs
 
 # Default target.
-all: begin createdirs gccversion $(CFLAGS_SUB) build size end
+all: begin createdirs gccversion $(CFLAGS_SUB) build size
 	@echo ' '
 	@echo '!!!!!!!!!!!!!!!!!!! Finished building target !!!!!!!!!!!!!!!!!!!'
-	
-# Output files to be build
-elf: $(OUTDIR)/$(TARGET).elf
-lss: $(OUTDIR)/$(TARGET).lss 
-sym: $(OUTDIR)/$(TARGET).sym
-hex: $(OUTDIR)/$(TARGET).hex
-bin: $(OUTDIR)/$(TARGET).bin
 
-# Build all outputs
-build: elf hex bin lss sym
+# Begin message
+begin:
+	@echo '!!!!!!!!!!!!!!!!!!! Building target !!!!!!!!!!!!!!!!!!!'
+	@echo ' '
 
 # Create output directories.
 createdirs:
@@ -72,12 +67,20 @@ createdirs:
 	-@mkdir $(OUTDEPDIR) 2>/dev/null || echo "" >/dev/null
 	-@mkdir $(OUTLSTDIR) 2>/dev/null || echo "" >/dev/null
 	-@mkdir $(OUTOBJDIR) 2>/dev/null || echo "" >/dev/null
-	
-# Begin message
-begin:
-	@echo '!!!!!!!!!!!!!!!!!!! Building target !!!!!!!!!!!!!!!!!!!'
-	@echo ' '
 
+# Display compiler version information.
+gccversion : 
+	@$(CC) --version
+
+# Build all outputs
+build: elf hex bin lss sym
+
+# Output files to be build
+elf: $(OUTDIR)/$(TARGET).elf
+lss: $(OUTDIR)/$(TARGET).lss 
+sym: $(OUTDIR)/$(TARGET).sym
+hex: $(OUTDIR)/$(TARGET).hex
+bin: $(OUTDIR)/$(TARGET).bin
 
 # Calculate sizes of sections
 size: build
@@ -85,9 +88,6 @@ size: build
 	@echo '---- Calculating size of sections in elf file:'
 	$(SIZE) -A -x $(OUTDIR)/$(TARGET).elf
 	
-# Display compiler version information.
-gccversion : 
-	@$(CC) --version
 
 # Target: clean project.
 clean:
@@ -106,8 +106,9 @@ clean:
 	@echo '!!!!!!!!!!!!!!!!!!! Target removed !!!!!!!!!!!!!!!!!!!'
 	
 # TBD: flash
-flash: #$(OUTDIR)/$(TARGET).elf
-	@echo "Flashing with OPENOCD"
+flash: $(OUTDIR)/$(TARGET).elf
+	@echo "Flashing with OPENOCD NOT IMPLEMETED"
+	@exit -1
 	#$(OOCD_EXE) $(OOCD_CL)
 
 
