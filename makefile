@@ -101,9 +101,9 @@ clean:
 	$(RM) $(OUTDIR)/$(TARGET).bin
 	$(RM) $(OUTDIR)/$(TARGET).sym
 	$(RM) $(OUTDIR)/$(TARGET).lss
-	$(RM) $(OUTOBJDIR)/*.o >nul 2>&1
-	$(RM) $(OUTLSTDIR)/*.lst >nul 2>&1
-	$(RM) $(OUTDEPDIR)/*.o.d >nul 2>&1
+	$(RM) $(OUTOBJDIR)/*.o >/dev/null 2>&1
+	$(RM) $(OUTLSTDIR)/*.lst >/dev/null 2>&1
+	$(RM) $(OUTDEPDIR)/*.o.d >/dev/null 2>&1
 #	$(RM) $(CFLAGS_SUB) 
 	@echo '!!!!!!!!!!!!!!!!!!! Target removed !!!!!!!!!!!!!!!!!!!'
 	
@@ -117,10 +117,10 @@ flash: #$(OUTDIR)/$(TARGET).elf
 # i.e. if compiling file from CSRCS set THUMB to -mthumb
 #      if compiling file from CSRCSARM set THUMB empty
 $(CSRCS:.c=.o) : THUMB = -mthumb
-$(CPPSRCS:.c=.o) : THUMB = -mthumb
+$(CPPSRCS:.cpp=.o) : THUMB = -mthumb
 $(ASRCS:.s=.o) : THUMB = -mthumb -mthumb-interwork
 $(CSRCSARM:.c=.o)  : THUMB =
-$(CPPSRCSARM:.c=.o) : THUMB =
+$(CPPSRCSARM:.cpp=.o) : THUMB =
 $(ASRCSARM:.s=.o) : THUMB =
 
 
