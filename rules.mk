@@ -15,8 +15,6 @@
 
 CFLAGS =  \
 	-mcpu=cortex-m3 \
-	-mthumb \
-	-mthumb-interwork \
 	-gdwarf-2 \
 	-O2 \
 	-fpromote-loop-indices \

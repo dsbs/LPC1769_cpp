@@ -112,36 +112,49 @@ flash: #$(OUTDIR)/$(TARGET).elf
 	@echo "Flashing with OPENOCD"
 	#$(OOCD_EXE) $(OOCD_CL)
 
+
+# set THUMB variable depending on sources compiled
+# i.e. if compiling file from CSRCS set THUMB to -mthumb
+#      if compiling file from CSRCSARM set THUMB empty
+$(CSRCS:.c=.o) : THUMB = -mthumb
+$(CPPSRCS:.c=.o) : THUMB = -mthumb
+$(ASRCS:.s=.o) : THUMB = -mthumb -mthumb-interwork
+$(CSRCSARM:.c=.o)  : THUMB =
+$(CPPSRCSARM:.c=.o) : THUMB =
+$(ASRCSARM:.s=.o) : THUMB =
+
+
 ###########################################################################
 # Build release files
 ###########################################################################
 # Create final output file (.hex) from ELF output file.
-%.hex: %.elf
+$(OUTDIR)/%.hex: $(OUTDIR)/%.elf
 	@echo ' '
 	@echo '---- Creating HEX file: ' $@
+	@echo $(OBJS)
 	$(OBJCOPY) -O ihex $< $@
 	
 # Create final output file (.bin) from ELF output file.
-%.bin: %.elf
+$(OUTDIR)/%.bin: $(OUTDIR)/%.elf
 	@echo ' '
 	@echo '---- Creating BINARY file: ' $@
 	$(OBJCOPY) -O binary $< $@
 
 # Create extended listing file/disassambly from ELF output file.
 # using objdump testing: option -C
-%.lss: %.elf
+$(OUTDIR)/%.lss: $(OUTDIR)/%.elf
 	@echo ' '
 	@echo '---- Creating Extended Listing/Disassembly file: ' $@
 	$(OBJDUMP) -h -S -C -r $< > $@
 
 # Create a symbol table from ELF output file.
-%.sym: %.elf
+$(OUTDIR)/%.sym: $(OUTDIR)/%.elf
 	@echo ' '
 	@echo '---- Creating SYMBOL file: ' $@
 	$(NM) -n $< > $@
 
 # Link: create ELF output file from object files.
-%.elf:  $(OBJS)
+$(OUTDIR)/%.elf: $(CSRCS:.c=.o) $(CSRCSARM:.c=.o) $(CPPSRCS:.cpp=.o) $(CPPSRCSARM:.cpp=.o) $(ASRCS:.s=.o) $(ASRCSARM:.s=.o)
 	@echo ' '
 	@echo '---- Linking, creating ELF file: ' $@
 	$(LD)  $(CFLAGS) $(OBJS) --output $@ $(LDFLAGS)
@@ -149,62 +162,22 @@ flash: #$(OUTDIR)/$(TARGET).elf
 ###########################################################################
 # Compile
 ###########################################################################
-# Assembler: create object files from assembler source files.
-define ASSEMBLE_TEMPLATE
-$(OUTOBJDIR)/$(notdir $(basename $(1))).o : $(1)
-	@echo ' '
-	@echo '---- Assembling: ' $$< to $$@
-	$(CC) -c -mthumb -mthumb-interwork $$(ASFLAGS) $$< -o $$@ 
-endef
-$(foreach src, $(ASRCS), $(eval $(call ASSEMBLE_TEMPLATE, $(src)))) 
 
-# Assemble: create object files from assembler source files. ARM-only
-define ASSEMBLE_ARM_TEMPLATE
-$(OUTOBJDIR)/$(notdir $(basename $(1))).o : $(1)
+%.o: %.s
 	@echo ' '
-	@echo '---- Assembling ARM-only: ' $$< to $$@
-	$(CC) -c $$(ASFLAGS) $$< -o $$@ 
-endef
-$(foreach src, $(ASRCSARM), $(eval $(call ASSEMBLE_ARM_TEMPLATE, $(src)))) 
+	@echo '---- Compiling ASM ' $< to $@
+	$(CC) -c $(THUMB) $(ASFLAGS) $< -o $@ 
 
-# Compile: create object files from C source files.
-define COMPILE_C_TEMPLATE
-$(OUTOBJDIR)/$(notdir $(basename $(1))).o : $(1)
+%.o: %.c
 	@echo ' '
-	@echo '---- Compiling C: ' $$< to $$@
-	$(CC) -c -mthumb $$(CFLAGS) $$(CONLYFLAGS) $$< -o $$@ 
-endef
-$(foreach src, $(CSRCS), $(eval $(call COMPILE_C_TEMPLATE, $(src)))) 
-#%.o : %.c Makefile $(CFLAGS)
-#	$(CC) $(CFLAGS) -c -o $*.o $<
-	
-# Compile: create object files from C source files. ARM-only
-define COMPILE_C_ARM_TEMPLATE
-$(OUTOBJDIR)/$(notdir $(basename $(1))).o : $(1)
-	@echo ' '
-	@echo '---- Compiling C ARM-only: ' $$< to $$@
-	$(CC) -c $$(CFLAGS) $$(CONLYFLAGS) $$< -o $$@ 
-endef
-$(foreach src, $(CSRCSARM), $(eval $(call COMPILE_C_ARM_TEMPLATE, $(src)))) 
+	@echo '---- Compiling C: ' $< to $@
+	$(CC) -c $(THUMB) $(CFLAGS) $(CONLYFLAGS) $< -o $(OUTOBJDIR)/$@ 
 
-
-# Compile: create object files from C++ source files.
-define COMPILE_CPP_TEMPLATE
-$(OUTOBJDIR)/$(notdir $(basename $(1))).o : $(1)
+%.o: %.cpp
 	@echo ' '
-	@echo '---- Compiling C++: ' $$< to $$@
-	$(CC) -c -mthumb $$(CFLAGS) $$(CPPFLAGS) $$< -o $$@ 
-endef
-$(foreach src, $(CPPSRCS), $(eval $(call COMPILE_CPP_TEMPLATE, $(src)))) 
+	@echo '---- Compiling CPP: ' $< to $@
+	$(CC) -c $(THUMB) $(CFLAGS) $(CPPFLAGS) $< -o $(OUTOBJDIR)/$@ 
 
-# Compile: create object files from C++ source files. ARM-only
-define COMPILE_CPP_ARM_TEMPLATE
-$(OUTOBJDIR)/$(notdir $(basename $(1))).o : $(1)
-	@echo ' '
-	@echo '---- Compiling C++ ARM-only: ' $$< to $$@
-	$(CC) -c $$(CFLAGS) $$(CPPFLAGS) $$< -o $$@ 
-endef
-$(foreach src, $(CPPSRCSARM), $(eval $(call COMPILE_CPP_ARM_TEMPLATE, $(src)))) 
 
 # Compile: create assembler files from C source files. ARM/Thumb
 $(CSRC:.c=.s) : %.s : %.c
