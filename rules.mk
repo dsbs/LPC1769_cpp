@@ -18,8 +18,11 @@ CFLAGS =  \
 	-gdwarf-2 \
 	-O2 \
 	-fpromote-loop-indices \
+	-Wnested-externs \
+	-std=gnu99 \
 	-Wall -Wextra \
 	-Wimplicit -Wcast-align -Wpointer-arith -Wredundant-decls -Wshadow -Wcast-qual -Wcast-align \
+	-fno-rtti -fno-exceptions \
 	-MD -MP -MF $(OUTDEPDIR)/$(@F).d \
 	-Wa,-adhlns=$(addprefix $(OUTLSTDIR)/, $(notdir $(addsuffix .lst, $(basename $<)))) \
 	$(patsubst %,-I%,$(SUBDIRS)) -I.
@@ -43,18 +46,14 @@ CFLAGS =  \
 #   -Wnested-externs      				# Warn if an extern declaration is encountered within a function
 #   -std=gnu99							# Defined standard: c99 plus GCC extensions
 #   $(patsubst %,-I%,$(SUBDIRS)) -I.    # Seach thru all subdirs
-CONLYFLAGS = \
-	-Wnested-externs \
-	-std=gnu99 \
-	$(patsubst %,-I%,$(SUBDIRS)) -I.					
+
+CONLYFLAGS = 
 
 # C++ only compiler flags
 #   -fno-rtti -fno-exceptions           # If you will not use virtual functions 
 #                                       # those setting flags will optimalize the code
 #   $(patsubst %,-I%,$(SUBDIRS)) -I.    # Seach thru all subdirs
-CPPFLAGS = \
-	-fno-rtti -fno-exceptions \
-	$(patsubst %,-I%,$(SUBDIRS)) -I.		
+CPPFLAGS = 
 
 # Assembler compliler flags
 # -mcpu=cortex-m3 \                # CPU name

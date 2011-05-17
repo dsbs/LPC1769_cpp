@@ -53,6 +53,8 @@ TARGET = lpc1769
 
 # Default target.
 all: begin createdirs gccversion $(CFLAGS_SUB) build size end
+	@echo ' '
+	@echo '!!!!!!!!!!!!!!!!!!! Finished building target !!!!!!!!!!!!!!!!!!!'
 	
 # Output files to be build
 elf: $(OUTDIR)/$(TARGET).elf
@@ -76,13 +78,9 @@ begin:
 	@echo '!!!!!!!!!!!!!!!!!!! Building target !!!!!!!!!!!!!!!!!!!'
 	@echo ' '
 
-# End message
-end:
-	@echo ' '
-	@echo '!!!!!!!!!!!!!!!!!!! Finished building target !!!!!!!!!!!!!!!!!!!'
 
 # Calculate sizes of sections
-size:
+size: build
 	@echo ' '	
 	@echo '---- Calculating size of sections in elf file:'
 	$(SIZE) -A -x $(OUTDIR)/$(TARGET).elf
