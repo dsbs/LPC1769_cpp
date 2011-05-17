@@ -38,9 +38,9 @@ OUTLSTDIR = $(OUTDIR)/lst
 VPATH = $(SUBDIRS)
 
 # Define all object files based on source files to be compiled
-OBJS = $(addprefix $(OUTOBJDIR)/, $(CSRCS:.c=.o) $(CSRCSARM:.c=.o) \
+OBJS = $(CSRCS:.c=.o) $(CSRCSARM:.c=.o) \
 	   $(CPPSRCS:.cpp=.o) $(CPPSRCSARM:.cpp=.o) $(ASRCS:.s=.o) \
-	   $(ASRCSARM:.s=.o))
+	   $(ASRCSARM:.s=.o)
 
 # Target file name
 TARGET = lpc1769
@@ -131,7 +131,6 @@ $(ASRCSARM:.s=.o) : THUMB =
 $(OUTDIR)/%.hex: $(OUTDIR)/%.elf
 	@echo ' '
 	@echo '---- Creating HEX file: ' $@
-	@echo $(OBJS)
 	$(OBJCOPY) -O ihex $< $@
 	
 # Create final output file (.bin) from ELF output file.
@@ -154,10 +153,10 @@ $(OUTDIR)/%.sym: $(OUTDIR)/%.elf
 	$(NM) -n $< > $@
 
 # Link: create ELF output file from object files.
-$(OUTDIR)/%.elf: $(CSRCS:.c=.o) $(CSRCSARM:.c=.o) $(CPPSRCS:.cpp=.o) $(CPPSRCSARM:.cpp=.o) $(ASRCS:.s=.o) $(ASRCSARM:.s=.o)
+$(OUTDIR)/%.elf: $(OBJS)
 	@echo ' '
 	@echo '---- Linking, creating ELF file: ' $@
-	$(LD) -mthumb $(CFLAGS) $(OBJS) --output $@ $(LDFLAGS)
+	$(LD) -mthumb $(CFLAGS) $(addprefix $(OUTOBJDIR)/, $(OBJS)) --output $@ $(LDFLAGS)
 
 ###########################################################################
 # Compile
