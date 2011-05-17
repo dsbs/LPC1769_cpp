@@ -18,6 +18,7 @@ include rules.mk
 TCHAIN_PREFIX = arm-none-eabi-
 CC      = $(TCHAIN_PREFIX)gcc
 CPP     = $(TCHAIN_PREFIX)g++
+LD      = $(TCHAIN_PREFIX)g++
 AR      = $(TCHAIN_PREFIX)ar
 OBJCOPY = $(TCHAIN_PREFIX)objcopy
 OBJDUMP = $(TCHAIN_PREFIX)objdump
@@ -142,17 +143,10 @@ flash: #$(OUTDIR)/$(TARGET).elf
 	$(NM) -n $< > $@
 
 # Link: create ELF output file from object files.
-.SECONDARY : $(TARGET).elf
-.PRECIOUS : $(OBJS)
 %.elf:  $(OBJS)
 	@echo ' '
 	@echo '---- Linking, creating ELF file: ' $@
-# use $(CC) for C-only projects or $(CPP) for C++-projects:
-ifeq "$(strip $(CPPSRCS)$(CPPSRCSARM))" ""
-	$(CC)  $(CFLAGS) $(OBJS) --output $@ -nostartfiles $(LDFLAGS)
-else
-	$(CPP)  $(CFLAGS) $(OBJS) --output $@ $(LDFLAGS)
-endif
+	$(LD)  $(CFLAGS) $(OBJS) --output $@ $(LDFLAGS)
 
 ###########################################################################
 # Compile
@@ -183,7 +177,9 @@ $(OUTOBJDIR)/$(notdir $(basename $(1))).o : $(1)
 	$(CC) -c -mthumb $$(CFLAGS) $$(CONLYFLAGS) $$< -o $$@ 
 endef
 $(foreach src, $(CSRCS), $(eval $(call COMPILE_C_TEMPLATE, $(src)))) 
-
+#%.o : %.c Makefile $(CFLAGS)
+#	$(CC) $(CFLAGS) -c -o $*.o $<
+	
 # Compile: create object files from C source files. ARM-only
 define COMPILE_C_ARM_TEMPLATE
 $(OUTOBJDIR)/$(notdir $(basename $(1))).o : $(1)
