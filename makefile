@@ -157,7 +157,7 @@ $(OUTDIR)/%.sym: $(OUTDIR)/%.elf
 $(OUTDIR)/%.elf: $(CSRCS:.c=.o) $(CSRCSARM:.c=.o) $(CPPSRCS:.cpp=.o) $(CPPSRCSARM:.cpp=.o) $(ASRCS:.s=.o) $(ASRCSARM:.s=.o)
 	@echo ' '
 	@echo '---- Linking, creating ELF file: ' $@
-	$(LD)  $(CFLAGS) $(OBJS) --output $@ $(LDFLAGS)
+	$(LD) -mthumb $(CFLAGS) $(OBJS) --output $@ $(LDFLAGS)
 
 ###########################################################################
 # Compile
