@@ -12,21 +12,34 @@
 # -MD -MP -MF $(OUTDEPDIR)/$(@F).d # Compiler flags to generate dependency files
 #                                  # -Wa -pass to the assembler, -adhlns -create assembler listing
 # $(patsubst %,-I%,$(SUBDIRS)) -I. # Seach thru all subdirs
-CFLAGS_SUB = cflags.sub
-CFLAGS =  @$(CFLAGS_SUB)
-$(CFLAGS_SUB):
-	@echo -mcpu=cortex-m3 >>$@
-	@echo -mthumb >>$@
-	@echo -mthumb-interwork >>$@
-	@echo -gdwarf-2 >>$@
-	@echo -O2 >>$@
-	@echo -fpromote-loop-indices >>$@
-	@echo -Wall -Wextra >>$@
-	@echo -Wimplicit -Wcast-align -Wpointer-arith -Wredundant-decls -Wshadow -Wcast-qual -Wcast-align >>$@
-	@echo -MD -MP -MF $(OUTDEPDIR)/$(@F).d >>$@
-	@echo -Wa,-adhlns=$(addprefix $(OUTLSTDIR)/, $(notdir $(addsuffix .lst, $(basename $<)))) >>$@
-	@echo $(patsubst %,-I%,$(SUBDIRS)) -I.>>$@
-	echo $(CFLAGS)
+
+CFLAGS =  \
+	-mcpu=cortex-m3 \
+	-mthumb \
+	-mthumb-interwork \
+	-gdwarf-2 \
+	-O2 \
+	-fpromote-loop-indices \
+	-Wall -Wextra \
+	-Wimplicit -Wcast-align -Wpointer-arith -Wredundant-decls -Wshadow -Wcast-qual -Wcast-align \
+	-MD -MP -MF $(OUTDEPDIR)/$(@F).d \
+	-Wa,-adhlns=$(addprefix $(OUTLSTDIR)/, $(notdir $(addsuffix .lst, $(basename $<)))) \
+	$(patsubst %,-I%,$(SUBDIRS)) -I.
+
+#CFLAGS_SUB = cflags.sub
+#CFLAGS =  @$(CFLAGS_SUB)
+#$(CFLAGS_SUB):
+	#@echo -mcpu=cortex-m3 >>$@
+	#@echo -mthumb >>$@
+	#@echo -mthumb-interwork >>$@
+	#@echo -gdwarf-2 >>$@
+	#@echo -O2 >>$@
+	#@echo -fpromote-loop-indices >>$@
+	#@echo -Wall -Wextra >>$@
+	#@echo -Wimplicit -Wcast-align -Wpointer-arith -Wredundant-decls -Wshadow -Wcast-qual -Wcast-align >>$@
+	#@echo -MD -MP -MF $(OUTDEPDIR)/$(@F).d >>$@
+	#@echo -Wa,-adhlns=$(addprefix $(OUTLSTDIR)/, $(notdir $(addsuffix .lst, $(basename $<)))) >>$@
+	#@echo $(patsubst %,-I%,$(SUBDIRS)) -I.>>$@
 
 # C only compiler flags
 #   -Wnested-externs      				# Warn if an extern declaration is encountered within a function
@@ -65,8 +78,8 @@ ASFLAGS  = \
 # -lc -lm -lgc -lstdc++                                             # Link to standard libraries (lLibrary)
 # -T$(LINKERSCRIPT)                                                 # Use this linker script
 # -nostartfiles                                                     # Do not use the standard system startup files when linking
-# -Wl-pass to the linker, -Map -create map file,
-# --cref -Output a cross reference table,
+# -Wl # pass to the linker, -Map -create map file,
+# --cref -Output # a cross reference table,
 # --gc-sections -Enable garbage collection of unused input sections
 LDFLAGS = \
 	-lc -lm -lgcc -lstdc++ \

@@ -64,8 +64,6 @@ bin: $(OUTDIR)/$(TARGET).bin
 # Build all outputs
 build: elf hex bin lss sym
 
-rules: $(CFLAGS_SUB)
-
 # Create output directories.
 createdirs:
 	-@mkdir $(OUTDIR) 2>/dev/null || echo "" >/dev/null
@@ -106,7 +104,7 @@ clean:
 	$(RM) $(OUTOBJDIR)/*.o >nul 2>&1
 	$(RM) $(OUTLSTDIR)/*.lst >nul 2>&1
 	$(RM) $(OUTDEPDIR)/*.o.d >nul 2>&1
-	$(RM) $(CFLAGS_SUB) 
+#	$(RM) $(CFLAGS_SUB) 
 	@echo '!!!!!!!!!!!!!!!!!!! Target removed !!!!!!!!!!!!!!!!!!!'
 	
 # TBD: flash
