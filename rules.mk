@@ -14,6 +14,8 @@
 # $(patsubst %,-I%,$(SUBDIRS)) -I. # Seach thru all subdirs
 
 CFLAGS =  \
+	-Wa,-adhlns=$(addprefix $(OUTLSTDIR)/, $(notdir $(addsuffix .lst, $(basename $<)))) \
+	$(patsubst %,-I%,$(SUBDIRS)) -I.
 	-mcpu=cortex-m3 \
 	-gdwarf-2 \
 	-O2 \
@@ -24,8 +26,6 @@ CFLAGS =  \
 	-Wimplicit -Wcast-align -Wpointer-arith -Wredundant-decls -Wshadow -Wcast-qual -Wcast-align \
 	-fno-rtti -fno-exceptions \
 	-MD -MP -MF $(OUTDEPDIR)/$(@F).d \
-	-Wa,-adhlns=$(addprefix $(OUTLSTDIR)/, $(notdir $(addsuffix .lst, $(basename $<)))) \
-	$(patsubst %,-I%,$(SUBDIRS)) -I.
 
 #CFLAGS_SUB = cflags.sub
 #CFLAGS =  @$(CFLAGS_SUB)
@@ -79,6 +79,7 @@ ASFLAGS  = \
 # --cref -Output # a cross reference table,
 # --gc-sections -Enable garbage collection of unused input sections
 LDFLAGS = \
-	-lc -lm -lgcc -lstdc++ \
-	-Wl,-Map=$(OUTDIR)/$(TARGET).map,--cref,--gc-sections \
-	-T$(LINKERSCRIPT) -nostartfiles
+	-Map=$(OUTDIR)/$(TARGET).map --cref --gc-sections \
+	-T$(LINKERSCRIPT) -nostartfiles -Iapp -Ilib/CMSIS/Core -I.
+#	-lc -lm -lgcc -lstdc++ \
+

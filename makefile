@@ -18,7 +18,7 @@ include rules.mk
 TCHAIN_PREFIX = arm-none-eabi-
 CC      = $(TCHAIN_PREFIX)gcc
 CPP     = $(TCHAIN_PREFIX)g++
-LD      = $(TCHAIN_PREFIX)g++
+LD      = $(TCHAIN_PREFIX)ld
 AR      = $(TCHAIN_PREFIX)ar
 OBJCOPY = $(TCHAIN_PREFIX)objcopy
 OBJDUMP = $(TCHAIN_PREFIX)objdump
@@ -44,6 +44,8 @@ OBJS = $(CSRCS:.c=.o) $(CSRCSARM:.c=.o) \
 
 # Target file name
 TARGET = lpc1769
+
+CFLAGS_SUB = cflags.sub
 
 ###########################################################################
 # Targets
@@ -71,6 +73,9 @@ createdirs:
 # Display compiler version information.
 gccversion : 
 	@$(CC) --version
+
+#$(CFLAGS_SUB):
+#	@echo $(CFLAGS) >> $(CFLAGS_SUB)
 
 # Build all outputs
 build: elf hex bin lss sym
@@ -102,7 +107,7 @@ clean:
 	$(RM) $(OUTOBJDIR)/*.o >/dev/null 2>&1
 	$(RM) $(OUTLSTDIR)/*.lst >/dev/null 2>&1
 	$(RM) $(OUTDEPDIR)/*.o.d >/dev/null 2>&1
-	$(RM) $(CFLAGS_SUB) 
+	#$(RM) $(CFLAGS_SUB) 
 	@echo '!!!!!!!!!!!!!!!!!!! Target removed !!!!!!!!!!!!!!!!!!!'
 	
 # TBD: flash
@@ -155,7 +160,7 @@ $(OUTDIR)/%.sym: $(OUTDIR)/%.elf
 $(OUTDIR)/%.elf: $(OBJS)
 	@echo ' '
 	@echo '---- Linking, creating ELF file: ' $@
-	$(LD) -mthumb $(CFLAGS) $(addprefix $(OUTOBJDIR)/, $(OBJS)) --output $@ $(LDFLAGS)
+	$(LD) $(LDFLAGS) $(addprefix $(OUTOBJDIR)/, $(OBJS)) --output $@
 
 ###########################################################################
 # Compile
@@ -168,12 +173,12 @@ $(OUTDIR)/%.elf: $(OBJS)
 %.o: %.c
 	@echo ' '
 	@echo '---- Compiling C: ' $< to $@
-	$(CC) -c $(THUMB) $(CFLAGS) $(CONLYFLAGS) $< -o $(OUTOBJDIR)/$@ 
+	$(CC) -c $(THUMB) @$(CFLAGS_SUB) $(CONLYFLAGS) $< -o $(OUTOBJDIR)/$@ 
 
 %.o: %.cpp
 	@echo ' '
 	@echo '---- Compiling CPP: ' $< to $@
-	$(CC) -c $(THUMB) $(CFLAGS) $(CPPFLAGS) $< -o $(OUTOBJDIR)/$@ 
+	$(CC) -c $(THUMB) @$(CFLAGS_SUB) $(CPPFLAGS) $< -o $(OUTOBJDIR)/$@ 
 
 ###########################################################################
 # Options for OpenOCD flash-programming
