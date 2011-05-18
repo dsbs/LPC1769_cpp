@@ -1,5 +1,6 @@
 ###########################################################################
 # Dawid Bazan <dawidbazan@gmail.com>
+# Dariusz Synowiec <devemouse@gmail.com>
 #
 # makefile
 #
@@ -45,18 +46,32 @@ OBJS = $(CSRCS:.c=.o) $(CSRCSARM:.c=.o) \
 # Target file name
 TARGET = lpc1769
 
-CFLAGS_SUB = cflags.sub
+###########################################################################
+# Compiler/linker rules selection depending on file group
+###########################################################################
+# set THUMB variable depending on sources compiled
+# i.e. if compiling file from CSRCS set THUMB to -mthumb
+#      if compiling file from CSRCSARM set THUMB empty
+$(CSRCS:.c=.o)        : CFLAGS   = @$(CFLAGS_SUB) @$(CONLYFLAGS_SUB) $(THUMB)
+$(CPPSRCS:.cpp=.o)    : CPPFLAGS = @$(CFLAGS_SUB) @$(CPPFLAGS_SUB) $(THUMB)
+$(ASRCS:.s=.o)        : ASFLAGS  = @$(ASFLAGS_SUB) $(THUMB)
+$(CSRCSARM:.c=.o)     : CFLAGS   = @$(CFLAGS_SUB) @$(CONLYFLAGS_SUB)
+$(CPPSRCSARM:.cpp=.o) : CPPFLAGS = @$(CFLAGS_SUB) @$(CPPFLAGS_SUB)
+$(ASRCSARM:.s=.o)     : ASFLAGS  = @$(ASFLAGS_SUB)
+LDFLAGS = @$(LDFLAGS_SUB)
 
 ###########################################################################
 # Targets
 ###########################################################################
 # Listing of phony targets.
 .PHONY : all begin size gccversion build elf hex bin lss sym clean createdirs
+.DEFAULT_GOAL := all
 
 # Default target.
-all: begin createdirs gccversion $(CFLAGS_SUB) build size
+all: makefile begin createdirs gccversion build size
 	@echo ' '
 	@echo '!!!!!!!!!!!!!!!!!!! Finished building target !!!!!!!!!!!!!!!!!!!'
+
 
 # Begin message
 begin:
@@ -74,11 +89,9 @@ createdirs:
 gccversion : 
 	@$(CC) --version
 
-#$(CFLAGS_SUB):
-#	@echo $(CFLAGS) >> $(CFLAGS_SUB)
 
 # Build all outputs
-build: elf hex bin lss sym
+build: $(FLAGS_SUB) elf hex bin lss sym
 
 # Output files to be build
 elf: $(OUTDIR)/$(TARGET).elf
@@ -107,7 +120,7 @@ clean:
 	$(RM) $(OUTOBJDIR)/*.o >/dev/null 2>&1
 	$(RM) $(OUTLSTDIR)/*.lst >/dev/null 2>&1
 	$(RM) $(OUTDEPDIR)/*.o.d >/dev/null 2>&1
-	#$(RM) $(CFLAGS_SUB) 
+	$(RM) $(FLAGS_SUB) 
 	@echo '!!!!!!!!!!!!!!!!!!! Target removed !!!!!!!!!!!!!!!!!!!'
 	
 # TBD: flash
@@ -115,17 +128,6 @@ flash: $(OUTDIR)/$(TARGET).elf
 	@echo "Flashing with OPENOCD NOT IMPLEMETED"
 	@exit -1
 	#$(OOCD_EXE) $(OOCD_CL)
-
-
-# set THUMB variable depending on sources compiled
-# i.e. if compiling file from CSRCS set THUMB to -mthumb
-#      if compiling file from CSRCSARM set THUMB empty
-$(CSRCS:.c=.o) : THUMB = -mthumb
-$(CPPSRCS:.cpp=.o) : THUMB = -mthumb
-$(ASRCS:.s=.o) : THUMB = -mthumb -mthumb-interwork
-$(CSRCSARM:.c=.o)  : THUMB =
-$(CPPSRCSARM:.cpp=.o) : THUMB =
-$(ASRCSARM:.s=.o) : THUMB =
 
 
 ###########################################################################
@@ -168,17 +170,17 @@ $(OUTDIR)/%.elf: $(OBJS)
 %.o: %.s
 	@echo ' '
 	@echo '---- Compiling ASM ' $< to $@
-	$(CC) -c $(THUMB) $(ASFLAGS) $< -o $@ 
+	$(CC) -c $(ASFLAGS) $< -o $@ 
 
 %.o: %.c
 	@echo ' '
 	@echo '---- Compiling C: ' $< to $@
-	$(CC) -c $(THUMB) @$(CFLAGS_SUB) $(CONLYFLAGS) $< -o $(OUTOBJDIR)/$@ 
+	$(CC) -c $(CFLAGS) $< -o $(OUTOBJDIR)/$@ 
 
 %.o: %.cpp
 	@echo ' '
 	@echo '---- Compiling CPP: ' $< to $@
-	$(CC) -c $(THUMB) @$(CFLAGS_SUB) $(CPPFLAGS) $< -o $(OUTOBJDIR)/$@ 
+	$(CC) -c $(CPPFLAGS) $< -o $(OUTOBJDIR)/$@ 
 
 ###########################################################################
 # Options for OpenOCD flash-programming
