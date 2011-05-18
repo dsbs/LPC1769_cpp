@@ -1,2 +1,4 @@
- - Linker script to be done when HW will be available
- - template files for c, cpp and h (remember about doxygen)
+List of open items:
+
+* Linker script to be done when HW will be available
+* template files for c, cpp and h (remember about doxygen)
