@@ -1,6 +1,7 @@
 /* 
  * Linker script for LCP1769
  * Dawid Bazan <dawidbazan@gmail.com>
+ * Dariusz Synowiec <>
  * May 2011
  */
 
@@ -23,7 +24,7 @@ MEMORY
    /* On-chip main SRAM: 0x1000 0000 - 0x1000 7FFF */ 
    RAM1(rwx)  : ORIGIN = 0x10000000, LENGTH =  32K
    
-   /* On-chip SRAM AHB SRAM bank 0 and 1(You may reserve for Ethernet and USB): 0x2007 C000 - 0x2008 3FFF */
+   /* On-chip SRAM AHB SRAM bank 0 and 1(may be reserved for Ethernet and USB): 0x2007 C000 - 0x2008 3FFF */
    RAM2(rwx) : ORIGIN = 0x2007C000, LENGTH = 16k
    RAM3(rwx) : ORIGIN = 0x20080000, LENGTH = 16k
 }
@@ -49,10 +50,19 @@ SECTIONS
    {
       /* CREATE_OBJECT_SYMBOLS - The command tells the linker to create a symbol for each input file */
       CREATE_OBJECT_SYMBOLS
+      /* 
+       * KEEP - When link-time garbage collection is in use (‘--gc-sections’), 
+       * it is often useful to mark sections that should not be eliminated
+       */
         KEEP(*(.isr_vector .isr_vector.*))
+        /* 
+         * The ‘*’ is a wildcard which matches any fil ename .Th eexpressio n‘*(.text)’ 
+         * means all ‘.text’ input sections in all input files
+         */
         *(.text .text.*)
+        /* The linkonce is to support C++ vague linkage(inline functions, vtables etc. */
         *(.gnu.linkonce.t.*)
-		*(.gnu.warning)
+		  *(.gnu.warning)
         *(.glue_7)
         *(.glue_7t)
         /* This section holds Language Specific Data */
