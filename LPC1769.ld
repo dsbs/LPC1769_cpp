@@ -52,6 +52,7 @@ SECTIONS
         KEEP(*(.isr_vector .isr_vector.*))
         *(.text .text.*)
         *(.gnu.linkonce.t.*)
+		*(.gnu.warning)
         *(.glue_7)
         *(.glue_7t)
         /* This section holds Language Specific Data */
@@ -74,22 +75,21 @@ SECTIONS
         __init_array_end = .;
         
         . = ALIGN(4);
-        /* This section contains a list of global constructor function pointers */ 
-        KEEP (*crtbegin.o(.ctors))
-        KEEP (*(EXCLUDE_FILE (*crtend.o) .ctors))
-        KEEP (*(SORT(.ctors.*)))
-        KEEP (*crtend.o(.ctors))
-        
-        . = ALIGN(4);
-        KEEP(*(.fini))
-        
-        . = ALIGN(4);
-        __fini_array_start = .;
-        KEEP (*(.fini_array))
-        KEEP (*(SORT(.fini_array.*)))
-        __fini_array_end = .;
-        
+		KEEP(*(.fini))
+		
+		. = ALIGN(4);
+		__fini_array_start = .;
+		KEEP (*(.fini_array))
+		KEEP (*(SORT(.fini_array.*)))
+		__fini_array_end = .;
 
+        /* This section contains a list of global constructor function pointers */ 
+		. = ALIGN(0x4);
+		KEEP (*crtbegin.o(.ctors))
+		KEEP (*(EXCLUDE_FILE (*crtend.o) .ctors))
+		KEEP (*(SORT(.ctors.*)))
+		KEEP (*crtend.o(.ctors))
+		
         . = ALIGN(4);
         /* This section contains a list of global destructor function pointers */
         KEEP (*crtbegin.o(.dtors))
@@ -105,6 +105,16 @@ SECTIONS
       /* Store at 'etext' which is the address of the end of this section */
       _etext = .;
    } >ROM
+
+	.eh_frame_hdr : ALIGN (4)
+	{
+		KEEP (*(.eh_frame_hdr))
+	} >ROM
+	.eh_frame : ALIGN (4)
+	{
+		KEEP (*(.eh_frame))
+	} >ROM
+
   
     __exidx_start = .;
   .ARM.exidx :
@@ -233,6 +243,7 @@ SECTIONS
    .stab.exclstr  0 : { *(.stab.exclstr) }
    .stab.index    0 : { *(.stab.index) }
    .stab.indexstr 0 : { *(.stab.indexstr) }
+  .comment       0 : { *(.comment) }
    /* DWARF debug sections.
     * Symbols in the DWARF debugging sections are relative to the beginning
     * of the section so we begin them at 0
@@ -262,4 +273,11 @@ SECTIONS
    .debug_funcnames 0 : { *(.debug_funcnames) }
    .debug_typenames 0 : { *(.debug_typenames) }
    .debug_varnames  0 : { *(.debug_varnames) }  
+  /* DWARF 3 */
+  .debug_pubtypes 0 : { *(.debug_pubtypes) }
+  .debug_ranges   0 : { *(.debug_ranges) }
+
+  .ARM.attributes 0 : { KEEP (*(.ARM.attributes)) KEEP (*(.gnu.attributes)) }
+  .note.gnu.arm.ident 0 : { KEEP (*(.note.gnu.arm.ident)) }
+  /DISCARD/ : { *(.note.GNU-stack) *(.gnu_debuglink) }
 }
