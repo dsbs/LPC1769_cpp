@@ -1,0 +1,10 @@
+2011-05-18  Dariusz Synowiec
+
+	* Build system is improved.
+	* Documentation is generated.
+
+2011-05-15  Dawid Bazan
+
+	* Initial code and build system is added.
+	* Linker script is updated.
+	* Template files with doxygen tags are added.
