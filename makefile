@@ -86,7 +86,7 @@ bin: $(OUTDIR)/$(TARGET).bin
 size: build
 	@echo ' '	
 	@echo '---- Calculating size of sections in elf file:'
-	$(SIZE) -A -x $(OUTDIR)/$(TARGET).elf
+	$(SIZE) -A -d $(OUTDIR)/$(TARGET).elf
 	
 
 # Target: clean project.
@@ -160,7 +160,6 @@ $(OUTDIR)/%.elf: $(OBJS)
 ###########################################################################
 # Compile
 ###########################################################################
-
 %.o: %.s
 	@echo ' '
 	@echo '---- Compiling ASM ' $< to $@
@@ -175,20 +174,6 @@ $(OUTDIR)/%.elf: $(OBJS)
 	@echo ' '
 	@echo '---- Compiling CPP: ' $< to $@
 	$(CC) -c $(THUMB) $(CFLAGS) $(CPPFLAGS) $< -o $(OUTOBJDIR)/$@ 
-
-
-# Compile: create assembler files from C source files. ARM/Thumb
-$(CSRC:.c=.s) : %.s : %.c
-	@echo ' '
-	@echo '---- Creating asm-File from C-Source: ' $< to $@
-	$(CC) -mthumb -S $(CFLAGS) $(CONLYFLAGS) $< -o $@
-
-# Compile: create assembler files from C source files. ARM only
-$(CSRCARM:.c=.s) : %.s : %.c
-	@echo ' '
-	@echo '---- Creating asm-File from C-Source (ARM-only): ' $< to $@
-	$(CC) -S $(CFLAGS) $(CONLYFLAGS) $< -o $@
-
 
 ###########################################################################
 # Options for OpenOCD flash-programming

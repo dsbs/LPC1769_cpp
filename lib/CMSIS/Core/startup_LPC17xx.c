@@ -31,13 +31,13 @@
 //
 //*****************************************************************************
 /* System exception vector handler */
-void WEAK 		Reset_Handler(void);             /* Reset Handler */
+/* void WEAK 		Reset_Handler(void); */             /* Reset Handler */
 void WEAK 		NMI_Handler(void);               /* NMI Handler */
 void WEAK 		HardFault_Handler(void);         /* Hard Fault Handler */
 void WEAK 		MemManage_Handler(void);         /* MPU Fault Handler */
 void WEAK 		BusFault_Handler(void);          /* Bus Fault Handler */
 void WEAK 		UsageFault_Handler(void);        /* Usage Fault Handler */
-void  		SVC_Handler(void);               /* SVCall Handler */
+void WEAK 		SVC_Handler(void);               /* SVCall Handler */
 void WEAK 		DebugMon_Handler(void);          /* Debug Monitor Handler */
 void WEAK 		PendSV_Handler(void);            /* PendSV Handler */
 void WEAK 		SysTick_Handler(void);           /* SysTick Handler */
