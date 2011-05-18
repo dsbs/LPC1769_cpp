@@ -68,15 +68,13 @@ LDFLAGS = @$(LDFLAGS_SUB)
 .DEFAULT_GOAL := all
 
 # Default target.
-all: makefile begin createdirs gccversion build size
-	@echo ' '
-	@echo '!!!!!!!!!!!!!!!!!!! Finished building target !!!!!!!!!!!!!!!!!!!'
+all: makefile createdirs gccversion begin build size
+	@echo '---- $(TARGET) built:'
 
 
 # Begin message
 begin:
-	@echo '!!!!!!!!!!!!!!!!!!! Building target !!!!!!!!!!!!!!!!!!!'
-	@echo ' '
+	@echo '---- Compiling:'
 
 # Create output directories.
 createdirs:
@@ -87,6 +85,7 @@ createdirs:
 
 # Display compiler version information.
 gccversion : 
+	@echo ' '
 	@$(CC) --version
 
 
@@ -109,8 +108,7 @@ size: build
 
 # Target: clean project.
 clean:
-	@echo ' '
-	@echo '!!!!!!!!!!!!!!!!!!! Removing target !!!!!!!!!!!!!!!!!!!'
+	@echo '---- Cleaning:'
 	$(RM) $(OUTDIR)/$(TARGET).map
 	$(RM) $(OUTDIR)/$(TARGET).elf
 	$(RM) $(OUTDIR)/$(TARGET).hex
@@ -121,13 +119,18 @@ clean:
 	$(RM) $(OUTLSTDIR)/*.lst >/dev/null 2>&1
 	$(RM) $(OUTDEPDIR)/*.o.d >/dev/null 2>&1
 	$(RM) $(FLAGS_SUB) 
-	@echo '!!!!!!!!!!!!!!!!!!! Target removed !!!!!!!!!!!!!!!!!!!'
+	@echo ' '
+	@echo '---- Cleaned'
 	
 # TBD: flash
-flash: $(OUTDIR)/$(TARGET).elf
-	@echo "Flashing with OPENOCD NOT IMPLEMETED"
-	@exit -1
+# use following dependencies after implementing this target
+#flash: $(OUTDIR)/$(TARGET).elf
+flash:
+	$(error Flashing with OPENOCD NOT IMPLEMETED)
 	#$(OOCD_EXE) $(OOCD_CL)
+	
+doc:
+	$(error Doxygen generation NOT IMPLEMETED)
 
 
 ###########################################################################
@@ -159,7 +162,7 @@ $(OUTDIR)/%.sym: $(OUTDIR)/%.elf
 	$(NM) -n $< > $@
 
 # Link: create ELF output file from object files.
-$(OUTDIR)/%.elf: $(OBJS)
+$(OUTDIR)/%.elf: $(OBJS) $(FLAGS_SUB)
 	@echo ' '
 	@echo '---- Linking, creating ELF file: ' $@
 	$(LD) $(LDFLAGS) $(addprefix $(OUTOBJDIR)/, $(OBJS)) --output $@
@@ -167,19 +170,13 @@ $(OUTDIR)/%.elf: $(OBJS)
 ###########################################################################
 # Compile
 ###########################################################################
-%.o: %.s
-	@echo ' '
-	@echo '---- Compiling ASM ' $< to $@
+%.o: %.s $(FLAGS_SUB)
 	$(CC) -c $(ASFLAGS) $< -o $@ 
 
-%.o: %.c
-	@echo ' '
-	@echo '---- Compiling C: ' $< to $@
+%.o: %.c $(FLAGS_SUB)
 	$(CC) -c $(CFLAGS) $< -o $(OUTOBJDIR)/$@ 
 
-%.o: %.cpp
-	@echo ' '
-	@echo '---- Compiling CPP: ' $< to $@
+%.o: %.cpp $(FLAGS_SUB)
 	$(CC) -c $(CPPFLAGS) $< -o $(OUTOBJDIR)/$@ 
 
 ###########################################################################
