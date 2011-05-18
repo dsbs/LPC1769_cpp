@@ -38,9 +38,9 @@ OUTLSTDIR = $(OUTDIR)/lst
 VPATH = $(SUBDIRS)
 
 # Define all object files based on source files to be compiled
-OBJS = $(addprefix $(OUTOBJDIR)/, $(CSRCS:.c=.o) $(CSRCSARM:.c=.o) \
+OBJS = $(CSRCS:.c=.o) $(CSRCSARM:.c=.o) \
 	   $(CPPSRCS:.cpp=.o) $(CPPSRCSARM:.cpp=.o) $(ASRCS:.s=.o) \
-	   $(ASRCSARM:.s=.o))
+	   $(ASRCSARM:.s=.o)
 
 # Target file name
 TARGET = lpc1769
@@ -49,20 +49,17 @@ TARGET = lpc1769
 # Targets
 ###########################################################################
 # Listing of phony targets.
-.PHONY : all begin end size gccversion build elf hex bin lss sym clean createdirs
+.PHONY : all begin size gccversion build elf hex bin lss sym clean createdirs
 
 # Default target.
-all: begin createdirs gccversion $(CFLAGS_SUB) build size end
-	
-# Output files to be build
-elf: $(OUTDIR)/$(TARGET).elf
-lss: $(OUTDIR)/$(TARGET).lss 
-sym: $(OUTDIR)/$(TARGET).sym
-hex: $(OUTDIR)/$(TARGET).hex
-bin: $(OUTDIR)/$(TARGET).bin
+all: begin createdirs gccversion $(CFLAGS_SUB) build size
+	@echo ' '
+	@echo '!!!!!!!!!!!!!!!!!!! Finished building target !!!!!!!!!!!!!!!!!!!'
 
-# Build all outputs
-build: elf hex bin lss sym
+# Begin message
+begin:
+	@echo '!!!!!!!!!!!!!!!!!!! Building target !!!!!!!!!!!!!!!!!!!'
+	@echo ' '
 
 # Create output directories.
 createdirs:
@@ -70,26 +67,27 @@ createdirs:
 	-@mkdir $(OUTDEPDIR) 2>/dev/null || echo "" >/dev/null
 	-@mkdir $(OUTLSTDIR) 2>/dev/null || echo "" >/dev/null
 	-@mkdir $(OUTOBJDIR) 2>/dev/null || echo "" >/dev/null
-	
-# Begin message
-begin:
-	@echo '!!!!!!!!!!!!!!!!!!! Building target !!!!!!!!!!!!!!!!!!!'
-	@echo ' '
 
-# End message
-end:
-	@echo ' '
-	@echo '!!!!!!!!!!!!!!!!!!! Finished building target !!!!!!!!!!!!!!!!!!!'
+# Display compiler version information.
+gccversion : 
+	@$(CC) --version
+
+# Build all outputs
+build: elf hex bin lss sym
+
+# Output files to be build
+elf: $(OUTDIR)/$(TARGET).elf
+lss: $(OUTDIR)/$(TARGET).lss 
+sym: $(OUTDIR)/$(TARGET).sym
+hex: $(OUTDIR)/$(TARGET).hex
+bin: $(OUTDIR)/$(TARGET).bin
 
 # Calculate sizes of sections
-size:
+size: build
 	@echo ' '	
 	@echo '---- Calculating size of sections in elf file:'
 	$(SIZE) -A -x $(OUTDIR)/$(TARGET).elf
 	
-# Display compiler version information.
-gccversion : 
-	@$(CC) --version
 
 # Target: clean project.
 clean:
@@ -101,110 +99,83 @@ clean:
 	$(RM) $(OUTDIR)/$(TARGET).bin
 	$(RM) $(OUTDIR)/$(TARGET).sym
 	$(RM) $(OUTDIR)/$(TARGET).lss
-	$(RM) $(OUTOBJDIR)/*.o >nul 2>&1
-	$(RM) $(OUTLSTDIR)/*.lst >nul 2>&1
-	$(RM) $(OUTDEPDIR)/*.o.d >nul 2>&1
+	$(RM) $(OUTOBJDIR)/*.o >/dev/null 2>&1
+	$(RM) $(OUTLSTDIR)/*.lst >/dev/null 2>&1
+	$(RM) $(OUTDEPDIR)/*.o.d >/dev/null 2>&1
 #	$(RM) $(CFLAGS_SUB) 
 	@echo '!!!!!!!!!!!!!!!!!!! Target removed !!!!!!!!!!!!!!!!!!!'
 	
 # TBD: flash
-flash: #$(OUTDIR)/$(TARGET).elf
-	@echo "Flashing with OPENOCD"
+flash: $(OUTDIR)/$(TARGET).elf
+	@echo "Flashing with OPENOCD NOT IMPLEMETED"
+	@exit -1
 	#$(OOCD_EXE) $(OOCD_CL)
+
+
+# set THUMB variable depending on sources compiled
+# i.e. if compiling file from CSRCS set THUMB to -mthumb
+#      if compiling file from CSRCSARM set THUMB empty
+$(CSRCS:.c=.o) : THUMB = -mthumb
+$(CPPSRCS:.cpp=.o) : THUMB = -mthumb
+$(ASRCS:.s=.o) : THUMB = -mthumb -mthumb-interwork
+$(CSRCSARM:.c=.o)  : THUMB =
+$(CPPSRCSARM:.cpp=.o) : THUMB =
+$(ASRCSARM:.s=.o) : THUMB =
+
 
 ###########################################################################
 # Build release files
 ###########################################################################
 # Create final output file (.hex) from ELF output file.
-%.hex: %.elf
+$(OUTDIR)/%.hex: $(OUTDIR)/%.elf
 	@echo ' '
 	@echo '---- Creating HEX file: ' $@
 	$(OBJCOPY) -O ihex $< $@
 	
 # Create final output file (.bin) from ELF output file.
-%.bin: %.elf
+$(OUTDIR)/%.bin: $(OUTDIR)/%.elf
 	@echo ' '
 	@echo '---- Creating BINARY file: ' $@
 	$(OBJCOPY) -O binary $< $@
 
 # Create extended listing file/disassambly from ELF output file.
 # using objdump testing: option -C
-%.lss: %.elf
+$(OUTDIR)/%.lss: $(OUTDIR)/%.elf
 	@echo ' '
 	@echo '---- Creating Extended Listing/Disassembly file: ' $@
 	$(OBJDUMP) -h -S -C -r $< > $@
 
 # Create a symbol table from ELF output file.
-%.sym: %.elf
+$(OUTDIR)/%.sym: $(OUTDIR)/%.elf
 	@echo ' '
 	@echo '---- Creating SYMBOL file: ' $@
 	$(NM) -n $< > $@
 
 # Link: create ELF output file from object files.
-%.elf:  $(OBJS)
+$(OUTDIR)/%.elf: $(OBJS)
 	@echo ' '
 	@echo '---- Linking, creating ELF file: ' $@
-	$(LD)  $(CFLAGS) $(OBJS) --output $@ $(LDFLAGS)
+	$(LD) -mthumb $(CFLAGS) $(addprefix $(OUTOBJDIR)/, $(OBJS)) --output $@ $(LDFLAGS)
 
 ###########################################################################
 # Compile
 ###########################################################################
-# Assembler: create object files from assembler source files.
-define ASSEMBLE_TEMPLATE
-$(OUTOBJDIR)/$(notdir $(basename $(1))).o : $(1)
-	@echo ' '
-	@echo '---- Assembling: ' $$< to $$@
-	$(CC) -c -mthumb -mthumb-interwork $$(ASFLAGS) $$< -o $$@ 
-endef
-$(foreach src, $(ASRCS), $(eval $(call ASSEMBLE_TEMPLATE, $(src)))) 
 
-# Assemble: create object files from assembler source files. ARM-only
-define ASSEMBLE_ARM_TEMPLATE
-$(OUTOBJDIR)/$(notdir $(basename $(1))).o : $(1)
+%.o: %.s
 	@echo ' '
-	@echo '---- Assembling ARM-only: ' $$< to $$@
-	$(CC) -c $$(ASFLAGS) $$< -o $$@ 
-endef
-$(foreach src, $(ASRCSARM), $(eval $(call ASSEMBLE_ARM_TEMPLATE, $(src)))) 
+	@echo '---- Compiling ASM ' $< to $@
+	$(CC) -c $(THUMB) $(ASFLAGS) $< -o $@ 
 
-# Compile: create object files from C source files.
-define COMPILE_C_TEMPLATE
-$(OUTOBJDIR)/$(notdir $(basename $(1))).o : $(1)
+%.o: %.c
 	@echo ' '
-	@echo '---- Compiling C: ' $$< to $$@
-	$(CC) -c -mthumb $$(CFLAGS) $$(CONLYFLAGS) $$< -o $$@ 
-endef
-$(foreach src, $(CSRCS), $(eval $(call COMPILE_C_TEMPLATE, $(src)))) 
-#%.o : %.c Makefile $(CFLAGS)
-#	$(CC) $(CFLAGS) -c -o $*.o $<
-	
-# Compile: create object files from C source files. ARM-only
-define COMPILE_C_ARM_TEMPLATE
-$(OUTOBJDIR)/$(notdir $(basename $(1))).o : $(1)
-	@echo ' '
-	@echo '---- Compiling C ARM-only: ' $$< to $$@
-	$(CC) -c $$(CFLAGS) $$(CONLYFLAGS) $$< -o $$@ 
-endef
-$(foreach src, $(CSRCSARM), $(eval $(call COMPILE_C_ARM_TEMPLATE, $(src)))) 
+	@echo '---- Compiling C: ' $< to $@
+	$(CC) -c $(THUMB) $(CFLAGS) $(CONLYFLAGS) $< -o $(OUTOBJDIR)/$@ 
 
-
-# Compile: create object files from C++ source files.
-define COMPILE_CPP_TEMPLATE
-$(OUTOBJDIR)/$(notdir $(basename $(1))).o : $(1)
+%.o: %.cpp
 	@echo ' '
-	@echo '---- Compiling C++: ' $$< to $$@
-	$(CC) -c -mthumb $$(CFLAGS) $$(CPPFLAGS) $$< -o $$@ 
-endef
-$(foreach src, $(CPPSRCS), $(eval $(call COMPILE_CPP_TEMPLATE, $(src)))) 
+	@echo '---- Compiling CPP: ' $< to $@
+	$(CC) -c $(THUMB) $(CFLAGS) $(CPPFLAGS) $< -o $(OUTOBJDIR)/$@ 
 
-# Compile: create object files from C++ source files. ARM-only
-define COMPILE_CPP_ARM_TEMPLATE
-$(OUTOBJDIR)/$(notdir $(basename $(1))).o : $(1)
-	@echo ' '
-	@echo '---- Compiling C++ ARM-only: ' $$< to $$@
-	$(CC) -c $$(CFLAGS) $$(CPPFLAGS) $$< -o $$@ 
-endef
-$(foreach src, $(CPPSRCSARM), $(eval $(call COMPILE_CPP_ARM_TEMPLATE, $(src)))) 
 
 # Compile: create assembler files from C source files. ARM/Thumb
 $(CSRC:.c=.s) : %.s : %.c
