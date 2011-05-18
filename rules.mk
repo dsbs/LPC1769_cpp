@@ -9,11 +9,11 @@
 ###########################################################################
 # Files containing rules
 ###########################################################################
-CFLAGS_SUB = cflags.sub
-CONLYFLAGS_SUB = conlyflags.sub
-CPPFLAGS_SUB = cppflags.sub
-ASFLAGS_SUB = asflags.sub
-LDFLAGS_SUB = ldflags.sub
+CFLAGS_SUB = $(OUTDIR)/cflags.sub
+CONLYFLAGS_SUB = $(OUTDIR)/conlyflags.sub
+CPPFLAGS_SUB = $(OUTDIR)/cppflags.sub
+ASFLAGS_SUB = $(OUTDIR)/asflags.sub
+LDFLAGS_SUB = $(OUTDIR)/ldflags.sub
 FLAGS_SUB = $(CFLAGS_SUB) $(CONLYFLAGS_SUB) $(CPPFLAGS_SUB) $(ASFLAGS_SUB) $(LDFLAGS_SUB)
 
 

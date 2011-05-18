@@ -18,12 +18,6 @@ help:
 	@echo ' Files are generated in release folder                                             '
 
 ###########################################################################
-# included makefiles.
-###########################################################################
-include sources.mk
-include rules.mk
-
-###########################################################################
 # Tool chain files and shell commands.
 ###########################################################################
 TCHAIN_PREFIX = arm-none-eabi-
@@ -46,6 +40,12 @@ OUTDEPDIR = $(OUTDIR)/dep
 OUTLSTDIR = $(OUTDIR)/lst
 LOGDIR = $(OUTDIR)/log/
 DOCDIR = $(OUTDIR)/doc/{html,man}
+
+###########################################################################
+# included makefiles.
+###########################################################################
+include sources.mk
+include rules.mk
 
 # Add all subfolders with source codes and includes to the makefile path
 VPATH = $(SUBDIRS)
