@@ -1,9 +1,12 @@
 /* 
  * Linker script for LCP1769
+ *
  * Dawid Bazan <dawidbazan@gmail.com>
- * Dariusz Synowiec <>
- * May 2011
+ * Dariusz Synowiec <devemouse@gmail.com>
+ * 
+ * Last update on May 2011
  */
+
 
 /* 
  * OUTPUT_FORMAT(default, big, little) BFD(Binary File Descriptor) library format 
@@ -12,7 +15,6 @@
 OUTPUT_FORMAT("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
 /* The first instruction to execute in a program */
 ENTRY(Reset_Handler)
-/* TBD: not see Reset_handler */
 
 
 /* MPU - defining regions of memory */
@@ -51,13 +53,13 @@ SECTIONS
       /* CREATE_OBJECT_SYMBOLS - The command tells the linker to create a symbol for each input file */
       CREATE_OBJECT_SYMBOLS
       /* 
-       * KEEP - When link-time garbage collection is in use (‘--gc-sections’), 
+       * KEEP - When link-time garbage collection is in use ("--gc-sections"), 
        * it is often useful to mark sections that should not be eliminated
        */
         KEEP(*(.isr_vector .isr_vector.*))
         /* 
-         * The ‘*’ is a wildcard which matches any fil ename .Th eexpressio n‘*(.text)’ 
-         * means all ‘.text’ input sections in all input files
+         * The "*" is a wildcard which matches any file name. The expression "*(.text)" 
+         * means all ".text" input sections in all input files
          */
         *(.text .text.*)
         /* The linkonce is to support C++ vague linkage(inline functions, vtables etc. */
@@ -94,7 +96,7 @@ SECTIONS
 		__fini_array_end = .;
 
         /* This section contains a list of global constructor function pointers */ 
-		. = ALIGN(0x4);
+		. = ALIGN(4);
 		KEEP (*crtbegin.o(.ctors))
 		KEEP (*(EXCLUDE_FILE (*crtend.o) .ctors))
 		KEEP (*(SORT(.ctors.*)))
@@ -106,12 +108,7 @@ SECTIONS
         KEEP (*(EXCLUDE_FILE (*crtend.o) .dtors))
         KEEP (*(SORT(.dtors.*)))
         KEEP (*crtend.o(.dtors))
-      /*
-       * '*' so called 'asterisk' is wildcard which matches any file name 
-       * The expression '*(.text)' means all '.text' input sections in all input files
-       */
-      /* Input section name which will be placed into this output section - program code */
-      /**(.text)*/
+
       /* Store at 'etext' which is the address of the end of this section */
       _etext = .;
    } >ROM

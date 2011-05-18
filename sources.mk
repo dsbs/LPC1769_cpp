@@ -1,7 +1,8 @@
 ###########################################################################
 # Dawid Bazan <dawidbazan@gmail.com>
-# This file contains source file names and paths 
-# This file should be included in Makefile
+# Dariusz Synowiec <devemouse@gmail.com>
+# 
+# sources.mk
 ###########################################################################
 
 
