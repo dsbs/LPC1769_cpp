@@ -2,3 +2,10 @@ List of open items:
 
 * Linker script to be done when HW will be available
 * template files for c, cpp and h (remember about doxygen)
+* add class LED as a part of the template to get feeling how to add new api modules in C++. 
+   This class shall be placed in h and cpp files which shall be trated as a template files(see point 2)
+   c file does't need separate example of template(I think it should be the same like cpp) 
+* dependences not created during compilation
+* listings not created during compilation
+* logs not created during compilation
+* generated *flags.sub put in folder release/sub 
