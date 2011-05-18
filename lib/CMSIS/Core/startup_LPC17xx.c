@@ -37,7 +37,7 @@ void WEAK 		HardFault_Handler(void);         /* Hard Fault Handler */
 void WEAK 		MemManage_Handler(void);         /* MPU Fault Handler */
 void WEAK 		BusFault_Handler(void);          /* Bus Fault Handler */
 void WEAK 		UsageFault_Handler(void);        /* Usage Fault Handler */
-void WEAK 		SVC_Handler(void);               /* SVCall Handler */
+void  		SVC_Handler(void);               /* SVCall Handler */
 void WEAK 		DebugMon_Handler(void);          /* Debug Monitor Handler */
 void WEAK 		PendSV_Handler(void);            /* PendSV Handler */
 void WEAK 		SysTick_Handler(void);           /* SysTick Handler */
@@ -180,6 +180,9 @@ void (* const g_pfnVectors[])(void) =
 *******************************************************************************/
 void Reset_Handler(void)
 {
+   // Initialize the System
+   SystemInit();
+
     unsigned long *pulSrc, *pulDest;
 
     //
@@ -202,8 +205,7 @@ void Reset_Handler(void)
         *(pulDest++) = 0;
     }
 
-    // Initialize the System
-    SystemInit();
+
     //
     // Call the application's entry point.
     //

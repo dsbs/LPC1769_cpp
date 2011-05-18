@@ -10,7 +10,8 @@
  */
 OUTPUT_FORMAT("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
 /* The first instruction to execute in a program */
-/*ENTRY(_Reset_Handler)*/
+ENTRY(Reset_Handler)
+/* TBD: not see Reset_handler */
 
 
 /* MPU - defining regions of memory */
@@ -22,7 +23,7 @@ MEMORY
    /* On-chip main SRAM: 0x1000 0000 - 0x1000 7FFF */ 
    RAM1(rwx)  : ORIGIN = 0x10000000, LENGTH =  32K
    
-   /* On-chip SRAM AHB SRAM bank 0 and 1(You can reserve for Ethernet and USB): 0x2007 C000 - 0x2008 3FFF */
+   /* On-chip SRAM AHB SRAM bank 0 and 1(You may reserve for Ethernet and USB): 0x2007 C000 - 0x2008 3FFF */
    RAM2(rwx) : ORIGIN = 0x2007C000, LENGTH = 16k
    RAM3(rwx) : ORIGIN = 0x20080000, LENGTH = 16k
 }
@@ -89,7 +90,7 @@ SECTIONS
         __fini_array_end = .;
         
 
-        . = ALIGN(0x4);
+        . = ALIGN(4);
         /* This section contains a list of global destructor function pointers */
         KEEP (*crtbegin.o(.dtors))
         KEEP (*(EXCLUDE_FILE (*crtend.o) .dtors))
@@ -100,7 +101,7 @@ SECTIONS
        * The expression '*(.text)' means all '.text' input sections in all input files
        */
       /* Input section name which will be placed into this output section - program code */
-      *(.text)
+      /**(.text)*/
       /* Store at 'etext' which is the address of the end of this section */
       _etext = .;
    } >ROM
