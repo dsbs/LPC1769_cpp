@@ -1,6 +1,39 @@
 ###########################################################################
+# Dawid Bazan <dawidbazan@gmail.com>
+# Dariusz Synowiec <devemouse@gmail.com>
+#
+# rules.mk
+
+###########################################################################
+
+###########################################################################
+# Files containing rules
+###########################################################################
+CFLAGS_SUB = cflags.sub
+CONLYFLAGS_SUB = conlyflags.sub
+CPPFLAGS_SUB = cppflags.sub
+ASFLAGS_SUB = asflags.sub
+LDFLAGS_SUB = ldflags.sub
+FLAGS_SUB = $(CFLAGS_SUB) $(CONLYFLAGS_SUB) $(CPPFLAGS_SUB) $(ASFLAGS_SUB) $(LDFLAGS_SUB)
+
+
+###########################################################################
 # Compiler settings
 ###########################################################################
+# THUMB rules
+# -mthumb           # Generate code for the Thumb instruction set.  The default is to use the 32-bit
+#                   # ARM instruction set. This option automatically enables either 16-bit Thumb-
+#                   # 1 or mixed 16/32-bit Thumb-2 instructions based on the ‘-mcpu=name’ and
+#                   # ‘-march=name’ options. This option is not passed to the assembler. If you want
+#                   # to force assembler file st ob einterprete da sThum bcode ,eithe rad d a‘.thumb’
+#                   # directive to the source or pass the ‘-mthumb’ option directly to the assembler
+#                   # by prefixin gi twit h‘-Wa’.
+# -mthumb-interwork # Generate code which supports calling between the ARM and Thumb instruction
+#                   # sets. Without this option the two instruction sets cannot be reliably used inside
+#                   # one program. The default is ‘-mno-thumb-interwork’, since slightly larger code
+#                   # is generated when ‘-mthumb-interwork’ is specified.
+THUMB = -mthumb -mthumb-interwork
+
 # C/C++ compiler flags
 # -mcpu=cortex-m3                  # CPU name
 # -mthumb-interwork                # Compile with using mixed instructions ARM and Thumb
@@ -12,48 +45,43 @@
 # -MD -MP -MF $(OUTDEPDIR)/$(@F).d # Compiler flags to generate dependency files
 #                                  # -Wa -pass to the assembler, -adhlns -create assembler listing
 # $(patsubst %,-I%,$(SUBDIRS)) -I. # Seach thru all subdirs
-
-CFLAGS =  \
-	-mcpu=cortex-m3 \
-	-gdwarf-2 \
-	-O2 \
-	-fpromote-loop-indices \
-	-Wnested-externs \
-	-std=gnu99 \
-	-Wall -Wextra \
-	-Wimplicit -Wcast-align -Wpointer-arith -Wredundant-decls -Wshadow -Wcast-qual -Wcast-align \
-	-fno-rtti -fno-exceptions \
-	-MD -MP -MF $(OUTDEPDIR)/$(@F).d \
-	-Wa,-adhlns=$(addprefix $(OUTLSTDIR)/, $(notdir $(addsuffix .lst, $(basename $<)))) \
-	$(patsubst %,-I%,$(SUBDIRS)) -I.
-
-#CFLAGS_SUB = cflags.sub
-#CFLAGS =  @$(CFLAGS_SUB)
-#$(CFLAGS_SUB):
-	#@echo -mcpu=cortex-m3 >>$@
-	#@echo -mthumb >>$@
-	#@echo -mthumb-interwork >>$@
-	#@echo -gdwarf-2 >>$@
-	#@echo -O2 >>$@
-	#@echo -fpromote-loop-indices >>$@
-	#@echo -Wall -Wextra >>$@
-	#@echo -Wimplicit -Wcast-align -Wpointer-arith -Wredundant-decls -Wshadow -Wcast-qual -Wcast-align >>$@
-	#@echo -MD -MP -MF $(OUTDEPDIR)/$(@F).d >>$@
-	#@echo -Wa,-adhlns=$(addprefix $(OUTLSTDIR)/, $(notdir $(addsuffix .lst, $(basename $<)))) >>$@
-	#@echo $(patsubst %,-I%,$(SUBDIRS)) -I.>>$@
+$(CFLAGS_SUB): 
+	@$(RM) $@
+	@echo $(patsubst %,-I%,$(SUBDIRS)) >>$@
+	@echo -I. >>$@
+#	@echo -Wa,-adhlns=$(addprefix $(OUTLSTDIR)/, $(notdir $(addsuffix .lst, $(basename $<)))) >>$@
+	@echo -mcpu=cortex-m3 >>$@
+	@echo -gdwarf-2 >>$@
+	@echo -O2 >>$@
+	@echo -fpromote-loop-indices >>$@
+	@echo -Wall >>$@
+	@echo -Wextra >>$@
+	@echo -Wimplicit >>$@
+	@echo -Wcast-align >>$@
+	@echo -Wpointer-arith >>$@
+	@echo -Wredundant-decls >>$@
+	@echo -Wshadow >>$@
+	@echo -Wcast-qual >>$@
+	@echo -Wcast-align >>$@
+	@echo -fno-exceptions >>$@
+	@echo -MD -MP -MF $(OUTDEPDIR)/$(@F).d >>$@
 
 # C only compiler flags
 #   -Wnested-externs      				# Warn if an extern declaration is encountered within a function
 #   -std=gnu99							# Defined standard: c99 plus GCC extensions
 #   $(patsubst %,-I%,$(SUBDIRS)) -I.    # Seach thru all subdirs
-
-CONLYFLAGS = 
+$(CONLYFLAGS_SUB): 
+	@$(RM) $@
+	@echo -Wnested-externs >>$@
+	@echo -std=gnu99 >>$@
 
 # C++ only compiler flags
 #   -fno-rtti -fno-exceptions           # If you will not use virtual functions 
 #                                       # those setting flags will optimalize the code
 #   $(patsubst %,-I%,$(SUBDIRS)) -I.    # Seach thru all subdirs
-CPPFLAGS = 
+$(CPPFLAGS_SUB): 
+	@$(RM) $@
+	@echo -fno-rtti >>$@
 
 # Assembler compliler flags
 # -mcpu=cortex-m3 \                # CPU name
@@ -63,13 +91,14 @@ CPPFLAGS =
 # -D__ASSEMBLY__ \                 # Allows include files in assemler
 #                                  # -Wa -pass to the assembler, -adhlns -create assembler listing
 # $(patsubst %,-I%,$(SUBDIRS)) -I. # Seach thru all subdirs
-ASFLAGS  = \
-	-mcpu=cortex-m3 \
-	-Wa, -gdwarf-2 \
-	-x assembler-with-cpp \
-	-D__ASSEMBLY__ \
-	-Wa,-adhlns=$(addprefix $(OUTLSTDIR)/, $(notdir $(addsuffix .lst, $(basename $<)))) \
-	$(patsubst %,-I%,$(SUBDIRS)) -I.
+$(ASFLAGS_SUB): 
+	@$(RM) $@
+	@echo -mcpu=cortex-m3 >>$@
+	@echo -Wa, -gdwarf-2 >>$@
+	@echo -x assembler-with-cpp >>$@
+	@echo -D__ASSEMBLY__ >>$@
+	@echo -Wa,-adhlns=$(addprefix $(OUTLSTDIR)/, $(notdir $(addsuffix .lst, $(basename $<)))) >>$@
+	@echo $(patsubst %,-I%,$(SUBDIRS)) -I. >>$@
 
 # Linker flags
 # -lc -lm -lgc -lstdc++                                             # Link to standard libraries (lLibrary)
@@ -78,7 +107,9 @@ ASFLAGS  = \
 # -Wl # pass to the linker, -Map -create map file,
 # --cref -Output # a cross reference table,
 # --gc-sections -Enable garbage collection of unused input sections
-LDFLAGS = \
-	-lc -lm -lgcc -lstdc++ \
-	-Wl,-Map=$(OUTDIR)/$(TARGET).map,--cref,--gc-sections \
-	-T$(LINKERSCRIPT) -nostartfiles
+$(LDFLAGS_SUB): 
+	@$(RM) $@
+	@echo -Map=$(OUTDIR)/$(TARGET).map --cref --gc-sections  >>$@
+	@echo -T$(LINKERSCRIPT) -nostartfiles -Iapp -Ilib/CMSIS/Core -I. >>$@
+#	@echo -lc -lm -lgcc -lstdc++ \ >>$@
+
