@@ -102,7 +102,7 @@ clean:
 	$(RM) $(OUTOBJDIR)/*.o >/dev/null 2>&1
 	$(RM) $(OUTLSTDIR)/*.lst >/dev/null 2>&1
 	$(RM) $(OUTDEPDIR)/*.o.d >/dev/null 2>&1
-#	$(RM) $(CFLAGS_SUB) 
+	$(RM) $(CFLAGS_SUB) 
 	@echo '!!!!!!!!!!!!!!!!!!! Target removed !!!!!!!!!!!!!!!!!!!'
 	
 # TBD: flash
