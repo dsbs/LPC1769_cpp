@@ -141,7 +141,7 @@ flash:
 	#$(OOCD_EXE) $(OOCD_CL)
 
 doc: createdirs
-	c:\Darek\app\doxygen\doxygen.exe doxyfile
+	doxygen doxyfile
 #	$(error Doxygen generation NOT IMPLEMETED)
 
 ###########################################################################
