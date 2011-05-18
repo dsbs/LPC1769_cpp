@@ -142,7 +142,6 @@ flash:
 
 doc: createdirs
 	doxygen doxyfile
-#	$(error Doxygen generation NOT IMPLEMETED)
 
 ###########################################################################
 # Build release files
