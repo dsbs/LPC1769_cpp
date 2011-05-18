@@ -1,3 +1,13 @@
+/**************************************************************************//**
+ * @file main.cpp
+ * @brief This file contains main loop
+ * @author Dawid Bazan <dawidbazan@gmail.com>
+ * @author Dariusz Synowiec <devemouse@gmail.com>
+ * @version 0.0
+ * @date    May 2011
+ * @bug There is no bug. left this to have a refference.
+ * @warning This was never programmed to the uC yet.
+ *****************************************************************************/
 
 #include "LPC17xx.h"
 
@@ -38,22 +48,25 @@ __INLINE static void LED_On (uint32_t led) {
   LPC_GPIO1->FIOPIN |=  (led);                  /* Turn On  LED */
 }
 
-
-/*------------------------------------------------------------------------------
-  Switch off LEDs
- *------------------------------------------------------------------------------*/
+/**************************************************************************//**
+ * LED_Off
+ * Turns off a led connected to some pin
+ *
+ * @param uint32_t led channel
+ *
+ *****************************************************************************/
 __INLINE static void LED_Off (uint32_t led) {
 
   LPC_GPIO1->FIOPIN &= ~(led);                  /* Turn Off LED */
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/**************************************************************************//**
+ * main
+ * Function from which everything starts...
+ *
+ * @return on embeded targets this function shall never return
+ *
+ *****************************************************************************/
 int main(void)
 {
 	  if (SysTick_Config(12 / 1000)) { /* Setup SysTick Timer for 1 msec interrupts  */
