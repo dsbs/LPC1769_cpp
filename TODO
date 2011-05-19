@@ -1,12 +1,28 @@
-List of open items:
+This file contains list of all todo items. An item can be either pending for someone to pick it up,
+in progress by some volounteer or done.
 
+ABBREVIATIONS
+==============
+DS - Dariusz Synowiec
+DB - Dawid Bazan
+
+IN PROGRESS
+==============
+* (DS) logs not created during compilation
+* (DS) listings not created during compilation
+* (DS) generated *flags.sub put in folder release/sub 
+* (DS) dependences not created during compilation
+* (DS) add some linker options so it generates more warnings (unknown sections etc.)
+
+PENDING
+==============
 * Linker script to be done when HW will be available
 * template files for c, cpp and h (remember about doxygen)
 * add class LED as a part of the template to get feeling how to add new api modules in C++. 
-   This class shall be placed in h and cpp files which shall be trated as a template files(see point 2)
-   c file does't need separate example of template(I think it should be the same like cpp) 
-* dependences not created during compilation
-* listings not created during compilation
-* logs not created during compilation
-* generated *flags.sub put in folder release/sub 
+  This class shall be placed in h and cpp files which shall be treated as a template files (see
+  point 2) c file doesn't need separate example of template(I think it should be the same like cpp) 
 * sym file recognize
+
+DONE
+==============
+* File format for TODO items ;)
