@@ -1,5 +1,5 @@
 ###########################################################################
-# Makefile header and help message.
+# Makefile header and help message
 ###########################################################################
 help:
 	@echo '                                                                                   '
@@ -18,7 +18,7 @@ help:
 	@echo ' Files are generated in release folder                                             '
 
 ###########################################################################
-# Tool chain files and shell commands.
+# Tool chain files and shell commands
 ###########################################################################
 TCHAIN_PREFIX = arm-none-eabi-
 CC      = $(TCHAIN_PREFIX)gcc
@@ -31,18 +31,20 @@ SIZE    = $(TCHAIN_PREFIX)size
 NM      = $(TCHAIN_PREFIX)nm
 
 ###########################################################################
-# Target name and input/output path definitions.
+# Output path definitions
 ###########################################################################
 # Directory for output files (lst, obj, dep, elf, sym, map, hex, bin etc.)
 OUTDIR = release
 OUTOBJDIR = $(OUTDIR)/obj
 OUTDEPDIR = $(OUTDIR)/dep
 OUTLSTDIR = $(OUTDIR)/lst
-LOGDIR = $(OUTDIR)/log/
-DOCDIR = $(OUTDIR)/doc/{html,man}
+LOGDIR = $(OUTDIR)/log
+
+# Target file name
+TARGET = lpc1769
 
 ###########################################################################
-# included makefiles.
+# included makefiles, input path definitions
 ###########################################################################
 include sources.mk
 include rules.mk
@@ -58,15 +60,9 @@ OBJS = $(CSRCS:.c=.o) \
        $(ASRCS:.s=.o) \
        $(ASRCSARM:.s=.o)
 
-# Target file name
-TARGET = lpc1769
-
 ###########################################################################
-# Compiler/linker rules selection depending on file group
+# Compiler/Linker rules selection depending on file group
 ###########################################################################
-# set THUMB variable depending on sources compiled
-# i.e. if compiling file from CSRCS set THUMB to -mthumb
-#      if compiling file from CSRCSARM set THUMB empty
 $(CSRCS:.c=.o)        : CFLAGS   = @$(CFLAGS_SUB) @$(CONLYFLAGS_SUB) $(THUMB)
 $(CPPSRCS:.cpp=.o)    : CPPFLAGS = @$(CFLAGS_SUB) @$(CPPFLAGS_SUB) $(THUMB)
 $(ASRCS:.s=.o)        : ASFLAGS  = @$(ASFLAGS_SUB) $(THUMB)

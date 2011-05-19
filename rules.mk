@@ -6,7 +6,7 @@
 ###########################################################################
 
 ###########################################################################
-# Files containing rules
+# Automatically generated files containing rules
 ###########################################################################
 CFLAGS_SUB = $(OUTDIR)/cflags.sub
 CONLYFLAGS_SUB = $(OUTDIR)/conlyflags.sub
