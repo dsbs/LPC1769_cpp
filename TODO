@@ -13,10 +13,10 @@ IN PROGRESS
 * (DS) generated *flags.sub put in folder release/sub 
 * (DS) dependences not created during compilation
 * (DS) add some linker options so it generates more warnings (unknown sections etc.)
+* (DB) Linker script recognize all sections check which are needed
 
 PENDING
 ==============
-* Linker script to be done when HW will be available
 * template files for c, cpp and h (remember about doxygen)
 * add class LED as a part of the template to get feeling how to add new api modules in C++. 
   This class shall be placed in h and cpp files which shall be treated as a template files (see
