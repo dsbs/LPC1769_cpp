@@ -180,10 +180,10 @@ $(OUTDIR)/%.elf: $(OBJS) $(FLAGS_SUB)
 	$(CC) -c $(ASFLAGS) $< -o $@ 
 
 %.o: %.c $(FLAGS_SUB)
-	$(CC) -c $(CFLAGS) $< -o $(OUTOBJDIR)/$@ 
+	$(CC) -c $(CFLAGS) -Wa,-adhlns=$(OUTLSTDIR)/$(subst .c,.lst,$(notdir $<)) $< -o $(OUTOBJDIR)/$@ 
 
 %.o: %.cpp $(FLAGS_SUB)
-	$(CC) -c $(CPPFLAGS) $< -o $(OUTOBJDIR)/$@ 
+	$(CC) -c $(CPPFLAGS) -Wa,-adhlns=$(OUTLSTDIR)/$(subst .cpp,.lst,$(notdir $<)) $< -o $(OUTOBJDIR)/$@ 
 
 ###########################################################################
 # Options for OpenOCD flash-programming
