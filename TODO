@@ -9,3 +9,4 @@ List of open items:
 * listings not created during compilation
 * logs not created during compilation
 * generated *flags.sub put in folder release/sub 
+* sym file recognize
