@@ -10,8 +10,8 @@
 # All subdirectories where source code exists must be defined here
 ###########################################################################
 SUBDIRS = $(sort \
-	app \
-	lib/CMSIS/Core )
+	src/app \
+	src/lib/CMSIS/Core )
 	
 ###########################################################################
 # Sources to be build

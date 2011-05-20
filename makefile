@@ -46,8 +46,8 @@ TARGET = lpc1769
 ###########################################################################
 # included makefiles, input path definitions
 ###########################################################################
-include sources.mk
-include rules.mk
+include src/sources.mk
+include src/rules.mk
 
 # Add all subfolders with source codes and includes to the makefile path
 VPATH = $(SUBDIRS)
@@ -137,7 +137,8 @@ flash:
 	#$(OOCD_EXE) $(OOCD_CL)
 
 doc: createdirs
-	doxygen doxyfile
+	doxygen doxyfile 2>&1
+	@cat release/log/doxygen.log
 
 ###########################################################################
 # Build release files

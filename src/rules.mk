@@ -65,7 +65,6 @@ $(CFLAGS_SUB): createsubdir
 	@echo -Wcast-qual >>$@
 	@echo -Wcast-align >>$@
 	@echo -fno-exceptions >>$@
-	@echo -MD -MP -MF $(OUTDEPDIR)/$(@F).d >>$@
 
 # C only compiler flags
 #   -Wnested-externs      				# Warn if an extern declaration is encountered within a function
