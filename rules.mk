@@ -8,13 +8,15 @@
 ###########################################################################
 # Automatically generated files containing rules
 ###########################################################################
-CFLAGS_SUB = $(OUTDIR)/cflags.sub
-CONLYFLAGS_SUB = $(OUTDIR)/conlyflags.sub
-CPPFLAGS_SUB = $(OUTDIR)/cppflags.sub
-ASFLAGS_SUB = $(OUTDIR)/asflags.sub
-LDFLAGS_SUB = $(OUTDIR)/ldflags.sub
+CFLAGS_SUB = $(OUTDIR)/sub/cflags.sub
+CONLYFLAGS_SUB = $(OUTDIR)/sub/conlyflags.sub
+CPPFLAGS_SUB = $(OUTDIR)/sub/cppflags.sub
+ASFLAGS_SUB = $(OUTDIR)/sub/asflags.sub
+LDFLAGS_SUB = $(OUTDIR)/sub/ldflags.sub
 FLAGS_SUB = $(CFLAGS_SUB) $(CONLYFLAGS_SUB) $(CPPFLAGS_SUB) $(ASFLAGS_SUB) $(LDFLAGS_SUB)
 
+createsubdir:
+	-@mkdir $(OUTDIR)/sub 2>/dev/null || echo "" >/dev/null
 
 ###########################################################################
 # Compiler settings
@@ -44,7 +46,7 @@ THUMB = -mthumb -mthumb-interwork
 # -MD -MP -MF $(OUTDEPDIR)/$(@F).d # Compiler flags to generate dependency files
 #                                  # -Wa -pass to the assembler, -adhlns -create assembler listing
 # $(patsubst %,-I%,$(SUBDIRS)) -I. # Seach thru all subdirs
-$(CFLAGS_SUB): 
+$(CFLAGS_SUB): createsubdir
 	@$(RM) $@
 	@echo $(patsubst %,-I%,$(SUBDIRS)) >>$@
 	@echo -I. >>$@
@@ -69,7 +71,7 @@ $(CFLAGS_SUB):
 #   -Wnested-externs      				# Warn if an extern declaration is encountered within a function
 #   -std=gnu99							# Defined standard: c99 plus GCC extensions
 #   $(patsubst %,-I%,$(SUBDIRS)) -I.    # Seach thru all subdirs
-$(CONLYFLAGS_SUB): 
+$(CONLYFLAGS_SUB): createsubdir
 	@$(RM) $@
 	@echo -Wnested-externs >>$@
 	@echo -std=gnu99 >>$@
@@ -78,7 +80,7 @@ $(CONLYFLAGS_SUB):
 #   -fno-rtti -fno-exceptions           # If you will not use virtual functions 
 #                                       # those setting flags will optimalize the code
 #   $(patsubst %,-I%,$(SUBDIRS)) -I.    # Seach thru all subdirs
-$(CPPFLAGS_SUB): 
+$(CPPFLAGS_SUB): createsubdir
 	@$(RM) $@
 	@echo -fno-rtti >>$@
 
@@ -90,7 +92,7 @@ $(CPPFLAGS_SUB):
 # -D__ASSEMBLY__ \                 # Allows include files in assemler
 #                                  # -Wa -pass to the assembler, -adhlns -create assembler listing
 # $(patsubst %,-I%,$(SUBDIRS)) -I. # Seach thru all subdirs
-$(ASFLAGS_SUB): 
+$(ASFLAGS_SUB): createsubdir
 	@$(RM) $@
 	@echo -mcpu=cortex-m3 >>$@
 	@echo -Wa, -gdwarf-2 >>$@
