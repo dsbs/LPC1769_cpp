@@ -124,7 +124,7 @@ clean:
 	$(RM) $(OUTDIR)/$(TARGET).lss
 	$(RM) $(OUTOBJDIR)/*.o >/dev/null 2>&1
 	$(RM) $(OUTLSTDIR)/*.lst >/dev/null 2>&1
-	$(RM) $(OUTDEPDIR)/*.o.d >/dev/null 2>&1
+	$(RM) $(OUTDEPDIR)/*.d >/dev/null 2>&1
 	$(RM) $(FLAGS_SUB) 
 	@echo ' '
 	@echo '---- Cleaned'
@@ -177,13 +177,14 @@ $(OUTDIR)/%.elf: $(OBJS) $(FLAGS_SUB)
 # Compile
 ###########################################################################
 %.o: %.s $(FLAGS_SUB)
-	$(CC) -c $(ASFLAGS) $< -o $@ 
+	$(CC) -c $(ASFLAGS) -Wa,-adhlns=$(OUTLSTDIR)/$(subst .s,.lst,$(notdir $<)) -MD -MP -MF $(OUTDEPDIR)/$(subst .s,.d,$(notdir $<)) $< -o $@ 
 
 %.o: %.c $(FLAGS_SUB)
-	$(CC) -c $(CFLAGS) -Wa,-adhlns=$(OUTLSTDIR)/$(subst .c,.lst,$(notdir $<)) $< -o $(OUTOBJDIR)/$@ 
+	$(CC) -c $(CFLAGS) -Wa,-adhlns=$(OUTLSTDIR)/$(subst .c,.lst,$(notdir $<)) -MD -MP -MF $(OUTDEPDIR)/$(subst .c,.d,$(notdir $<)) $< -o $(OUTOBJDIR)/$@ 
+	
 
 %.o: %.cpp $(FLAGS_SUB)
-	$(CC) -c $(CPPFLAGS) -Wa,-adhlns=$(OUTLSTDIR)/$(subst .cpp,.lst,$(notdir $<)) $< -o $(OUTOBJDIR)/$@ 
+	$(CC) -c $(CPPFLAGS) -Wa,-adhlns=$(OUTLSTDIR)/$(subst .cpp,.lst,$(notdir $<)) -MD -MP -MF $(OUTDEPDIR)/$(subst .cpp,.d,$(notdir $<)) $< -o $(OUTOBJDIR)/$@ 
 
 ###########################################################################
 # Options for OpenOCD flash-programming
