@@ -178,14 +178,19 @@ $(OUTDIR)/%.elf: $(OBJS) $(FLAGS_SUB)
 # Compile
 ###########################################################################
 %.o: %.s $(FLAGS_SUB)
-	$(CC) -c $(ASFLAGS) -Wa,-adhlns=$(OUTLSTDIR)/$(subst .s,.lst,$(notdir $<)) -MD -MP -MF $(OUTDEPDIR)/$(subst .s,.d,$(notdir $<)) $< -o $@ 
+	$(CC) -c $(ASFLAGS) -Wa,-adhlns=$(OUTLSTDIR)/$(*F).lst -MD -MP -MF $@.tmp $< -o $@ 
+	@sed 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $@.tmp > $(OUTDEPDIR)/$(*F).d
+	@rm -f $@.tmp
 
 %.o: %.c $(FLAGS_SUB)
-	$(CC) -c $(CFLAGS) -Wa,-adhlns=$(OUTLSTDIR)/$(subst .c,.lst,$(notdir $<)) -MD -MP -MF $(OUTDEPDIR)/$(subst .c,.d,$(notdir $<)) $< -o $(OUTOBJDIR)/$@ 
-	
+	$(CC) -c $(CFLAGS) -Wa,-adhlns=$(OUTLSTDIR)/$(*F).lst -MD -MP -MF $@.tmp $< -o $(OUTOBJDIR)/$@ 
+	@sed 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $@.tmp > $(OUTDEPDIR)/$(*F).d
+	@rm -f $@.tmp
 
 %.o: %.cpp $(FLAGS_SUB)
-	$(CC) -c $(CPPFLAGS) -Wa,-adhlns=$(OUTLSTDIR)/$(subst .cpp,.lst,$(notdir $<)) -MD -MP -MF $(OUTDEPDIR)/$(subst .cpp,.d,$(notdir $<)) $< -o $(OUTOBJDIR)/$@ 
+	$(CPP) -c $(CPPFLAGS) -Wa,-adhlns=$(OUTLSTDIR)/$(*F).lst -MD -MP -MF $@.tmp $< -o $(OUTOBJDIR)/$@ 
+	@sed 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $@.tmp > $(OUTDEPDIR)/$(*F).d
+	@rm -f $@.tmp
 
 ###########################################################################
 # Options for OpenOCD flash-programming
