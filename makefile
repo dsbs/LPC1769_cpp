@@ -104,12 +104,12 @@ sym: $(OUTDIR)/$(TARGET).sym
 hex: $(OUTDIR)/$(TARGET).hex
 bin: $(OUTDIR)/$(TARGET).bin
 
-# Calculate sizes of sections
-#  -A # TODO: describe this option
-#  -d # TODO: describe this option
+# Calculate sizes of sections. Options:
+#  Format Compatibility(A-system default, B-Berkeley's similar)
+#  Size data type(d-digital, o-octal, h-hexadecimal)
 size: build
 	@echo ' '	
-	@$(SIZE) -A -d $(OUTDIR)/$(TARGET).elf
+	@$(SIZE) -A -d --totals $(OUTDIR)/$(TARGET).elf
 
 # Target: clean project.
 clean:
@@ -124,6 +124,7 @@ clean:
 	$(RM) $(LSTDIR)/*.lst >/dev/null 2>&1
 	$(RM) $(DEPDIR)/*.d >/dev/null 2>&1
 	$(RM) $(FLAGS_SUB) 
+	$(RM) $(LOGDIR)/*.log >/dev/null 2>&1
 	@echo ' '
 	@echo '---- Cleaned'
 
@@ -175,7 +176,7 @@ $(OUTDIR)/%.sym: $(OUTDIR)/%.elf
 $(OUTDIR)/%.elf: $(OBJS) $(FLAGS_SUB)
 	@echo ' '
 	@echo '  LINK     $(filter %.o,$(+F)) > $(@F)'
-	@$(LD) $(LDFLAGS) $(OBJS) --output $@ >> $(LOGDIR)/build.log
+	@$(LD) $(LDFLAGS) $(OBJS) --output $@ >> $(LOGDIR)/$(TARGET).log
 
 ###########################################################################
 # Compile
@@ -184,19 +185,19 @@ $(OBJDIR)/%.o: %.s
 	@echo '  AS  $(+F) > $(@F)'
 	@$(AS) -c $(ASFLAGS) $< -o $@; \
 	sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
-	$(RM) -f $(*F).tmp >> $(LOGDIR)/build.log
+	$(RM) -f $(*F).tmp >> $(LOGDIR)/$(TARGET).log
 
 $(OBJDIR)/%.o: %.c
 	@echo '  CC  $(+F) > $(@F)'
 	@$(CC) -c $(CFLAGS) $< -o $@; \
 	sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
-	$(RM) -f $(*F).tmp >> $(LOGDIR)/build.log
+	$(RM) -f $(*F).tmp >> $(LOGDIR)/$(TARGET).log
 
 $(OBJDIR)/%.o: %.cpp
 	@echo '  CPP $(+F) > $(@F)'
 	@$(CPP) -c $(CPPFLAGS) $< -o $@; \
 	sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
-	$(RM) -f $(*F).tmp >> $(LOGDIR)/build.log
+	$(RM) -f $(*F).tmp >> $(LOGDIR)/$(TARGET).log
 
 ###########################################################################
 # Options for OpenOCD flash-programming
