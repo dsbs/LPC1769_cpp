@@ -75,12 +75,8 @@ LDFLAGS = @$(LDFLAGS_SUB)
 # Targets
 ###########################################################################
 # Default target.
-all: makefile createdirs gccversion begin build size
+all: gccversion makefile createdirs build size
 	@echo '---- $(TARGET) built:'
-
-# Begin message
-begin:
-	@echo '---- Compiling:'
 
 # Create output directories.
 createdirs:
@@ -93,7 +89,6 @@ createdirs:
 
 # Display compiler version information.
 gccversion : 
-	@echo ' '
 	@$(CC) --version
 
 # Build all outputs
@@ -109,8 +104,7 @@ bin: $(OUTDIR)/$(TARGET).bin
 # Calculate sizes of sections
 size: build
 	@echo ' '	
-	@echo '---- Calculating size of sections in elf file:'
-	$(SIZE) -A -d $(OUTDIR)/$(TARGET).elf
+	@$(SIZE) -A -d $(OUTDIR)/$(TARGET).elf
 	
 
 # Target: clean project.
@@ -145,52 +139,51 @@ doc: createdirs
 ###########################################################################
 # Create final output file (.hex) from ELF output file.
 $(OUTDIR)/%.hex: $(OUTDIR)/%.elf
-	@echo ' '
-	@echo '---- Creating HEX file: ' $@
-	$(OBJCOPY) -O ihex $< $@
+	@echo '  OBJCOPY  $(+F) > $(@F)  - hex file'
+	@$(OBJCOPY) -O ihex $< $@
 	
 # Create final output file (.bin) from ELF output file.
 $(OUTDIR)/%.bin: $(OUTDIR)/%.elf
-	@echo ' '
-	@echo '---- Creating BINARY file: ' $@
-	$(OBJCOPY) -O binary $< $@
+	@echo '  OBJCOPY  $(+F) > $(@F)  - binary file'
+	@$(OBJCOPY) -O binary $< $@
 
 # Create extended listing file/disassambly from ELF output file.
 # using objdump testing: option -C
 $(OUTDIR)/%.lss: $(OUTDIR)/%.elf
-	@echo ' '
-	@echo '---- Creating Extended Listing/Disassembly file: ' $@
-	$(OBJDUMP) -h -S -C -r $< > $@
+	@echo '  OBJDUMP  $(+F) > $(@F)  - extended listing/disassembly file'
+	@$(OBJDUMP) -h -S -C -r $< > $@
 
 # Create a symbol table from ELF output file.
 $(OUTDIR)/%.sym: $(OUTDIR)/%.elf
-	@echo ' '
-	@echo '---- Creating SYMBOL file: ' $@
-	$(NM) -n $< > $@
+	@echo '  NM       $(+F) > $(@F)  - symbol file'
+	@$(NM) -n $< > $@
 
 # Link: create ELF output file from object files.
 $(OUTDIR)/%.elf: $(OBJS) $(FLAGS_SUB)
 	@echo ' '
-	@echo '---- Linking, creating ELF file: ' $@
-	$(LD) $(LDFLAGS) $(OBJS) --output $@
+	@echo '  LINK     $(filter %.o,$(+F)) > $(@F)'
+	@$(LD) $(LDFLAGS) $(OBJS) --output $@ >> release/log/build.log
 
 ###########################################################################
 # Compile
 ###########################################################################
 $(OUTOBJDIR)/%.o: %.s
-	$(AS) -c $(ASFLAGS) $< -o $@ 
-	@sed 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(OUTDEPDIR)/$(*F).d; \
-	rm -f $(*F).tmp
+	@echo '  AS  $(+F) > $(@F)'
+	@$(AS) -c $(ASFLAGS) $< -o $@; \
+	sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(OUTDEPDIR)/$(*F).d; \
+	rm -f $(*F).tmp >> $(LOGDIR)/build.log
 
 $(OUTOBJDIR)/%.o: %.c
-	$(CC) -c $(CFLAGS) $< -o $@ 
-	@sed 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(OUTDEPDIR)/$(*F).d; \
-	rm -f $(*F).tmp
+	@echo '  CC  $(+F) > $(@F)'
+	@$(CC) -c $(CFLAGS) $< -o $@; \
+	sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(OUTDEPDIR)/$(*F).d; \
+	rm -f $(*F).tmp >> $(LOGDIR)/build.log
 
 $(OUTOBJDIR)/%.o: %.cpp
-	$(CPP) -c $(CPPFLAGS) $< -o $@ 
-	@sed 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(OUTDEPDIR)/$(*F).d; \
-	rm -f $(*F).tmp
+	@echo '  CPP $(+F) > $(@F)'
+	@$(CPP) -c $(CPPFLAGS) $< -o $@; \
+	sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(OUTDEPDIR)/$(*F).d; \
+	rm -f $(*F).tmp >> $(LOGDIR)/build.log
 
 ###########################################################################
 # Options for OpenOCD flash-programming
@@ -228,5 +221,5 @@ OOCD_CL+=-c shutdown
 ###########################################################################
 # Listing of phony targets and default target.
 ###########################################################################
-.PHONY : all help begin size gccversion build elf hex bin lss sym clean createdirs
+.PHONY : all help size gccversion build elf hex bin lss sym clean createdirs
 .DEFAULT_GOAL := all
