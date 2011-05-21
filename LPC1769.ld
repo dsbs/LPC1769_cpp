@@ -13,6 +13,7 @@
  * to use for the output file. Describes how many bit machine and what kind of endianess it is
  */
 OUTPUT_FORMAT("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
+
 /* The first instruction to execute in a program */
 ENTRY(Reset_Handler)
 
@@ -45,8 +46,7 @@ SECTIONS
    * '.' so called 'dot' is location counter which refers to the current location 
    * the location counter is incremented by the size of the output section 
    */
-  /* .ROM  start is needed instead magic number can it be done? The same with other sections TBD */
-  . = 0x00000000;
+
   /* This section holds the text, or executable instructions, of a program */
   .text :
   {
@@ -148,7 +148,6 @@ SECTIONS
   } >RAM1 AT>ROM
 
   /* These section hold initialized data that contribute to the program's memory image */
-  . = 0x10000000;
   .data :
   {
     /*TBD: use this below? instead of address of section above*/
@@ -191,19 +190,20 @@ SECTIONS
     _ebss = .;
   } >RAM1
    
+   
   /* Start of heap section */
   .heap (NOLOAD):
   {
     *(.heap)
   } >RAM1
    
-  /* TBD: define stack */
-  /* Top of stack section */
-  .stack (0x10007000) :
+
+  /* Stack section */
+  .stack (NOLOAD) :
   {
-    _estack = .;
-    PROVIDE(estack = .);
     *(.stack)
+    /* Provide stack end address */
+    _estack = . ;
   } >RAM1
    
 /**/

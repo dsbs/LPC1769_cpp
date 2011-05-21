@@ -106,7 +106,7 @@ bin: $(OUTDIR)/$(TARGET).bin
 
 # Calculate sizes of sections. Options:
 #  Format Compatibility(A-system default, B-Berkeley's similar)
-#  Size data type(d-digital, o-octal, h-hexadecimal)
+#  Size data type(d-digital, o-octal, x-hexadecimal)
 size: build
 	@echo ' '	
 	@$(SIZE) -A -d --totals $(OUTDIR)/$(TARGET).elf
