@@ -15,9 +15,6 @@ ASFLAGS_SUB = $(OUTDIR)/sub/asflags.sub
 LDFLAGS_SUB = $(OUTDIR)/sub/ldflags.sub
 FLAGS_SUB = $(CFLAGS_SUB) $(CONLYFLAGS_SUB) $(CPPFLAGS_SUB) $(ASFLAGS_SUB) $(LDFLAGS_SUB)
 
-createsubdir:
-	-@mkdir $(OUTDIR)/sub 2>/dev/null || echo "" >/dev/null
-
 ###########################################################################
 # Compiler settings
 ###########################################################################
@@ -35,6 +32,11 @@ createsubdir:
 #                   # is generated when ‘-mthumb-interwork’ is specified.
 THUMB = -mthumb -mthumb-interwork
 
+# listing generation rules
+LSTGEN = -Wa,-adhlns=$(OUTLSTDIR)/$(*F).lst 
+# dependency generation rules
+DEPGEN = -MD -MP -MF $(*F).tmp
+
 # C/C++ compiler flags
 # -mcpu=cortex-m3                  # CPU name
 # -mthumb-interwork                # Compile with using mixed instructions ARM and Thumb
@@ -46,7 +48,8 @@ THUMB = -mthumb -mthumb-interwork
 # -MD -MP -MF $(OUTDEPDIR)/$(@F).d # Compiler flags to generate dependency files
 #                                  # -Wa -pass to the assembler, -adhlns -create assembler listing
 # $(patsubst %,-I%,$(SUBDIRS)) -I. # Seach thru all subdirs
-$(CFLAGS_SUB): createsubdir
+$(CFLAGS_SUB):
+	-@mkdir $(OUTDIR)/sub 2>/dev/null || echo "" >/dev/null
 	@$(RM) $@
 	@echo $(patsubst %,-I%,$(SUBDIRS)) >>$@
 	@echo -I. >>$@
@@ -70,7 +73,8 @@ $(CFLAGS_SUB): createsubdir
 #   -Wnested-externs      				# Warn if an extern declaration is encountered within a function
 #   -std=gnu99							# Defined standard: c99 plus GCC extensions
 #   $(patsubst %,-I%,$(SUBDIRS)) -I.    # Seach thru all subdirs
-$(CONLYFLAGS_SUB): createsubdir
+$(CONLYFLAGS_SUB):
+	-@mkdir $(OUTDIR)/sub 2>/dev/null || echo "" >/dev/null
 	@$(RM) $@
 	@echo -Wnested-externs >>$@
 	@echo -std=gnu99 >>$@
@@ -79,7 +83,8 @@ $(CONLYFLAGS_SUB): createsubdir
 #   -fno-rtti -fno-exceptions           # If you will not use virtual functions 
 #                                       # those setting flags will optimalize the code
 #   $(patsubst %,-I%,$(SUBDIRS)) -I.    # Seach thru all subdirs
-$(CPPFLAGS_SUB): createsubdir
+$(CPPFLAGS_SUB):
+	-@mkdir $(OUTDIR)/sub 2>/dev/null || echo "" >/dev/null
 	@$(RM) $@
 	@echo -fno-rtti >>$@
 
@@ -91,7 +96,8 @@ $(CPPFLAGS_SUB): createsubdir
 # -D__ASSEMBLY__ \                 # Allows include files in assemler
 #                                  # -Wa -pass to the assembler, -adhlns -create assembler listing
 # $(patsubst %,-I%,$(SUBDIRS)) -I. # Seach thru all subdirs
-$(ASFLAGS_SUB): createsubdir
+$(ASFLAGS_SUB):
+	-@mkdir $(OUTDIR)/sub 2>/dev/null || echo "" >/dev/null
 	@$(RM) $@
 	@echo -mcpu=cortex-m3 >>$@
 	@echo -Wa, -gdwarf-2 >>$@

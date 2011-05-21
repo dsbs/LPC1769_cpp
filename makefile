@@ -53,22 +53,22 @@ include src/rules.mk
 VPATH = $(SUBDIRS)
 
 # Define all object files based on source files to be compiled
-OBJS = $(CSRCS:.c=.o) \
+OBJS = $(addprefix $(OUTOBJDIR)/, $(CSRCS:.c=.o) \
        $(CSRCSARM:.c=.o) \
        $(CPPSRCS:.cpp=.o) \
        $(CPPSRCSARM:.cpp=.o)\
        $(ASRCS:.s=.o) \
-       $(ASRCSARM:.s=.o)
+       $(ASRCSARM:.s=.o))
 
 ###########################################################################
 # Compiler/Linker rules selection depending on file group
 ###########################################################################
-$(CSRCS:.c=.o)        : CFLAGS   = @$(CFLAGS_SUB) @$(CONLYFLAGS_SUB) $(THUMB)
-$(CPPSRCS:.cpp=.o)    : CPPFLAGS = @$(CFLAGS_SUB) @$(CPPFLAGS_SUB) $(THUMB)
-$(ASRCS:.s=.o)        : ASFLAGS  = @$(ASFLAGS_SUB) $(THUMB)
-$(CSRCSARM:.c=.o)     : CFLAGS   = @$(CFLAGS_SUB) @$(CONLYFLAGS_SUB)
-$(CPPSRCSARM:.cpp=.o) : CPPFLAGS = @$(CFLAGS_SUB) @$(CPPFLAGS_SUB)
-$(ASRCSARM:.s=.o)     : ASFLAGS  = @$(ASFLAGS_SUB)
+$(addprefix $(OUTOBJDIR)/,$(CSRCS:.c=.o))       :CFLAGS   = @$(CFLAGS_SUB) @$(CONLYFLAGS_SUB) $(THUMB) $(LSTGEN) $(DEPGEN)
+$(addprefix $(OUTOBJDIR)/,$(CPPSRCS:.cpp=.o))   :CPPFLAGS = @$(CFLAGS_SUB) @$(CPPFLAGS_SUB) $(THUMB) $(LSTGEN) $(DEPGEN)
+$(addprefix $(OUTOBJDIR)/,$(ASRCS:.s=.o))       :ASFLAGS  = @$(ASFLAGS_SUB) $(THUMB) $(LSTGEN) $(DEPGEN)
+$(addprefix $(OUTOBJDIR)/,$(CSRCSARM:.c=.o))    :CFLAGS   = @$(CFLAGS_SUB) @$(CONLYFLAGS_SUB) $(LSTGEN) $(DEPGEN)
+$(addprefix $(OUTOBJDIR)/,$(CPPSRCSARM:.cpp=.o)):CPPFLAGS = @$(CFLAGS_SUB) @$(CPPFLAGS_SUB) $(LSTGEN) $(DEPGEN)
+$(addprefix $(OUTOBJDIR)/,$(ASRCSARM:.s=.o))    :ASFLAGS  = @$(ASFLAGS_SUB) $(LSTGEN) $(DEPGEN)
 LDFLAGS = @$(LDFLAGS_SUB)
 
 ###########################################################################
@@ -172,25 +172,25 @@ $(OUTDIR)/%.sym: $(OUTDIR)/%.elf
 $(OUTDIR)/%.elf: $(OBJS) $(FLAGS_SUB)
 	@echo ' '
 	@echo '---- Linking, creating ELF file: ' $@
-	$(LD) $(LDFLAGS) $(addprefix $(OUTOBJDIR)/, $(OBJS)) --output $@
+	$(LD) $(LDFLAGS) $(OBJS) --output $@
 
 ###########################################################################
 # Compile
 ###########################################################################
-%.o: %.s $(FLAGS_SUB)
-	$(CC) -c $(ASFLAGS) -Wa,-adhlns=$(OUTLSTDIR)/$(*F).lst -MD -MP -MF $@.tmp $< -o $@ 
-	@sed 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $@.tmp > $(OUTDEPDIR)/$(*F).d
-	@rm -f $@.tmp
+$(OUTOBJDIR)/%.o: %.s
+	$(AS) -c $(ASFLAGS) $< -o $@ 
+	@sed 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(OUTDEPDIR)/$(*F).d; \
+	rm -f $(*F).tmp
 
-%.o: %.c $(FLAGS_SUB)
-	$(CC) -c $(CFLAGS) -Wa,-adhlns=$(OUTLSTDIR)/$(*F).lst -MD -MP -MF $@.tmp $< -o $(OUTOBJDIR)/$@ 
-	@sed 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $@.tmp > $(OUTDEPDIR)/$(*F).d
-	@rm -f $@.tmp
+$(OUTOBJDIR)/%.o: %.c
+	$(CC) -c $(CFLAGS) $< -o $@ 
+	@sed 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(OUTDEPDIR)/$(*F).d; \
+	rm -f $(*F).tmp
 
-%.o: %.cpp $(FLAGS_SUB)
-	$(CPP) -c $(CPPFLAGS) -Wa,-adhlns=$(OUTLSTDIR)/$(*F).lst -MD -MP -MF $@.tmp $< -o $(OUTOBJDIR)/$@ 
-	@sed 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $@.tmp > $(OUTDEPDIR)/$(*F).d
-	@rm -f $@.tmp
+$(OUTOBJDIR)/%.o: %.cpp
+	$(CPP) -c $(CPPFLAGS) $< -o $@ 
+	@sed 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(OUTDEPDIR)/$(*F).d; \
+	rm -f $(*F).tmp
 
 ###########################################################################
 # Options for OpenOCD flash-programming
@@ -222,6 +222,8 @@ OOCD_CL+=-c "flash write_image erase $(OOCD_LOADFILE)" -c "verify_image $(OOCD_L
 OOCD_CL+=-c "reset run"
 # terminate OOCD after programming
 OOCD_CL+=-c shutdown
+
+-include $(OUTDEPDIR)/*
 
 ###########################################################################
 # Listing of phony targets and default target.
