@@ -102,13 +102,26 @@ $(ASFLAGS_SUB):
 	@echo -D__ASSEMBLY__ >>$@
 
 # Linker flags
-# -T$(LINKERSCRIPT)                                                 # Use this linker script
-# -nostartfiles                                                     # Do not use the standard system startup files when linking
-# -Wl # pass to the linker, -Map -create map file,
-# --cref -Output # a cross reference table,
-# --gc-sections -Enable garbage collection of unused input sections
+# --warn-common         # Warn when a common symbol is combined with another common
+#                       # symbol or with a symbol definition.
+# --warn-constructors   # Warn if any global constructors are used.
+# --warn-section-align  # Warn if the address of an output section is changed
+#                       # because of alignment.
+# --warn-shared-textrel # Warn if the linker adds a DT TEXTREL to a shared object.
+# --warn-alternate-em   # Warn if an object has alternate ELF machine code.
+# -nostartfiles         # Do not use the standard system startup files when linking
+# -Wl                   # pass to the linker, -Map -create map file,
+# --cref                # Output a cross reference table,
+# --gc-sections         # Enable garbage collection of unused input sections
+# -T$(LINKERSCRIPT)     # Use this linker script
 $(LDFLAGS_SUB): 
 	@$(RM) $@
+	@echo --warn-common >>$@
+	@echo --warn-constructors >>$@
+	@echo --warn-section-align >>$@
+	@echo --warn-shared-textrel >>$@
+	@echo --warn-alternate-em >>$@
+	@echo -nostartfiles >> $@
 	@echo -Map=$(OUTDIR)/$(TARGET).map --cref --gc-sections  >>$@
-	@echo -T$(LINKERSCRIPT) -nostartfiles -Iapp -Ilib/CMSIS/Core -I. >>$@
+	@echo -T$(LINKERSCRIPT) >>$@
 
