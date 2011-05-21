@@ -39,6 +39,9 @@ OBJDIR = $(OUTDIR)/obj
 DEPDIR = $(OUTDIR)/dep
 LSTDIR = $(OUTDIR)/lst
 LOGDIR = $(OUTDIR)/log
+LOGFILE = $(LOGDIR)/build.log
+
+TEE     = tee -a $(LOGFILE)
 
 # Target file name
 TARGET = lpc1769
@@ -79,7 +82,7 @@ LDFLAGS = @$(LDFLAGS_SUB)
 ###########################################################################
 # Default target.
 all: gccversion makefile createdirs build size
-	@echo '---- $(TARGET) built:'
+	@echo '---- $(TARGET) built:' | $(TEE)
 
 # Create output directories.
 createdirs:
@@ -93,6 +96,7 @@ createdirs:
 # Display compiler version information.
 gccversion:
 	@$(CC) --version
+	$(CC) --version > $(LOGFILE)
 
 # Build all outputs
 build: $(FLAGS_SUB) elf hex bin lss sym
@@ -108,8 +112,8 @@ bin: $(OUTDIR)/$(TARGET).bin
 #  -A # TODO: describe this option
 #  -d # TODO: describe this option
 size: build
-	@echo ' '	
-	@$(SIZE) -A -d $(OUTDIR)/$(TARGET).elf
+	@echo ' '	 | $(TEE)
+	@$(SIZE) -A -d $(OUTDIR)/$(TARGET).elf | $(TEE)
 
 # Target: clean project.
 clean:
@@ -124,6 +128,7 @@ clean:
 	$(RM) $(LSTDIR)/*.lst >/dev/null 2>&1
 	$(RM) $(DEPDIR)/*.d >/dev/null 2>&1
 	$(RM) $(FLAGS_SUB) 
+	$(RM) $(LOGFILE)
 	@echo ' '
 	@echo '---- Cleaned'
 
@@ -145,15 +150,15 @@ doc: createdirs
 #  -O   # TODO: describe this option
 #  ihex # TODO: describe this option
 $(OUTDIR)/%.hex: $(OUTDIR)/%.elf
-	@echo '  OBJCOPY  $(+F) > $(@F)  - hex file'
-	@$(OBJCOPY) -O ihex $< $@
+	@echo '  OBJCOPY  $(+F) > $(@F)  - hex file' | $(TEE)
+	@$(OBJCOPY) -O ihex $< $@ | $(TEE)
 	
 # Create final output file (.bin) from ELF output file.
 #  -O     # TODO: describe this option
 #  binary # TODO: describe this option
 $(OUTDIR)/%.bin: $(OUTDIR)/%.elf
-	@echo '  OBJCOPY  $(+F) > $(@F)  - binary file'
-	@$(OBJCOPY) -O binary $< $@
+	@echo '  OBJCOPY  $(+F) > $(@F)  - binary file' | $(TEE)
+	@$(OBJCOPY) -O binary $< $@ | $(TEE)
 
 # Create extended listing file/disassambly from ELF output file.
 # using objdump testing: option -C
@@ -162,41 +167,41 @@ $(OUTDIR)/%.bin: $(OUTDIR)/%.elf
 #  -C # TODO: describe this option
 #  -r # TODO: describe this option
 $(OUTDIR)/%.lss: $(OUTDIR)/%.elf
-	@echo '  OBJDUMP  $(+F) > $(@F)  - extended listing/disassembly file'
-	@$(OBJDUMP) -h -S -C -r $< > $@
+	@echo '  OBJDUMP  $(+F) > $(@F)  - extended listing/disassembly file' | $(TEE)
+	@$(OBJDUMP) -h -S -C -r $< > $@ | $(TEE)
 
 # Create a symbol table from ELF output file.
 #  -n # TODO: describe this option
 $(OUTDIR)/%.sym: $(OUTDIR)/%.elf
-	@echo '  NM       $(+F) > $(@F)  - symbol file'
-	@$(NM) -n $< > $@
+	@echo '  NM       $(+F) > $(@F)  - symbol file' | $(TEE)
+	@$(NM) -n $< > $@ | $(TEE)
 
 # Link: create ELF output file from object files.
 $(OUTDIR)/%.elf: $(OBJS) $(FLAGS_SUB)
-	@echo ' '
-	@echo '  LINK     $(filter %.o,$(+F)) > $(@F)'
-	@$(LD) $(LDFLAGS) $(OBJS) --output $@ >> $(LOGDIR)/build.log
+	@echo ' ' | $(TEE)
+	@echo '  LINK     $(filter %.o,$(+F)) > $(@F)' | $(TEE)
+	@$(LD) $(LDFLAGS) $(OBJS) --output $@ | $(TEE)
 
 ###########################################################################
 # Compile
 ###########################################################################
 $(OBJDIR)/%.o: %.s
-	@echo '  AS  $(+F) > $(@F)'
+	@echo '  AS  $(+F) > $(@F)' | $(TEE)
 	@$(AS) -c $(ASFLAGS) $< -o $@; \
 	sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
-	$(RM) -f $(*F).tmp >> $(LOGDIR)/build.log
+	$(RM) -f $(*F).tmp | $(TEE)
 
 $(OBJDIR)/%.o: %.c
-	@echo '  CC  $(+F) > $(@F)'
+	@echo '  CC  $(+F) > $(@F)' | $(TEE)
 	@$(CC) -c $(CFLAGS) $< -o $@; \
 	sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
-	$(RM) -f $(*F).tmp >> $(LOGDIR)/build.log
+	$(RM) -f $(*F).tmp | $(TEE)
 
 $(OBJDIR)/%.o: %.cpp
-	@echo '  CPP $(+F) > $(@F)'
+	@echo '  CPP $(+F) > $(@F)' | $(TEE)
 	@$(CPP) -c $(CPPFLAGS) $< -o $@; \
 	sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
-	$(RM) -f $(*F).tmp >> $(LOGDIR)/build.log
+	$(RM) -f $(*F).tmp | $(TEE)
 
 ###########################################################################
 # Options for OpenOCD flash-programming
