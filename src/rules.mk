@@ -33,8 +33,11 @@ FLAGS_SUB = $(CFLAGS_SUB) $(CONLYFLAGS_SUB) $(CPPFLAGS_SUB) $(ASFLAGS_SUB) $(LDF
 THUMB = -mthumb -mthumb-interwork
 
 # listing generation rules
-LSTGEN = -Wa,-adhlns=$(OUTLSTDIR)/$(*F).lst 
+# TODO: describe listing generation parameters
+LSTGEN = -Wa,-adhlns=$(LSTDIR)/$(*F).lst 
+
 # dependency generation rules
+# TODO: describe dependency generation parameters
 DEPGEN = -MD -MP -MF $(*F).tmp
 
 # C/C++ compiler flags
@@ -45,15 +48,11 @@ DEPGEN = -MD -MP -MF $(*F).tmp
 # -fpromote-loop-indices           # Convert loop indices to word-sized quantities
 # -Wall -Wextra                    # Turn all optional warnings plus extra optional
 #                                  # optional warnings from -Wall and -Wextra below above line
-# -MD -MP -MF $(OUTDEPDIR)/$(@F).d # Compiler flags to generate dependency files
-#                                  # -Wa -pass to the assembler, -adhlns -create assembler listing
-# $(patsubst %,-I%,$(SUBDIRS)) -I. # Seach thru all subdirs
 $(CFLAGS_SUB):
 	-@mkdir $(OUTDIR)/sub 2>/dev/null || echo "" >/dev/null
 	@$(RM) $@
 	@echo $(patsubst %,-I%,$(SUBDIRS)) >>$@
 	@echo -I. >>$@
-#	@echo -Wa,-adhlns=$(addprefix $(OUTLSTDIR)/, $(notdir $(addsuffix .lst, $(basename $<)))) >>$@
 	@echo -mcpu=cortex-m3 >>$@
 	@echo -gdwarf-2 >>$@
 	@echo -O2 >>$@
@@ -72,7 +71,6 @@ $(CFLAGS_SUB):
 # C only compiler flags
 #   -Wnested-externs      				# Warn if an extern declaration is encountered within a function
 #   -std=gnu99							# Defined standard: c99 plus GCC extensions
-#   $(patsubst %,-I%,$(SUBDIRS)) -I.    # Seach thru all subdirs
 $(CONLYFLAGS_SUB):
 	-@mkdir $(OUTDIR)/sub 2>/dev/null || echo "" >/dev/null
 	@$(RM) $@
@@ -82,7 +80,6 @@ $(CONLYFLAGS_SUB):
 # C++ only compiler flags
 #   -fno-rtti -fno-exceptions           # If you will not use virtual functions 
 #                                       # those setting flags will optimalize the code
-#   $(patsubst %,-I%,$(SUBDIRS)) -I.    # Seach thru all subdirs
 $(CPPFLAGS_SUB):
 	-@mkdir $(OUTDIR)/sub 2>/dev/null || echo "" >/dev/null
 	@$(RM) $@
@@ -95,19 +92,16 @@ $(CPPFLAGS_SUB):
 # -x assembler-with-cpp \          # Source files C++ for assembler
 # -D__ASSEMBLY__ \                 # Allows include files in assemler
 #                                  # -Wa -pass to the assembler, -adhlns -create assembler listing
-# $(patsubst %,-I%,$(SUBDIRS)) -I. # Seach thru all subdirs
 $(ASFLAGS_SUB):
 	-@mkdir $(OUTDIR)/sub 2>/dev/null || echo "" >/dev/null
 	@$(RM) $@
+	@echo $(patsubst %,-I%,$(SUBDIRS)) -I. >>$@
 	@echo -mcpu=cortex-m3 >>$@
 	@echo -Wa, -gdwarf-2 >>$@
 	@echo -x assembler-with-cpp >>$@
 	@echo -D__ASSEMBLY__ >>$@
-	@echo -Wa,-adhlns=$(addprefix $(OUTLSTDIR)/, $(notdir $(addsuffix .lst, $(basename $<)))) >>$@
-	@echo $(patsubst %,-I%,$(SUBDIRS)) -I. >>$@
 
 # Linker flags
-# -lc -lm -lgc -lstdc++                                             # Link to standard libraries (lLibrary)
 # -T$(LINKERSCRIPT)                                                 # Use this linker script
 # -nostartfiles                                                     # Do not use the standard system startup files when linking
 # -Wl # pass to the linker, -Map -create map file,
@@ -117,5 +111,4 @@ $(LDFLAGS_SUB):
 	@$(RM) $@
 	@echo -Map=$(OUTDIR)/$(TARGET).map --cref --gc-sections  >>$@
 	@echo -T$(LINKERSCRIPT) -nostartfiles -Iapp -Ilib/CMSIS/Core -I. >>$@
-#	@echo -lc -lm -lgcc -lstdc++ \ >>$@
 
