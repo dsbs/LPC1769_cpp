@@ -9,7 +9,6 @@ DB - Dawid Bazan
 IN PROGRESS
 ==============
 * (DS) logs not created during compilation
-* (DS) dependences not included in makfile
 * (DS) add some linker options so it generates more warnings (unknown sections etc.)
 * (DB) Linker script recognize all sections check which are needed
 
@@ -23,6 +22,7 @@ PENDING
 
 DONE
 ==============
+* (DS) dependences not included in makfile
 * (DS) generated *flags.sub put in folder release/sub 
 * (DS) File format for TODO items ;)
 * (DS) listings not created during compilation
