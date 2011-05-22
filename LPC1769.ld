@@ -17,19 +17,18 @@ OUTPUT_FORMAT("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
 /* The first instruction to execute in a program */
 ENTRY(Reset_Handler)
 
-
 /* MPU - defining regions of memory */
 MEMORY
 {
   /* On-chip non-volatile memory (ROM): 0x0000 0000 - 0x0007 FFFF */
-  ROM(rw)   : ORIGIN = 0x00000000, LENGTH = 512K
+  rom(rw)   : ORIGIN = 0x00000000, LENGTH = 512K
   
   /* On-chip main SRAM: 0x1000 0000 - 0x1000 7FFF */ 
-  RAM1(rwx)  : ORIGIN = 0x10000000, LENGTH =  32K
+  ram1(rwx)  : ORIGIN = 0x10000000, LENGTH =  32K
    
   /* On-chip SRAM AHB SRAM bank 0 and 1(may be reserved for Ethernet and USB): 0x2007 C000 - 0x2008 3FFF */
-  RAM2(rwx) : ORIGIN = 0x2007C000, LENGTH = 16k
-  RAM3(rwx) : ORIGIN = 0x20080000, LENGTH = 16k
+  ram2(rwx) : ORIGIN = 0x2007C000, LENGTH = 16k
+  ram3(rwx) : ORIGIN = 0x20080000, LENGTH = 16k
 }
 
 /* 
@@ -43,65 +42,116 @@ MEMORY
 SECTIONS
 {
   /* 
-   * '.' so called 'dot' is location counter which refers to the current location 
+   * '.' is location counter which refers to the current location 
    * the location counter is incremented by the size of the output section 
    */
 
   /* This section holds the text, or executable instructions, of a program */
+  . = ORIGIN(rom);
   .text :
   {
     /* CREATE_OBJECT_SYMBOLS - The command tells the linker to create a symbol for each input file */
     CREATE_OBJECT_SYMBOLS
     /* 
-     * KEEP - When link-time garbage collection is in use ("--gc-sections"), 
+     * KEEP the interrupt vector section: When link-time garbage collection is in use ("--gc-sections"), 
      * it is often useful to mark sections that should not be eliminated
      */
     KEEP(*(.isr_vector .isr_vector.*))
+    /* ROM sections */
+    *(.rom)
+    *(.rom.b)
+    
     /* 
      * The "*" is a wildcard which matches any file name. The expression "*(.text)" 
      * means all ".text" input sections in all input files
      */
     *(.text .text.*)
-    /* The linkonce is to support C++ vague linkage(inline functions, vtables for virtual functions etc. */
+    
+    /* The linkonce is to support C++ vague linkage(inline functions, vtables for virtual functions etc.) */
     *(.gnu.linkonce.t.*)
+    
+    /* 
+     * Procedure Linkage Table (PLT) generation for multiple load regions containing code when in Base Platform mode 
+     * Option is useful when you have multiple load regions that might be moved relative to each other when the image 
+     * is dynamically loaded. The linker generates a PLT for each load region so that calls do not have to be 
+     * extended to reach a distant PLT.
+     */
+    *(.plt)
+    
+    /* Warnings section */
 		*(.gnu.warning)
+		
+		/* These sections are provided to store ARM/Thumb interworking code */
     *(.glue_7)
     *(.glue_7t)
+    
+    /* 
+     * This section is needed for some instructions which might be here generated because of 
+     * hardware bug for VFP11 coprocessor hardware,
+     */
+    *(.vfp11_veneer)
+    
     /* This section holds Language Specific Data */
     *(.gcc_except_table)
+    
+    /*
+     * This section contains a pointer to the .eh_frame section which is accessible 
+     * to the runtime support code of a C++ application. 
+     * This section may also contain a binary search table which may be used by 
+     * the runtime support code to more efficiently access records in the .eh_frame section. 
+     */
+    *(.eh_frame_hdr)
+    
+    /* This section contains information necessary for frame unwinding during exception handling */
+    *(.eh_frame)
+    
     /* Initialized read-only data */
     *(.rodata .rodata*)
+    
+    /* The linkonce is to support C++ vague linkage(inline functions, vtables for virtual functions etc.) */
     *(.gnu.linkonce.r.*)
+    
+    /* Set the location counter to the next 4 aligned boundary */
     . = ALIGN(4);
+    /* KEEP the init section */
+    /* 
+     * .init_array contains pointers to blocks of code that need to be executed
+     * when an application is being initialized (before main() is called).  Its
+     * used for a number of things, but the primary use is in C++ for running
+     * static constructors; a secondary use that is sometimes used is to
+     * initialize IO systems in the C library. 
+     */    
     KEEP(*(.init))
-      
+    /* Set the location counter to the next 4 aligned boundary */
     . = ALIGN(4);
     __preinit_array_start = .;
     KEEP (*(.preinit_array))
     __preinit_array_end = .;
-    
+    /* Set the location counter to the next 4 aligned boundary */
     . = ALIGN(4);
     __init_array_start = .;
     KEEP (*(SORT(.init_array.*)))
     KEEP (*(.init_array))
     __init_array_end = .;
-    
+    /* Set the location counter to the next 4 aligned boundary */
     . = ALIGN(4);
     KEEP(*(.fini))
-
+    /* Set the location counter to the next 4 aligned boundary */
     . = ALIGN(4);
     __fini_array_start = .;
     KEEP (*(.fini_array))
     KEEP (*(SORT(.fini_array.*)))
     __fini_array_end = .;
 
-    /* This section contains a list of global constructor function pointers */ 
+    /* Set the location counter to the next 4 aligned boundary */
     . = ALIGN(4);
+    /* This section contains a list of global constructor function pointers */ 
     KEEP (*crtbegin.o(.ctors))
     KEEP (*(EXCLUDE_FILE (*crtend.o) .ctors))
     KEEP (*(SORT(.ctors.*)))
     KEEP (*crtend.o(.ctors))
 		
+		/* Set the location counter to the next 4 aligned boundary */
     . = ALIGN(4);
     /* This section contains a list of global destructor function pointers */
     KEEP (*crtbegin.o(.dtors))
@@ -109,66 +159,74 @@ SECTIONS
     KEEP (*(SORT(.dtors.*)))
     KEEP (*crtend.o(.dtors))
 
-    /* Store at 'etext' which is the address of the end of this section */
+    /* Provide to the code the end of ROM address */
     _etext = .;
-  } >ROM
+    PROVIDE(etext = .);
+  } >rom
 
-  .eh_frame_hdr : ALIGN (4)
-  {
-  	KEEP (*(.eh_frame_hdr))
-  } >ROM
-	
-  .eh_frame : ALIGN (4)
-  {
-  	KEEP (*(.eh_frame))
-  } >ROM
 
-  
   __exidx_start = .;
   .ARM.exidx :
   {
     *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-  } >ROM
+  } >rom
   __exidx_end = .;
   
   /* fastcode - copied at startup & executed in RAM */ 
   .fastcode :
   {
+    /* Set the location counter to the next 4 aligned boundary */
     . = ALIGN (4);
     _sfastcode = . ;
     
-    *(.glue_7t) *(.glue_7)
+    *(.glue_7t) 
+    *(.glue_7)
     *(.fastcode)
     
     /* add other modules here ... */
-    
+    /* Set the location counter to the next 4 aligned boundary */
     . = ALIGN (4);
     _efastcode = . ;
-    _sidata = .;
-  } >RAM1 AT>ROM
+  } >ram1 AT>rom
 
   /* These section hold initialized data that contribute to the program's memory image */
+  . = ORIGIN(ram1);
   .data :
   {
-    /*TBD: use this below? instead of address of section above*/
-    /*_sidata = LOADADDR (.data);*/
-    /* Store at 'sidata' the address of the beginning of this section */
+    /* Provide to the code start of address for the initialization values */
     _sidata = .;
-    
-    /* Store at 'sdata' the address of the beginning of this section */
+    PROVIDE(sidata = .);
+    *(.sidata)
+
+    /* Provide to the code start of address for ram data */
     _sdata = .;
+    PROVIDE(sdata = .);    
     
+    . = ALIGN(4);
+    KEEP(*(.jcr))
+    /* 
+     * This section holds the read-only portion of the GLobal Offset Table. 
+     * This section may be made read-only after relocations have been applied. 
+     */
+    *(.got.plt) *(.got)
+    
+    *(.shdata)
     *(vtable vtable.*)
     *(.data .data.*)
     *(.gnu.linkonce.d*)
+    *(.ram)
     
     . = ALIGN(4);
      
     /* Data memory */
     /**(.data)*/  
-    /* Store at 'edata' the address of the end of this section */
-    _edata = .;       
-  } >RAM1
+
+    _edata = .; 
+    /* Provide to the code the end of RAM1 address */
+    _edata = .;
+    PROVIDE(edata = .);
+    /* TBD: >ram1 AT>rom --??*/      
+  } >ram1
   
   /* This section holds data that contributes to the program's memory image. 
    * The program may treat this data as uninitialized. 
@@ -180,22 +238,24 @@ SECTIONS
   {
     /* Store at 'sbss' the address of the beginning of this section */
     _sbss = .;
+    *(.shbss)
     *(.bss .bss.*)
     *(.gnu.linkonce.b*)
     *(COMMON)
     
     /* Statically-allocated variables represented solely by zero-valued bits initially */
-    /* *(.bss)*/
+    *(.ram.b)
     /* Store at 'bss' the address of the end of this section */
     _ebss = .;
-  } >RAM1
+/* TBD: >ram AT>rom ????*/
+  } >ram1
    
    
   /* Start of heap section */
   .heap (NOLOAD):
   {
     *(.heap)
-  } >RAM1
+  } >ram1
    
 
   /* Stack section */
@@ -204,41 +264,23 @@ SECTIONS
     *(.stack)
     /* Provide stack end address */
     _estack = . ;
-  } >RAM1
-   
-/**/
-  /* For stack section */
-/*.stackarea (NOLOAD) :
-  {
-    . = ALIGN(8);
-    _sstack = .;
+    PROVIDE(estack = .);
+  } >ram1
 
-  *(.stackarea .stackarea.*)
-
-  . = ALIGN(8);
-  _estack = .;
-
-  . = ALIGN(4);
-  _end = . ;
-  PROVIDE (end = .);
-
-  } > IRAM0
-_stack = ORIGIN(IRAM0) + LENGTH(IRAM0);
- */  
 
   /* These section hold initialized data that contribute to the program's memory image */
-  . = 0x2007C000;
-  .RAM2 :
+  . = ORIGIN(ram2);
+  .ram2 :
   {
-    *(.RAM2)
-  } >RAM2
+    *(.ram2)
+  } >ram2
    
   /* These section hold initialized data that contribute to the program's memory image */
-  . = 0x20080000;
-  .RAM3 :
+  . = ORIGIN(ram3);
+  .ram3 :
   {
-    *(.RAM3)
-  } >RAM3   
+    *(.ram3)
+  } >ram3   
    
   /* This section contains debugging information. The contents are not specified as part of the LSB -TBD find description*/
   .stab          0 : { *(.stab) }
