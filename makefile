@@ -33,18 +33,19 @@ NM      = $(TCHAIN_PREFIX)nm
 ###########################################################################
 # Output path definitions
 ###########################################################################
+# Target file name
+TARGET = lpc1769
+
 # Directory for output files (lst, obj, dep, elf, sym, map, hex, bin etc.)
 OUTDIR = release
 OBJDIR = $(OUTDIR)/obj
 DEPDIR = $(OUTDIR)/dep
 LSTDIR = $(OUTDIR)/lst
 LOGDIR = $(OUTDIR)/log
-LOGFILE = $(LOGDIR)/build.log
+LOGFILE = $(LOGDIR)/$(TARGET).log
 
 TEE     = tee -a $(LOGFILE)
 
-# Target file name
-TARGET = lpc1769
 
 ###########################################################################
 # included makefiles, input path definitions
