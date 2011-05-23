@@ -3,13 +3,13 @@ someone to pick it up, in progress by some volunteer or done.
 
 ABBREVIATIONS
 ==============
-DS - Dariusz Synowiec
-DB - Dawid Bazan
+* __DS:__ Dariusz Synowiec
+* __DB:__ Dawid Bazan
 
 IN PROGRESS
 ==============
-* (DS) build log not created during compilation
-* (DB) Linker script recognize all sections check which are needed
+* __DS:__ build log not created during compilation
+* __DB:__ Linker script recognize all sections check which are needed
 
 PENDING
 ==============
@@ -23,10 +23,10 @@ PENDING
 
 DONE
 ==============
-* (DS) add some linker options so it generates more warnings (unknown sections etc.)
-* (DS) dependences not included in makefile
-* (DS) generated *flags.sub put in folder release/sub 
-* (DS) File format for TODO items ;)
-* (DS) listings not created during compilation
-* (DS) dependences not created during compilation
+* __DS:__ add some linker options so it generates more warnings (unknown sections etc.)
+* __DS:__ dependences not included in makefile
+* __DS:__ generated *flags.sub put in folder release/sub 
+* __DS:__ File format for TODO items ;)
+* __DS:__ listings not created during compilation
+* __DS:__ dependences not created during compilation
 
