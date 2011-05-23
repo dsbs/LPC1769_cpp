@@ -95,9 +95,9 @@ createdirs:
 	-@mkdir $(DOCDIR) 2>/dev/null || echo "" >/dev/null
 
 # Display compiler version information.
-gccversion:
+gccversion: createdirs
 	@$(CC) --version
-	$(CC) --version > $(LOGFILE)
+	@$(CC) --version > $(LOGFILE)
 
 # Build all outputs
 build: $(FLAGS_SUB) elf hex bin lss sym
