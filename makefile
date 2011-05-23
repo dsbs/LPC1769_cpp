@@ -78,7 +78,7 @@ $(ASOBJS)     : ASFLAGS  += $(THUMB)
 # Targets
 ###########################################################################
 # Default target.
-all: gccversion createdirs build size
+all: createdirs gccversion build size
 	@echo '---- $(TARGET) built:' | $(TEE)
 
 # Create output directories.
@@ -187,21 +187,21 @@ $(OUTDIR)/%.elf: $(OBJS)
 ###########################################################################
 # Compile
 ###########################################################################
-$(OBJDIR)/%.o: %.s
+$(OBJDIR)/%.o: %.s createdirs
 	@echo '  AS  $(+F) > $(@F)' | $(TEE)
 	@echo '$(AS) -c $(ASFLAGS) $< -o $@' >> $(LOGFILE)
 	@$(AS) -c $(ASFLAGS) $< -o $@; \
 	sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
 	$(RM) -f $(*F).tmp | $(TEE)
 
-$(OBJDIR)/%.o: %.c
+$(OBJDIR)/%.o: %.c createdirs
 	@echo '  CC  $(+F) > $(@F)' | $(TEE)
 	@echo '$(CC) -c $(CFLAGS) $< -o $@' >> $(LOGFILE)
 	@$(CC) -c $(CFLAGS) $< -o $@; \
 	sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
 	$(RM) -f $(*F).tmp | $(TEE)
 
-$(OBJDIR)/%.o: %.cpp
+$(OBJDIR)/%.o: %.cpp createdirs
 	@echo '  CPP $(+F) > $(@F)' | $(TEE)
 	@echo '$(CPP) -c $(CPPFLAGS) $< -o $@' >> $(LOGFILE)
 	@$(CPP) -c $(CPPFLAGS) $< -o $@; \
