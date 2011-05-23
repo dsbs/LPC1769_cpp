@@ -46,7 +46,9 @@ DEPGEN = -MD -MP -MF $(*F).tmp
 # -fpromote-loop-indices           # Convert loop indices to word-sized quantities
 # -Wall -Wextra                    # Turn all optional warnings plus extra optional
 #                                  # optional warnings from -Wall and -Wextra below above line
-CFLAGS_SUB = \
+C_COMMONFLAGS = \
+				 $(LSTGEN) \
+				 $(DEPGEN) \
 				 $(patsubst %,-I%,$(SUBDIRS)) \
 				 -I. \
 				 -mcpu=cortex-m3 \
@@ -67,7 +69,8 @@ CFLAGS_SUB = \
 # C only compiler flags
 #   -Wnested-externs      				# Warn if an extern declaration is encountered within a function
 #   -std=gnu99							# Defined standard: c99 plus GCC extensions
-CONLYFLAGS_SUB = \
+CFLAGS_SUB = \
+					  $(C_COMMONFLAGS) \
 					  -Wnested-externs \
 					  -std=gnu99
 
@@ -75,6 +78,7 @@ CONLYFLAGS_SUB = \
 #   -fno-rtti -fno-exceptions           # If you will not use virtual functions 
 #                                       # those setting flags will optimalize the code
 CPPFLAGS_SUB = \
+					$(C_COMMONFLAGS) \
 					-fno-rtti
 
 # Assembler compliler flags
@@ -85,6 +89,8 @@ CPPFLAGS_SUB = \
 # -D__ASSEMBLY__ \                 # Allows include files in assemler
 #                                  # -Wa -pass to the assembler, -adhlns -create assembler listing
 ASFLAGS_SUB = \
+				 $(LSTGEN) \
+				 $(DEPGEN) \
 				  $(patsubst %,-I%,$(SUBDIRS)) -I. \
 				  -mcpu=cortex-m3 \
 				  -Wa, -gdwarf-2 \

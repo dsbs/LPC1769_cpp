@@ -70,12 +70,12 @@ OBJS = $(COBJS) $(COBJSARM) $(CPPOBJS) $(CPPOBJSARM) $(ASOBJS) $(ASOBJSARM)
 ###########################################################################
 # Compiler/Linker rules selection depending on file group
 ###########################################################################
-$(COBJS)      : CFLAGS   = $(CFLAGS_SUB) $(CONLYFLAGS_SUB) $(THUMB) $(LSTGEN) $(DEPGEN)
-$(CPPOBJS)    : CPPFLAGS = $(CFLAGS_SUB) $(CPPFLAGS_SUB) $(THUMB) $(LSTGEN) $(DEPGEN)
-$(ASOBJS)     : ASFLAGS  = $(ASFLAGS_SUB) $(THUMB) $(LSTGEN) $(DEPGEN)
-$(COBJSARM)   : CFLAGS   = $(CFLAGS_SUB) $(CONLYFLAGS_SUB) $(LSTGEN) $(DEPGEN)
-$(CPPOBJSARM) : CPPFLAGS = $(CFLAGS_SUB) $(CPPFLAGS_SUB) $(LSTGEN) $(DEPGEN)
-$(ASOBJSARM)  : ASFLAGS  = $(ASFLAGS_SUB) $(LSTGEN) $(DEPGEN)
+$(COBJS)      : CFLAGS   = $(CFLAGS_SUB) $(THUMB)
+$(CPPOBJS)    : CPPFLAGS = $(CPPFLAGS_SUB) $(THUMB)
+$(ASOBJS)     : ASFLAGS  = $(ASFLAGS_SUB) $(THUMB)
+$(COBJSARM)   : CFLAGS   = $(CFLAGS_SUB)
+$(CPPOBJSARM) : CPPFLAGS = $(CPPFLAGS_SUB)
+$(ASOBJSARM)  : ASFLAGS  = $(ASFLAGS_SUB)
 
 ###########################################################################
 # Targets
