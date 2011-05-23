@@ -26,19 +26,15 @@ MEMORY
   /* On-chip main SRAM: 0x1000 0000 - 0x1000 7FFF */ 
   ram1(rwx)  : ORIGIN = 0x10000000, LENGTH =  32K
    
-  /* On-chip SRAM AHB SRAM bank 0 and 1(may be reserved for Ethernet and USB): 0x2007 C000 - 0x2008 3FFF */
+  /* 
+   * On-chip SRAM AHB SRAM bank 0 and 1(may be reserved for Ethernet and USB): 0x2007 C000 - 0x2008 3FFF 
+   * Those are defined separately since physically those are separate momory regions
+   */
   ram2(rwx) : ORIGIN = 0x2007C000, LENGTH = 16k
   ram3(rwx) : ORIGIN = 0x20080000, LENGTH = 16k
 }
 
-/* 
- * Most of the sections and subsections are standard sections of ELF(Executable and Linking Format) 
- * and are described in Linux Standard Base (LSB) 
- * the documentation can be found under following link
- * http://refspecs.freestandards.org
- * 
- * Some of the sections and subsections are defined to be used in the user code(like for e.g. section .stack or .heap) 
- */
+/* Sections memory alignement */
 SECTIONS
 {
   /* 
@@ -79,9 +75,9 @@ SECTIONS
     *(.plt)
     
     /* Warnings section */
-		*(.gnu.warning)
+    *(.gnu.warning)
 		
-		/* These sections are provided to store ARM/Thumb interworking code */
+    /* These sections are provided to store ARM/Thumb interworking code */
     *(.glue_7)
     *(.glue_7t)
     
@@ -164,7 +160,7 @@ SECTIONS
     PROVIDE(etext = .);
   } >rom
 
-
+  /* The exception-handling index tables for ARM uC */ 
   __exidx_start = .;
   .ARM.exidx :
   {
@@ -172,21 +168,31 @@ SECTIONS
   } >rom
   __exidx_end = .;
   
-  /* fastcode - copied at startup & executed in RAM */ 
+  /* fastcode - copied at startup and executed in RAM */ 
   .fastcode :
   {
     /* Set the location counter to the next 4 aligned boundary */
     . = ALIGN (4);
+    /* Provide to the code the start address of fastcode section */
     _sfastcode = . ;
+    PROVIDE(sfastcode = .);
     
+    /* These sections are provided to store ARM/Thumb interworking code */
     *(.glue_7t) 
     *(.glue_7)
+    
+    /* Fast code */
     *(.fastcode)
     
-    /* add other modules here ... */
     /* Set the location counter to the next 4 aligned boundary */
     . = ALIGN (4);
+    /* Provide to the code the end address of fastcode section */
     _efastcode = . ;
+    PROVIDE(efastcode = .);
+    /* 
+     * >ram1 AT>rom - the VMA(Virtual Memory Address) is in ram1, the LMA(Load Memory Address) is in rom
+     * This feature is designed to make it easy to build a ROM image 
+     */
   } >ram1 AT>rom
 
   /* These section hold initialized data that contribute to the program's memory image */
@@ -202,7 +208,12 @@ SECTIONS
     _sdata = .;
     PROVIDE(sdata = .);    
     
+    /* Set the location counter to the next 4 aligned boundary */
     . = ALIGN(4);
+    /* 
+     * This section contains information necessary for registering compiled Java classes. 
+     * The contents are compiler-specific and used by compiler initialization functions.
+     */
     KEEP(*(.jcr))
     /* 
      * This section holds the read-only portion of the GLobal Offset Table. 
@@ -210,12 +221,18 @@ SECTIONS
      */
     *(.got.plt) *(.got)
     
+    /* TBD description */
     *(.shdata)
+    /* 
+     * vtable is a static pointer which is created as a part of the compilation 
+     * and it gets filled whenever constructor is called 
+     */
     *(vtable vtable.*)
     *(.data .data.*)
     *(.gnu.linkonce.d*)
     *(.ram)
     
+    /* Set the location counter to the next 4 aligned boundary */
     . = ALIGN(4);
      
     /* Data memory */
@@ -225,7 +242,6 @@ SECTIONS
     /* Provide to the code the end of RAM1 address */
     _edata = .;
     PROVIDE(edata = .);
-    /* TBD: >ram1 AT>rom --??*/      
   } >ram1
   
   /* This section holds data that contributes to the program's memory image. 
@@ -247,8 +263,11 @@ SECTIONS
     *(.ram.b)
     /* Store at 'bss' the address of the end of this section */
     _ebss = .;
-/* TBD: >ram AT>rom ????*/
-  } >ram1
+    /* 
+     * >ram1 AT>rom - the VMA(Virtual Memory Address) is in ram1, the LMA(Load Memory Address) is in rom
+     * This feature is designed to make it easy to build a ROM image 
+     */
+  } >ram1 AT>rom
    
    
   /* Start of heap section */

@@ -10,6 +10,7 @@ IN PROGRESS
 ==============
 * __DS:__ build log not created during compilation
 * __DB:__ Linker script recognize all sections check which are needed
+* __DB:__ Update startup file. Add fastcode section(already done in linker)
 
 PENDING
 ==============
