@@ -37,15 +37,14 @@ NM      = $(TCHAIN_PREFIX)nm
 TARGET = lpc1769
 
 # Directory for output files (lst, obj, dep, elf, sym, map, hex, bin etc.)
-OUTDIR = release
-OBJDIR = $(OUTDIR)/obj
-DEPDIR = $(OUTDIR)/dep
-LSTDIR = $(OUTDIR)/lst
-LOGDIR = $(OUTDIR)/log
+OUTDIR  = release
+OBJDIR  = $(OUTDIR)/obj
+DEPDIR  = $(OUTDIR)/dep
+LSTDIR  = $(OUTDIR)/lst
+LOGDIR  = $(OUTDIR)/log
 LOGFILE = $(LOGDIR)/$(TARGET).log
 
 TEE     = tee -a $(LOGFILE)
-
 
 ###########################################################################
 # included makefiles, input path definitions
@@ -65,23 +64,21 @@ CPPOBJS    = $(addprefix $(OBJDIR)/,$(CPPSRCS:.cpp=.o))
 CPPOBJSARM = $(addprefix $(OBJDIR)/,$(CPPSRCSARM:.cpp=.o))
 ASOBJS     = $(addprefix $(OBJDIR)/,$(ASRCS:.s=.o))
 ASOBJSARM  = $(addprefix $(OBJDIR)/,$(ASRCSARM:.s=.o))
+
 OBJS = $(COBJS) $(COBJSARM) $(CPPOBJS) $(CPPOBJSARM) $(ASOBJS) $(ASOBJSARM)
 
 ###########################################################################
 # Compiler/Linker rules selection depending on file group
 ###########################################################################
-$(COBJS)      : CFLAGS   = $(CFLAGS_SUB) $(THUMB)
-$(CPPOBJS)    : CPPFLAGS = $(CPPFLAGS_SUB) $(THUMB)
-$(ASOBJS)     : ASFLAGS  = $(ASFLAGS_SUB) $(THUMB)
-$(COBJSARM)   : CFLAGS   = $(CFLAGS_SUB)
-$(CPPOBJSARM) : CPPFLAGS = $(CPPFLAGS_SUB)
-$(ASOBJSARM)  : ASFLAGS  = $(ASFLAGS_SUB)
+$(COBJS)      : CFLAGS   += $(THUMB)
+$(CPPOBJS)    : CPPFLAGS += $(THUMB)
+$(ASOBJS)     : ASFLAGS  += $(THUMB)
 
 ###########################################################################
 # Targets
 ###########################################################################
 # Default target.
-all: gccversion makefile createdirs build size
+all: gccversion createdirs build size
 	@echo '---- $(TARGET) built:' | $(TEE)
 
 # Create output directories.

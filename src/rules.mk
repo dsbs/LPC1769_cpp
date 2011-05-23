@@ -6,14 +6,6 @@
 ###########################################################################
 
 ###########################################################################
-# Automatically generated files containing rules
-###########################################################################
-#CFLAGS_SUB = $(OUTDIR)/sub/cflags.sub
-#CONLYFLAGS_SUB = $(OUTDIR)/sub/conlyflags.sub
-#CPPFLAGS_SUB = $(OUTDIR)/sub/cppflags.sub
-#ASFLAGS_SUB = $(OUTDIR)/sub/asflags.sub
-
-###########################################################################
 # Compiler settings
 ###########################################################################
 # THUMB rules
@@ -47,39 +39,39 @@ DEPGEN = -MD -MP -MF $(*F).tmp
 # -Wall -Wextra                    # Turn all optional warnings plus extra optional
 #                                  # optional warnings from -Wall and -Wextra below above line
 C_COMMONFLAGS = \
-				 $(LSTGEN) \
-				 $(DEPGEN) \
-				 $(patsubst %,-I%,$(SUBDIRS)) \
-				 -I. \
-				 -mcpu=cortex-m3 \
-				 -gdwarf-2 \
-				 -O2 \
-				 -fpromote-loop-indices \
-				 -Wall \
-				 -Wextra \
-				 -Wimplicit \
-				 -Wcast-align \
-				 -Wpointer-arith \
-				 -Wredundant-decls \
-				 -Wshadow \
-				 -Wcast-qual \
-				 -Wcast-align \
-				 -fno-exceptions
+					 $(LSTGEN) \
+					 $(DEPGEN) \
+					 $(patsubst %,-I%,$(SUBDIRS)) \
+					 -I. \
+					 -mcpu=cortex-m3 \
+					 -gdwarf-2 \
+					 -O2 \
+					 -fpromote-loop-indices \
+					 -Wall \
+					 -Wextra \
+					 -Wimplicit \
+					 -Wcast-align \
+					 -Wpointer-arith \
+					 -Wredundant-decls \
+					 -Wshadow \
+					 -Wcast-qual \
+					 -Wcast-align \
+					 -fno-exceptions
 
 # C only compiler flags
 #   -Wnested-externs      				# Warn if an extern declaration is encountered within a function
 #   -std=gnu99							# Defined standard: c99 plus GCC extensions
-CFLAGS_SUB = \
-					  $(C_COMMONFLAGS) \
-					  -Wnested-externs \
-					  -std=gnu99
+CFLAGS = \
+			$(C_COMMONFLAGS) \
+			-Wnested-externs \
+			-std=gnu99
 
 # C++ only compiler flags
 #   -fno-rtti -fno-exceptions           # If you will not use virtual functions 
 #                                       # those setting flags will optimalize the code
-CPPFLAGS_SUB = \
-					$(C_COMMONFLAGS) \
-					-fno-rtti
+CPPFLAGS = \
+			  $(C_COMMONFLAGS) \
+			  -fno-rtti
 
 # Assembler compliler flags
 # -mcpu=cortex-m3 \                # CPU name
@@ -88,14 +80,14 @@ CPPFLAGS_SUB = \
 # -x assembler-with-cpp \          # Source files C++ for assembler
 # -D__ASSEMBLY__ \                 # Allows include files in assemler
 #                                  # -Wa -pass to the assembler, -adhlns -create assembler listing
-ASFLAGS_SUB = \
-				 $(LSTGEN) \
-				 $(DEPGEN) \
-				  $(patsubst %,-I%,$(SUBDIRS)) -I. \
-				  -mcpu=cortex-m3 \
-				  -Wa, -gdwarf-2 \
-				  -x assembler-with-cpp \
-				  -D__ASSEMBLY__
+ASFLAGS = \
+			 $(LSTGEN) \
+			 $(DEPGEN) \
+			 $(patsubst %,-I%,$(SUBDIRS)) -I. \
+			 -mcpu=cortex-m3 \
+			 -Wa, -gdwarf-2 \
+			 -x assembler-with-cpp \
+			 -D__ASSEMBLY__
 
 # Linker flags
 # --warn-common         # Warn when a common symbol is combined with another common
