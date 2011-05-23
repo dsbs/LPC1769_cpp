@@ -37,15 +37,14 @@ NM      = $(TCHAIN_PREFIX)nm
 TARGET = lpc1769
 
 # Directory for output files (lst, obj, dep, elf, sym, map, hex, bin etc.)
-OUTDIR = release
-OBJDIR = $(OUTDIR)/obj
-DEPDIR = $(OUTDIR)/dep
-LSTDIR = $(OUTDIR)/lst
-LOGDIR = $(OUTDIR)/log
+OUTDIR  = release
+OBJDIR  = $(OUTDIR)/obj
+DEPDIR  = $(OUTDIR)/dep
+LSTDIR  = $(OUTDIR)/lst
+LOGDIR  = $(OUTDIR)/log
 LOGFILE = $(LOGDIR)/$(TARGET).log
 
 TEE     = tee -a $(LOGFILE)
-
 
 ###########################################################################
 # included makefiles, input path definitions
@@ -65,24 +64,21 @@ CPPOBJS    = $(addprefix $(OBJDIR)/,$(CPPSRCS:.cpp=.o))
 CPPOBJSARM = $(addprefix $(OBJDIR)/,$(CPPSRCSARM:.cpp=.o))
 ASOBJS     = $(addprefix $(OBJDIR)/,$(ASRCS:.s=.o))
 ASOBJSARM  = $(addprefix $(OBJDIR)/,$(ASRCSARM:.s=.o))
+
 OBJS = $(COBJS) $(COBJSARM) $(CPPOBJS) $(CPPOBJSARM) $(ASOBJS) $(ASOBJSARM)
 
 ###########################################################################
 # Compiler/Linker rules selection depending on file group
 ###########################################################################
-$(COBJS)      : CFLAGS   = @$(CFLAGS_SUB) @$(CONLYFLAGS_SUB) $(THUMB) $(LSTGEN) $(DEPGEN)
-$(CPPOBJS)    : CPPFLAGS = @$(CFLAGS_SUB) @$(CPPFLAGS_SUB) $(THUMB) $(LSTGEN) $(DEPGEN)
-$(ASOBJS)     : ASFLAGS  = @$(ASFLAGS_SUB) $(THUMB) $(LSTGEN) $(DEPGEN)
-$(COBJSARM)   : CFLAGS   = @$(CFLAGS_SUB) @$(CONLYFLAGS_SUB) $(LSTGEN) $(DEPGEN)
-$(CPPOBJSARM) : CPPFLAGS = @$(CFLAGS_SUB) @$(CPPFLAGS_SUB) $(LSTGEN) $(DEPGEN)
-$(ASOBJSARM)  : ASFLAGS  = @$(ASFLAGS_SUB) $(LSTGEN) $(DEPGEN)
-LDFLAGS = @$(LDFLAGS_SUB)
+$(COBJS)      : CFLAGS   += $(THUMB)
+$(CPPOBJS)    : CPPFLAGS += $(THUMB)
+$(ASOBJS)     : ASFLAGS  += $(THUMB)
 
 ###########################################################################
 # Targets
 ###########################################################################
 # Default target.
-all: gccversion makefile createdirs build size
+all: gccversion createdirs build size
 	@echo '---- $(TARGET) built:' | $(TEE)
 
 # Create output directories.
@@ -100,7 +96,7 @@ gccversion: createdirs
 	@$(CC) --version > $(LOGFILE)
 
 # Build all outputs
-build: $(FLAGS_SUB) elf hex bin lss sym
+build: elf hex bin lss sym
 
 # Output files to be build
 elf: $(OUTDIR)/$(TARGET).elf
@@ -114,6 +110,7 @@ bin: $(OUTDIR)/$(TARGET).bin
 #  Size data type(d-digital, o-octal, x-hexadecimal)
 size: build
 	@echo ' '	 | $(TEE)
+	@echo '$(SIZE) -A -d --totals $(OUTDIR)/$(TARGET).elf' >> $(LOGFILE)
 	@$(SIZE) -A -d --totals $(OUTDIR)/$(TARGET).elf | $(TEE)
 
 # Target: clean project.
@@ -128,7 +125,6 @@ clean:
 	$(RM) $(OBJDIR)/*.o >/dev/null 2>&1
 	$(RM) $(LSTDIR)/*.lst >/dev/null 2>&1
 	$(RM) $(DEPDIR)/*.d >/dev/null 2>&1
-	$(RM) $(FLAGS_SUB) 
 	$(RM) $(LOGDIR)/*.log >/dev/null 2>&1
 	@echo ' '
 	@echo '---- Cleaned'
@@ -152,6 +148,7 @@ doc: createdirs
 #  ihex # TODO: describe this option
 $(OUTDIR)/%.hex: $(OUTDIR)/%.elf
 	@echo '  OBJCOPY  $(+F) > $(@F)  - hex file' | $(TEE)
+	@echo '$(OBJCOPY) -O ihex $< $@' >> $(LOGFILE)
 	@$(OBJCOPY) -O ihex $< $@ | $(TEE)
 	
 # Create final output file (.bin) from ELF output file.
@@ -159,6 +156,7 @@ $(OUTDIR)/%.hex: $(OUTDIR)/%.elf
 #  binary # TODO: describe this option
 $(OUTDIR)/%.bin: $(OUTDIR)/%.elf
 	@echo '  OBJCOPY  $(+F) > $(@F)  - binary file' | $(TEE)
+	@echo '$(OBJCOPY) -O binary $< $@' >> $(LOGFILE)
 	@$(OBJCOPY) -O binary $< $@ | $(TEE)
 
 # Create extended listing file/disassambly from ELF output file.
@@ -169,18 +167,21 @@ $(OUTDIR)/%.bin: $(OUTDIR)/%.elf
 #  -r # TODO: describe this option
 $(OUTDIR)/%.lss: $(OUTDIR)/%.elf
 	@echo '  OBJDUMP  $(+F) > $(@F)  - extended listing/disassembly file' | $(TEE)
+	@echo '$(OBJDUMP) -h -S -C -r $< > $@' >> $(LOGFILE)
 	@$(OBJDUMP) -h -S -C -r $< > $@ | $(TEE)
 
 # Create a symbol table from ELF output file.
 #  -n # TODO: describe this option
 $(OUTDIR)/%.sym: $(OUTDIR)/%.elf
 	@echo '  NM       $(+F) > $(@F)  - symbol file' | $(TEE)
+	@echo '$(NM) -n $< > $@' >> $(LOGFILE)
 	@$(NM) -n $< > $@ | $(TEE)
 
 # Link: create ELF output file from object files.
-$(OUTDIR)/%.elf: $(OBJS) $(FLAGS_SUB)
+$(OUTDIR)/%.elf: $(OBJS)
 	@echo ' ' | $(TEE)
 	@echo '  LINK     $(filter %.o,$(+F)) > $(@F)' | $(TEE)
+	@echo '$(LD) $(LDFLAGS) $(OBJS) --output $@ ' >> $(LOGFILE)
 	@$(LD) $(LDFLAGS) $(OBJS) --output $@ | $(TEE)
 
 ###########################################################################
@@ -188,18 +189,21 @@ $(OUTDIR)/%.elf: $(OBJS) $(FLAGS_SUB)
 ###########################################################################
 $(OBJDIR)/%.o: %.s
 	@echo '  AS  $(+F) > $(@F)' | $(TEE)
+	@echo '$(AS) -c $(ASFLAGS) $< -o $@' >> $(LOGFILE)
 	@$(AS) -c $(ASFLAGS) $< -o $@; \
 	sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
 	$(RM) -f $(*F).tmp | $(TEE)
 
 $(OBJDIR)/%.o: %.c
 	@echo '  CC  $(+F) > $(@F)' | $(TEE)
+	@echo '$(CC) -c $(CFLAGS) $< -o $@' >> $(LOGFILE)
 	@$(CC) -c $(CFLAGS) $< -o $@; \
 	sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
 	$(RM) -f $(*F).tmp | $(TEE)
 
 $(OBJDIR)/%.o: %.cpp
 	@echo '  CPP $(+F) > $(@F)' | $(TEE)
+	@echo '$(CPP) -c $(CPPFLAGS) $< -o $@' >> $(LOGFILE)
 	@$(CPP) -c $(CPPFLAGS) $< -o $@; \
 	sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
 	$(RM) -f $(*F).tmp | $(TEE)

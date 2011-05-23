@@ -6,16 +6,6 @@
 ###########################################################################
 
 ###########################################################################
-# Automatically generated files containing rules
-###########################################################################
-CFLAGS_SUB = $(OUTDIR)/sub/cflags.sub
-CONLYFLAGS_SUB = $(OUTDIR)/sub/conlyflags.sub
-CPPFLAGS_SUB = $(OUTDIR)/sub/cppflags.sub
-ASFLAGS_SUB = $(OUTDIR)/sub/asflags.sub
-LDFLAGS_SUB = $(OUTDIR)/sub/ldflags.sub
-FLAGS_SUB = $(CFLAGS_SUB) $(CONLYFLAGS_SUB) $(CPPFLAGS_SUB) $(ASFLAGS_SUB) $(LDFLAGS_SUB)
-
-###########################################################################
 # Compiler settings
 ###########################################################################
 # THUMB rules
@@ -48,42 +38,40 @@ DEPGEN = -MD -MP -MF $(*F).tmp
 # -fpromote-loop-indices           # Convert loop indices to word-sized quantities
 # -Wall -Wextra                    # Turn all optional warnings plus extra optional
 #                                  # optional warnings from -Wall and -Wextra below above line
-$(CFLAGS_SUB):
-	-@mkdir $(OUTDIR)/sub 2>/dev/null || echo "" >/dev/null
-	@$(RM) $@
-	@echo $(patsubst %,-I%,$(SUBDIRS)) >>$@
-	@echo -I. >>$@
-	@echo -mcpu=cortex-m3 >>$@
-	@echo -gdwarf-2 >>$@
-	@echo -O2 >>$@
-	@echo -fpromote-loop-indices >>$@
-	@echo -Wall >>$@
-	@echo -Wextra >>$@
-	@echo -Wimplicit >>$@
-	@echo -Wcast-align >>$@
-	@echo -Wpointer-arith >>$@
-	@echo -Wredundant-decls >>$@
-	@echo -Wshadow >>$@
-	@echo -Wcast-qual >>$@
-	@echo -Wcast-align >>$@
-	@echo -fno-exceptions >>$@
+C_COMMONFLAGS = \
+					 $(LSTGEN) \
+					 $(DEPGEN) \
+					 $(patsubst %,-I%,$(SUBDIRS)) \
+					 -I. \
+					 -mcpu=cortex-m3 \
+					 -gdwarf-2 \
+					 -O2 \
+					 -fpromote-loop-indices \
+					 -Wall \
+					 -Wextra \
+					 -Wimplicit \
+					 -Wcast-align \
+					 -Wpointer-arith \
+					 -Wredundant-decls \
+					 -Wshadow \
+					 -Wcast-qual \
+					 -Wcast-align \
+					 -fno-exceptions
 
 # C only compiler flags
 #   -Wnested-externs      				# Warn if an extern declaration is encountered within a function
 #   -std=gnu99							# Defined standard: c99 plus GCC extensions
-$(CONLYFLAGS_SUB):
-	-@mkdir $(OUTDIR)/sub 2>/dev/null || echo "" >/dev/null
-	@$(RM) $@
-	@echo -Wnested-externs >>$@
-	@echo -std=gnu99 >>$@
+CFLAGS = \
+			$(C_COMMONFLAGS) \
+			-Wnested-externs \
+			-std=gnu99
 
 # C++ only compiler flags
 #   -fno-rtti -fno-exceptions           # If you will not use virtual functions 
 #                                       # those setting flags will optimalize the code
-$(CPPFLAGS_SUB):
-	-@mkdir $(OUTDIR)/sub 2>/dev/null || echo "" >/dev/null
-	@$(RM) $@
-	@echo -fno-rtti >>$@
+CPPFLAGS = \
+			  $(C_COMMONFLAGS) \
+			  -fno-rtti
 
 # Assembler compliler flags
 # -mcpu=cortex-m3 \                # CPU name
@@ -92,14 +80,14 @@ $(CPPFLAGS_SUB):
 # -x assembler-with-cpp \          # Source files C++ for assembler
 # -D__ASSEMBLY__ \                 # Allows include files in assemler
 #                                  # -Wa -pass to the assembler, -adhlns -create assembler listing
-$(ASFLAGS_SUB):
-	-@mkdir $(OUTDIR)/sub 2>/dev/null || echo "" >/dev/null
-	@$(RM) $@
-	@echo $(patsubst %,-I%,$(SUBDIRS)) -I. >>$@
-	@echo -mcpu=cortex-m3 >>$@
-	@echo -Wa, -gdwarf-2 >>$@
-	@echo -x assembler-with-cpp >>$@
-	@echo -D__ASSEMBLY__ >>$@
+ASFLAGS = \
+			 $(LSTGEN) \
+			 $(DEPGEN) \
+			 $(patsubst %,-I%,$(SUBDIRS)) -I. \
+			 -mcpu=cortex-m3 \
+			 -Wa, -gdwarf-2 \
+			 -x assembler-with-cpp \
+			 -D__ASSEMBLY__
 
 # Linker flags
 # --warn-common         # Warn when a common symbol is combined with another common
@@ -114,14 +102,14 @@ $(ASFLAGS_SUB):
 # --cref                # Output a cross reference table,
 # --gc-sections         # Enable garbage collection of unused input sections
 # -T$(LINKERSCRIPT)     # Use this linker script
-$(LDFLAGS_SUB): 
-	@$(RM) $@
-	@echo --warn-common >>$@
-	@echo --warn-constructors >>$@
-	@echo --warn-section-align >>$@
-	@echo --warn-shared-textrel >>$@
-	@echo --warn-alternate-em >>$@
-	@echo -nostartfiles >> $@
-	@echo -Map=$(OUTDIR)/$(TARGET).map --cref --gc-sections  >>$@
-	@echo -T$(LINKERSCRIPT) >>$@
+
+LDFLAGS = \
+			 --warn-common \
+			 --warn-constructors \
+			 --warn-section-align \
+			 --warn-shared-textrel \
+			 --warn-alternate-em \
+			 -nostartfiles \
+			 -Map=$(OUTDIR)/$(TARGET).map --cref --gc-sections  \
+			 -T$(LINKERSCRIPT)
 
