@@ -70,13 +70,12 @@ OBJS = $(COBJS) $(COBJSARM) $(CPPOBJS) $(CPPOBJSARM) $(ASOBJS) $(ASOBJSARM)
 ###########################################################################
 # Compiler/Linker rules selection depending on file group
 ###########################################################################
-$(COBJS)      : CFLAGS   = @$(CFLAGS_SUB) @$(CONLYFLAGS_SUB) $(THUMB) $(LSTGEN) $(DEPGEN)
-$(CPPOBJS)    : CPPFLAGS = @$(CFLAGS_SUB) @$(CPPFLAGS_SUB) $(THUMB) $(LSTGEN) $(DEPGEN)
-$(ASOBJS)     : ASFLAGS  = @$(ASFLAGS_SUB) $(THUMB) $(LSTGEN) $(DEPGEN)
-$(COBJSARM)   : CFLAGS   = @$(CFLAGS_SUB) @$(CONLYFLAGS_SUB) $(LSTGEN) $(DEPGEN)
-$(CPPOBJSARM) : CPPFLAGS = @$(CFLAGS_SUB) @$(CPPFLAGS_SUB) $(LSTGEN) $(DEPGEN)
-$(ASOBJSARM)  : ASFLAGS  = @$(ASFLAGS_SUB) $(LSTGEN) $(DEPGEN)
-LDFLAGS = @$(LDFLAGS_SUB)
+$(COBJS)      : CFLAGS   = $(CFLAGS_SUB) $(CONLYFLAGS_SUB) $(THUMB) $(LSTGEN) $(DEPGEN)
+$(CPPOBJS)    : CPPFLAGS = $(CFLAGS_SUB) $(CPPFLAGS_SUB) $(THUMB) $(LSTGEN) $(DEPGEN)
+$(ASOBJS)     : ASFLAGS  = $(ASFLAGS_SUB) $(THUMB) $(LSTGEN) $(DEPGEN)
+$(COBJSARM)   : CFLAGS   = $(CFLAGS_SUB) $(CONLYFLAGS_SUB) $(LSTGEN) $(DEPGEN)
+$(CPPOBJSARM) : CPPFLAGS = $(CFLAGS_SUB) $(CPPFLAGS_SUB) $(LSTGEN) $(DEPGEN)
+$(ASOBJSARM)  : ASFLAGS  = $(ASFLAGS_SUB) $(LSTGEN) $(DEPGEN)
 
 ###########################################################################
 # Targets
@@ -100,7 +99,7 @@ gccversion: createdirs
 	@$(CC) --version > $(LOGFILE)
 
 # Build all outputs
-build: $(FLAGS_SUB) elf hex bin lss sym
+build: elf hex bin lss sym
 
 # Output files to be build
 elf: $(OUTDIR)/$(TARGET).elf
@@ -129,7 +128,6 @@ clean:
 	$(RM) $(OBJDIR)/*.o >/dev/null 2>&1
 	$(RM) $(LSTDIR)/*.lst >/dev/null 2>&1
 	$(RM) $(DEPDIR)/*.d >/dev/null 2>&1
-	$(RM) $(FLAGS_SUB) 
 	$(RM) $(LOGDIR)/*.log >/dev/null 2>&1
 	@echo ' '
 	@echo '---- Cleaned'
@@ -183,7 +181,7 @@ $(OUTDIR)/%.sym: $(OUTDIR)/%.elf
 	@$(NM) -n $< > $@ | $(TEE)
 
 # Link: create ELF output file from object files.
-$(OUTDIR)/%.elf: $(OBJS) $(FLAGS_SUB)
+$(OUTDIR)/%.elf: $(OBJS)
 	@echo ' ' | $(TEE)
 	@echo '  LINK     $(filter %.o,$(+F)) > $(@F)' | $(TEE)
 	@echo '$(LD) $(LDFLAGS) $(OBJS) --output $@ ' >> $(LOGFILE)
