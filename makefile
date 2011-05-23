@@ -114,6 +114,7 @@ bin: $(OUTDIR)/$(TARGET).bin
 #  Size data type(d-digital, o-octal, x-hexadecimal)
 size: build
 	@echo ' '	 | $(TEE)
+	@echo '$(SIZE) -A -d --totals $(OUTDIR)/$(TARGET).elf' >> $(LOGFILE)
 	@$(SIZE) -A -d --totals $(OUTDIR)/$(TARGET).elf | $(TEE)
 
 # Target: clean project.
@@ -152,6 +153,7 @@ doc: createdirs
 #  ihex # TODO: describe this option
 $(OUTDIR)/%.hex: $(OUTDIR)/%.elf
 	@echo '  OBJCOPY  $(+F) > $(@F)  - hex file' | $(TEE)
+	@echo '$(OBJCOPY) -O ihex $< $@' >> $(LOGFILE)
 	@$(OBJCOPY) -O ihex $< $@ | $(TEE)
 	
 # Create final output file (.bin) from ELF output file.
@@ -159,6 +161,7 @@ $(OUTDIR)/%.hex: $(OUTDIR)/%.elf
 #  binary # TODO: describe this option
 $(OUTDIR)/%.bin: $(OUTDIR)/%.elf
 	@echo '  OBJCOPY  $(+F) > $(@F)  - binary file' | $(TEE)
+	@echo '$(OBJCOPY) -O binary $< $@' >> $(LOGFILE)
 	@$(OBJCOPY) -O binary $< $@ | $(TEE)
 
 # Create extended listing file/disassambly from ELF output file.
@@ -169,18 +172,21 @@ $(OUTDIR)/%.bin: $(OUTDIR)/%.elf
 #  -r # TODO: describe this option
 $(OUTDIR)/%.lss: $(OUTDIR)/%.elf
 	@echo '  OBJDUMP  $(+F) > $(@F)  - extended listing/disassembly file' | $(TEE)
+	@echo '$(OBJDUMP) -h -S -C -r $< > $@' >> $(LOGFILE)
 	@$(OBJDUMP) -h -S -C -r $< > $@ | $(TEE)
 
 # Create a symbol table from ELF output file.
 #  -n # TODO: describe this option
 $(OUTDIR)/%.sym: $(OUTDIR)/%.elf
 	@echo '  NM       $(+F) > $(@F)  - symbol file' | $(TEE)
+	@echo '$(NM) -n $< > $@' >> $(LOGFILE)
 	@$(NM) -n $< > $@ | $(TEE)
 
 # Link: create ELF output file from object files.
 $(OUTDIR)/%.elf: $(OBJS) $(FLAGS_SUB)
 	@echo ' ' | $(TEE)
 	@echo '  LINK     $(filter %.o,$(+F)) > $(@F)' | $(TEE)
+	@echo '$(LD) $(LDFLAGS) $(OBJS) --output $@ ' >> $(LOGFILE)
 	@$(LD) $(LDFLAGS) $(OBJS) --output $@ | $(TEE)
 
 ###########################################################################
@@ -188,18 +194,21 @@ $(OUTDIR)/%.elf: $(OBJS) $(FLAGS_SUB)
 ###########################################################################
 $(OBJDIR)/%.o: %.s
 	@echo '  AS  $(+F) > $(@F)' | $(TEE)
+	@echo '$(AS) -c $(ASFLAGS) $< -o $@' >> $(LOGFILE)
 	@$(AS) -c $(ASFLAGS) $< -o $@; \
 	sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
 	$(RM) -f $(*F).tmp | $(TEE)
 
 $(OBJDIR)/%.o: %.c
 	@echo '  CC  $(+F) > $(@F)' | $(TEE)
+	@echo '$(CC) -c $(CFLAGS) $< -o $@' >> $(LOGFILE)
 	@$(CC) -c $(CFLAGS) $< -o $@; \
 	sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
 	$(RM) -f $(*F).tmp | $(TEE)
 
 $(OBJDIR)/%.o: %.cpp
 	@echo '  CPP $(+F) > $(@F)' | $(TEE)
+	@echo '$(CPP) -c $(CPPFLAGS) $< -o $@' >> $(LOGFILE)
 	@$(CPP) -c $(CPPFLAGS) $< -o $@; \
 	sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
 	$(RM) -f $(*F).tmp | $(TEE)
