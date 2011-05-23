@@ -20,6 +20,14 @@
  *
  ******************************************************************************/
 
+/*
+ * Updated to LPC1769 and to adjust to new linker file
+ * Dawid Bazan <dawidbazan@gmail.com>
+ * Dariusz Synowiec <devemouse@gmail.com>
+ *
+ * Last update on May 2011
+ */
+
 
 #include "LPC17xx.h"
 #include "system_LPC17xx.h"
@@ -82,14 +90,14 @@ void WEAK      	PLL1_IRQHandler(void);           /* PLL1 (USB PLL) */
 /* Exported types --------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 extern unsigned long _etext;     /* end address for the .text section. defined in linker script */
-extern unsigned long _sidata;		/* start address for the initialization values of the .data section. defined in linker script */
-extern unsigned long _sdata;		/* start address for the .data section. defined in linker script */
-extern unsigned long _edata;		/* end address for the .data section. defined in linker script */
+extern unsigned long _sidata;    /* start address for the initialization values of the .data section. defined in linker script */
+extern unsigned long _sdata;     /* start address for the .data section. defined in linker script */
+extern unsigned long _edata;     /* end address for the .data section. defined in linker script */
 
-extern unsigned long _sbss;	   /* start address for the .bss section. defined in linker script */
-extern unsigned long _ebss;		/* end address for the .bss section. defined in linker script */
+extern unsigned long _sbss;      /* start address for the .bss section. defined in linker script */
+extern unsigned long _ebss;      /* end address for the .bss section. defined in linker script */
 
-extern void _estack;		         /* init value for the stack pointer. defined in linker script */
+extern void _estack;             /* init value for the stack pointer. defined in linker script */
 
 
 

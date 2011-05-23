@@ -70,7 +70,7 @@ SECTIONS
      * Procedure Linkage Table (PLT) generation for multiple load regions containing code when in Base Platform mode 
      * Option is useful when you have multiple load regions that might be moved relative to each other when the image 
      * is dynamically loaded. The linker generates a PLT for each load region so that calls do not have to be 
-     * extended to reach a distant PLT.
+     * extended to reach a distant PLT
      */
     *(.plt)
     
@@ -94,7 +94,7 @@ SECTIONS
      * This section contains a pointer to the .eh_frame section which is accessible 
      * to the runtime support code of a C++ application. 
      * This section may also contain a binary search table which may be used by 
-     * the runtime support code to more efficiently access records in the .eh_frame section. 
+     * the runtime support code to more efficiently access records in the .eh_frame section 
      */
     *(.eh_frame_hdr)
     
@@ -115,7 +115,7 @@ SECTIONS
      * when an application is being initialized (before main() is called).  Its
      * used for a number of things, but the primary use is in C++ for running
      * static constructors; a secondary use that is sometimes used is to
-     * initialize IO systems in the C library. 
+     * initialize IO systems in the C library 
      */    
     KEEP(*(.init))
     /* Set the location counter to the next 4 aligned boundary */
@@ -211,32 +211,33 @@ SECTIONS
     /* Set the location counter to the next 4 aligned boundary */
     . = ALIGN(4);
     /* 
-     * This section contains information necessary for registering compiled Java classes. 
-     * The contents are compiler-specific and used by compiler initialization functions.
+     * This section contains information necessary for registering compiled Java classes
+     * The contents are compiler-specific and used by compiler initialization functions
      */
     KEEP(*(.jcr))
     /* 
-     * This section holds the read-only portion of the GLobal Offset Table. 
-     * This section may be made read-only after relocations have been applied. 
+     * This section holds the read-only portion of the GLobal Offset Table 
+     * This section may be made read-only after relocations have been applied 
      */
     *(.got.plt) *(.got)
     
-    /* TBD description */
+    /* Data memory */
     *(.shdata)
+    
     /* 
      * vtable is a static pointer which is created as a part of the compilation 
      * and it gets filled whenever constructor is called 
      */
     *(vtable vtable.*)
-    *(.data .data.*)
-    *(.gnu.linkonce.d*)
-    *(.ram)
     
-    /* Set the location counter to the next 4 aligned boundary */
-    . = ALIGN(4);
-     
     /* Data memory */
-    /**(.data)*/  
+    *(.data .data.*)
+    
+    /* The linkonce is to support C++ vague linkage(inline functions, vtables for virtual functions etc.) */
+    *(.gnu.linkonce.d*)
+    
+    /* RAM data */
+    *(.ram)
 
     _edata = .; 
     /* Provide to the code the end of RAM1 address */
@@ -244,25 +245,44 @@ SECTIONS
     PROVIDE(edata = .);
   } >ram1
   
-  /* This section holds data that contributes to the program's memory image. 
+  /* 
+   * This section holds data that contributes to the program's memory image. 
    * The program may treat this data as uninitialized. 
-   * However, the system shall initialize this data with zeroes when the program begins to run. 
+   * However, the system shall initialize this data with zeroes when the program begins to run 
    * The section occupies no file space
    */
-  /*TBD: NLOAD use?*/
+  /* 
+   * The section should be marked as not loadable, so that it will not be loaded into
+   * memory when the program is run
+   */
   .bss (NOLOAD) :
   {
-    /* Store at 'sbss' the address of the beginning of this section */
+    /* Provide to the code the start of RAM address where italized data is stored */
     _sbss = .;
-    *(.shbss)
-    *(.bss .bss.*)
-    *(.gnu.linkonce.b*)
-    *(COMMON)
+    PROVIDE(sbss = .);
     
     /* Statically-allocated variables represented solely by zero-valued bits initially */
+    *(.shbss)
+          
+    /* Statically-allocated variables represented solely by zero-valued bits initially */
+    *(.bss .bss.*)
+    
+    /* The linkonce is to support C++ vague linkage(inline functions, vtables for virtual functions etc.) */
+    *(.gnu.linkonce.b*)
+    
+    /* A special notation is needed for common symbols,  because in many object file formats
+     * common symbols do not have a particular input section. The linker treats common symbols 
+     * as though they are in an input section named "COMMON" 
+     */
+    *(COMMON)
+    
+    /* RAM data */
     *(.ram.b)
-    /* Store at 'bss' the address of the end of this section */
+    
+    /* Provide to the code the end of RAM address where italized data is stored */
     _ebss = .;
+    PROVIDE(ebss = .);
+    
     /* 
      * >ram1 AT>rom - the VMA(Virtual Memory Address) is in ram1, the LMA(Load Memory Address) is in rom
      * This feature is designed to make it easy to build a ROM image 
@@ -278,30 +298,49 @@ SECTIONS
    
 
   /* Stack section */
-  .stack (NOLOAD) :
+  .stack (NOLOAD):
   {
     *(.stack)
     /* Provide stack end address */
     _estack = . ;
     PROVIDE(estack = .);
   } >ram1
+  /*_stack = ORIGIN(IRAM0) + LENGTH(IRAM0); TBD: Stack top must be put at the end of RAM */
 
 
   /* These section hold initialized data that contribute to the program's memory image */
   . = ORIGIN(ram2);
   .ram2 :
   {
+    /* Provide to the code start of address for RAM2 */
+    _sdatar2 = .;
+    PROVIDE(sdatar2 = .);     
+    
+    /* RAM2 data */
     *(.ram2)
+          
+    /* Provide to the code end of address for RAM2 */
+    _edatar2 = .;
+    PROVIDE(edatar2 = .);           
   } >ram2
    
   /* These section hold initialized data that contribute to the program's memory image */
   . = ORIGIN(ram3);
   .ram3 :
   {
-    *(.ram3)
-  } >ram3   
+     /* Provide to the code start of address for RAM3 */
+     _sdatar3 = .;
+     PROVIDE(sdatar3 = .);     
+     
+     /* RAM3 data */
+     *(.ram3)
+           
+     /* Provide to the code end of address for RAM3 */
+     _edatar3 = .;
+     PROVIDE(edatar3 = .);    
+  } >ram3
    
-  /* This section contains debugging information. The contents are not specified as part of the LSB -TBD find description*/
+  /* Stabs refers to a format for information that describes a program to a debugger */
   .stab          0 : { *(.stab) }
   /* This section contains strings associated with the debugging infomation contained in the .stab section */
   .stabstr       0 : { *(.stabstr) }
