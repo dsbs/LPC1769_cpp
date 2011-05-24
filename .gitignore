@@ -4,3 +4,4 @@ release/*
 .project
 doc/*
 .settings/
+*.vim
