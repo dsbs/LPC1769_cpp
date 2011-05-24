@@ -158,6 +158,8 @@ SECTIONS
     /* Provide to the code the end of ROM address */
     _etext = .;
     PROVIDE(etext = .);
+    
+    _sifastcode = .;/* TODO: */
   } >rom
 
   /* The exception-handling index tables for ARM uC */ 
@@ -298,14 +300,16 @@ SECTIONS
    
 
   /* Stack section */
+  /*. = ORIGIN(ram1) + LENGTH(ram1) - 0x2000;*/
   .stack (NOLOAD):
   {
     *(.stack)
     /* Provide stack end address */
-    _estack = . ;
+    /*_estack = ORIGIN(ram1) + LENGTH(ram1);
+    PROVIDE(estack = ORIGIN(ram1) + LENGTH(ram1));*/
+    _estack = .;
     PROVIDE(estack = .);
   } >ram1
-  /*_stack = ORIGIN(IRAM0) + LENGTH(IRAM0); TBD: Stack top must be put at the end of RAM */
 
 
   /* These section hold initialized data that contribute to the program's memory image */

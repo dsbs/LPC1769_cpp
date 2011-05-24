@@ -21,7 +21,8 @@
  ******************************************************************************/
 
 /*
- * Updated to LPC1769 and to adjust to new linker file
+ * Updated to LPC1769 and to adjust to new linker file:
+ *
  * Dawid Bazan <dawidbazan@gmail.com>
  * Dariusz Synowiec <devemouse@gmail.com>
  *
@@ -39,6 +40,7 @@
 //
 //*****************************************************************************
 /* System exception vector handler */
+/* Reset handler comment out because of weak attribute which do not apply to the functions used in the same c file */
 /* void WEAK 		Reset_Handler(void); */             /* Reset Handler */
 void WEAK 		NMI_Handler(void);               /* NMI Handler */
 void WEAK 		HardFault_Handler(void);         /* Hard Fault Handler */
@@ -97,7 +99,16 @@ extern unsigned long _edata;     /* end address for the .data section. defined i
 extern unsigned long _sbss;      /* start address for the .bss section. defined in linker script */
 extern unsigned long _ebss;      /* end address for the .bss section. defined in linker script */
 
-extern void _estack;             /* init value for the stack pointer. defined in linker script */
+extern unsigned long _estack;    /* init value for the stack pointer. defined in linker script */
+
+extern unsigned long _sfastcode; /* start address for the .fastcode section. defined in linker script */
+extern unsigned long _efastcode; /* end address for the .fastcode section. defined in linker script */
+
+extern unsigned long _sdatar2;   /* start address for the .datar2(ram2) section. defined in linker script */
+extern unsigned long _edatar2;   /* end address for the .datar2(ram2) section. defined in linker script */
+
+extern unsigned long _sdatar3;   /* start address for the .datar3(ram3) section. defined in linker script */
+extern unsigned long _edatar3;   /* end address for the .datar3(ram3) section. defined in linker script */
 
 
 
@@ -123,8 +134,8 @@ __attribute__ ((section(".stack")))
 __attribute__ ((section(".isr_vector")))
 void (* const g_pfnVectors[])(void) =
 {
-        /* &_estack,                   // The initial stack pointer */
-		(void (*)(void))((unsigned long)pulStack + sizeof(pulStack)),  // The initial stack pointer
+        //(void (*)(void))(unsigned long)(&_estack),                   // The initial stack pointer
+        (void (*)(void))((unsigned long)pulStack + sizeof(pulStack)),  // The initial stack pointer
         Reset_Handler,             /* Reset Handler */
         NMI_Handler,               /* NMI Handler */
         HardFault_Handler,         /* Hard Fault Handler */
@@ -188,36 +199,38 @@ void (* const g_pfnVectors[])(void) =
 *******************************************************************************/
 void Reset_Handler(void)
 {
-   // Initialize the System
-   SystemInit();
-
     unsigned long *pulSrc, *pulDest;
 
-    //
-    // Copy the data segment initializers from flash to SRAM in ROM mode
-    //
-#if (__RAM_MODE__==0)
+    /* Initialize the System */
+    SystemInit();
+
+    /* Copy the data segment initializers from flash to SRAM in ROM mode */
     pulSrc = &_sidata;
-    for(pulDest = &_sdata; pulDest < &_edata; )
+    for( pulDest = &_sdata; pulDest < &_edata; )
     {
         *(pulDest++) = *(pulSrc++);
     }
-#endif
 
-
-    //
-    // Zero fill the bss segment.
-    //
-    for(pulDest = &_sbss; pulDest < &_ebss; )
+    /* Zero fill the bss segment */
+    for( pulDest = &_sbss; pulDest < &_ebss; )
     {
         *(pulDest++) = 0;
     }
 
+    /* Copy the fastcode which shall be executed from ROM to SRAM */
+//    pulSrc = &_sifastcode;
+//    for( pulDest = &_sfastcode; pulDest < &_efastcode; )
+//    {
+//        *(pulDest++) = *(pulSrc++);
+//    }
 
-    //
-    // Call the application's entry point.
-    //
+    /* Call the application's entry point */
     main();
+
+    while(1)
+    {
+       /* The application entry point shall not be left, in case it did ten go into an infinite loop */
+    }
 }
 
 //*****************************************************************************
@@ -277,9 +290,11 @@ void Reset_Handler(void)
 // for examination by a debugger.
 //
 //*****************************************************************************
-void Default_Handler(void) {
-	// Go into an infinite loop.
-	//
-	while (1) {
-	}
+void Default_Handler(void)
+{
+   /* Go into an infinite loop */
+   while (1)
+   {
+
+   }
 }
