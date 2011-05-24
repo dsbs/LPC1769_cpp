@@ -8,7 +8,7 @@ ABBREVIATIONS
 
 IN PROGRESS
 ==============
-* __DS:__ resolve TODO items in makefile saying about not described parameter
+* __DS:__ sym file recognize
 * __DB:__ Linker script recognize all sections check which are needed
 * __DB:__ Update startup file. Add: fastcode, heap, stack, ram2, ram3 sections(already done in linker)
 
@@ -19,10 +19,10 @@ PENDING
   modules in C++. This class shall be placed in h and cpp files which shall be
   treated as a template files (see point 2) c file doesn't need separate
   example of template(I think it should be the same like cpp) 
-* sym file recognize
 
 DONE
 ==============
+* __DS:__ resolve TODO items in makefile saying about not described parameter
 * __DS:__ build log not created during compilation
 * __DS:__ add some linker options so it generates more warnings (unknown sections etc.)
 * __DS:__ dependences not included in makefile

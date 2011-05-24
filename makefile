@@ -144,16 +144,14 @@ doc: createdirs
 # Build release files
 ###########################################################################
 # Create final output file (.hex) from ELF output file.
-#  -O   # TODO: describe this option
-#  ihex # TODO: describe this option
+# --output-target ihex  # Write the output file using the ihex object format
 $(OUTDIR)/%.hex: $(OUTDIR)/%.elf
 	@echo '  OBJCOPY  $(+F) > $(@F)  - hex file' | $(TEE)
 	@echo '$(OBJCOPY) -O ihex $< $@' >> $(LOGFILE)
-	@$(OBJCOPY) -O ihex $< $@ | $(TEE)
+	@$(OBJCOPY) --output-target ihex $< $@ | $(TEE)
 	
 # Create final output file (.bin) from ELF output file.
-#  -O     # TODO: describe this option
-#  binary # TODO: describe this option
+# --output-target binary  # Write the output file using the binary object format
 $(OUTDIR)/%.bin: $(OUTDIR)/%.elf
 	@echo '  OBJCOPY  $(+F) > $(@F)  - binary file' | $(TEE)
 	@echo '$(OBJCOPY) -O binary $< $@' >> $(LOGFILE)
@@ -161,20 +159,25 @@ $(OUTDIR)/%.bin: $(OUTDIR)/%.elf
 
 # Create extended listing file/disassambly from ELF output file.
 # using objdump testing: option -C
-#  -h # TODO: describe this option
-#  -S # TODO: describe this option
-#  -C # TODO: describe this option
-#  -r # TODO: describe this option
+# -h, --section-headers # Display summary information from the section headers
+#                       # of the objfile.
+# -S, --source          # Display source code intermixed with disassembly, if
+#                       # possible. Implies ‘-d’.
+# -d, --disassemble     # Display the assembler mnemonics for the machine
+#                       # instructions from objfile.
+# -C, --demangle        # change compiler generated names to readable ones.
+# -r, --reloc           # Print the relocation entries of the file.
 $(OUTDIR)/%.lss: $(OUTDIR)/%.elf
 	@echo '  OBJDUMP  $(+F) > $(@F)  - extended listing/disassembly file' | $(TEE)
 	@echo '$(OBJDUMP) -h -S -C -r $< > $@' >> $(LOGFILE)
-	@$(OBJDUMP) -h -S -C -r $< > $@ | $(TEE)
+	@$(OBJDUMP) --section-headers --source --demangle --reloc $< > $@ | $(TEE)
 
 # Create a symbol table from ELF output file.
-#  -n # TODO: describe this option
+# -n, --numeric-sort # Sort symbols numerically by their addresses, rather
+#                    # than alphabetically by their names
 $(OUTDIR)/%.sym: $(OUTDIR)/%.elf
 	@echo '  NM       $(+F) > $(@F)  - symbol file' | $(TEE)
-	@echo '$(NM) -n $< > $@' >> $(LOGFILE)
+	@echo '$(NM) --numeric-sort $< > $@' >> $(LOGFILE)
 	@$(NM) -n $< > $@ | $(TEE)
 
 # Link: create ELF output file from object files.
