@@ -9,6 +9,21 @@
  * @warning This was never programmed to the uC yet.
  *****************************************************************************/
 
+/** 
+ * \mainpage My Personal Index Page
+ *
+ * \section intro_sec Introduction
+ *
+ * This is the introduction.
+ *
+ * \section install_sec Installation
+ *
+ * \subsection step1 Step 1: Opening the box
+ *
+ * etc...
+ */
+
+
 #include "LPC17xx.h"
 
 //#define VERSION_STRING "V1.2.0 12/2009"

@@ -1,11 +1,7 @@
 #include "Lamp.h"
 
-Lamp::Lamp(bool initial_state) 
-   : _is_on(initial_state)
-{
-}
 
-Lamp::Lamp(uint32_t pin, bool initial_state = false) 
-   : _is_on(initial_state), _pin(pin)
+Lamp::Lamp(Pin pin, bool initial_state = false, bool inverted = false) 
+   : _pin(pin), _is_on(initial_state), _inverted(inverted)
 {
 }
