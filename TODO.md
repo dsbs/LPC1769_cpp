@@ -8,7 +8,6 @@ ABBREVIATIONS
 
 IN PROGRESS
 ==============
-* __DS:__ sym file recognize
 * __DB:__ Linker script recognize all sections check which are needed
 * __DB:__ Update startup file. Add: fastcode, heap, stack, ram2, ram3 sections(already done in linker)
 
@@ -22,6 +21,7 @@ PENDING
 
 DONE
 ==============
+* __DS:__ sym file recognize - it is generate by nm program, check `man nm`.
 * __DS:__ resolve TODO items in makefile saying about not described parameter
 * __DS:__ build log not created during compilation
 * __DS:__ add some linker options so it generates more warnings (unknown sections etc.)
