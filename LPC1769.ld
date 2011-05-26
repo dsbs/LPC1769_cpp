@@ -91,14 +91,14 @@ SECTIONS
     *(.gcc_except_table)
     
     /*
-     * This section contains a pointer to the .eh_frame section which is accessible 
+     * eh - exception handling, this section contains a pointer to the .eh_frame section which is accessible 
      * to the runtime support code of a C++ application. 
      * This section may also contain a binary search table which may be used by 
      * the runtime support code to more efficiently access records in the .eh_frame section 
      */
     *(.eh_frame_hdr)
     
-    /* This section contains information necessary for frame unwinding during exception handling */
+    /* eh - exception handling, this section contains information necessary for frame unwinding during exception handling */
     *(.eh_frame)
     
     /* Initialized read-only data */

@@ -11,8 +11,8 @@
 ###########################################################################
 SUBDIRS = $(sort \
 			 src/app \
-			 src/Lamp \
 			 src/lib/CMSIS/Core \
+			 src/lib/lamp \
 			 )
 
 ###########################################################################
@@ -33,7 +33,7 @@ CSRCSARM = $(sort \
 # List C++ source files. File suffix must be *.cpp with case sensitive
 CPPSRCS = $(sort \
 			 main.cpp \
-			 Lamp.cpp \
+			 lamp.cpp \
 			 )
 
 # List C++ source files here which must be compiled in ARM-Mode (no -mthumb)

@@ -99,7 +99,7 @@ extern unsigned long _edata;     /* end address for the .data section. defined i
 extern unsigned long _sbss;      /* start address for the .bss section. defined in linker script */
 extern unsigned long _ebss;      /* end address for the .bss section. defined in linker script */
 
-extern unsigned long _estack;    /* init value for the stack pointer. defined in linker script */
+extern unsigned long _estack;    /* init address for the stack pointer. defined in linker script */
 
 extern unsigned long _sfastcode; /* start address for the .fastcode section. defined in linker script */
 extern unsigned long _efastcode; /* end address for the .fastcode section. defined in linker script */
@@ -116,6 +116,8 @@ extern unsigned long _edatar3;   /* end address for the .datar3(ram3) section. d
 /* function prototypes ------------------------------------------------------*/
 void Reset_Handler(void) __attribute__((__interrupt__));
 extern int main(void);
+
+typedef void( *const irqfct )( void );
 
 
 /******************************************************************************
@@ -134,8 +136,12 @@ __attribute__ ((section(".stack")))
 __attribute__ ((section(".isr_vector")))
 void (* const g_pfnVectors[])(void) =
 {
-        //(void (*)(void))(unsigned long)(&_estack),                   // The initial stack pointer
-        (void (*)(void))((unsigned long)pulStack + sizeof(pulStack)),  // The initial stack pointer
+        /*
+         * The Cortex-M3 interrupt controller (NVIC) will need stack address before
+         * it can jump to the handler. Hence, it’s put as the first thing on the interrupt table
+         */
+        (irqfct)((unsigned long)&_estack),                   /* The initial stack pointer */
+        //(void (*)(void))((unsigned long)pulStack + sizeof(pulStack)),  /* The initial stack pointer */
         Reset_Handler,             /* Reset Handler */
         NMI_Handler,               /* NMI Handler */
         HardFault_Handler,         /* Hard Fault Handler */
