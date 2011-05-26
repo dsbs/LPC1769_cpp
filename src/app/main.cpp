@@ -5,7 +5,7 @@
  * @author Dariusz Synowiec <devemouse@gmail.com>
  * @version 0.0
  * @date    May 2011
- * @bug There is no bug. left this to have a refference.
+ * @bug There is no bug. left this to have a reference.
  * @warning This was never programmed to the uC yet.
  *****************************************************************************/
 
@@ -79,7 +79,7 @@ __INLINE static void LED_Off (uint32_t led) {
  * main
  * Function from which everything starts...
  *
- * @return on embeded targets this function shall never return
+ * @return on embedded targets this function shall never return
  *
  *****************************************************************************/
 int main(void)

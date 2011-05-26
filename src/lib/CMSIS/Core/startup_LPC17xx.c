@@ -22,7 +22,13 @@
 
 /*
  * Updated to LPC1769 and to adjust to new linker file:
- * TODO: List of updates
+ * - Included system_LPC17xx.h file for SystemInit() function
+ * - Fixed Reset_Handler() warning
+ * - End of stack address is provided by linker as well as size of the stack
+ * - Added addresses for the section ram2 and ram3 (separate banks of memory)
+ * - Updated Reset_Handler() function with call of SystemInit(), initialization of ram memory, jump to main()
+ * - Minor fixes: comments, this header description
+ *
  * Dawid Bazan <dawidbazan@gmail.com>
  * Dariusz Synowiec <devemouse@gmail.com>
  *
@@ -101,6 +107,7 @@ extern unsigned long _ebss;      /* end address for the .bss section. defined in
 
 extern unsigned long _estack;    /* init address for the stack pointer. defined in linker script */
 
+extern unsigned long _sifastcode;/* start address for the rom code instructions copied to .fastcode section. defined in linker script */
 extern unsigned long _sfastcode; /* start address for the .fastcode section. defined in linker script */
 extern unsigned long _efastcode; /* end address for the .fastcode section. defined in linker script */
 
@@ -127,17 +134,6 @@ extern int main(void);
 * 0x0000.0000.
 *
 ******************************************************************************/
-//TODO: remove after tests
-/*
- *
- * #define STACK_SIZE                              0x00000200
- *
- * __attribute__ ((section(".stack")))
- * /* static *//* unsigned long pulStack[STACK_SIZE];
- *
- */
-
-
 __attribute__ ((section(".isr_vector")))
 void (* const g_pfnVectors[])(void) =
 {
@@ -146,7 +142,6 @@ void (* const g_pfnVectors[])(void) =
          * it can jump to the handler. Hence, it’s put as the first thing on the interrupt table
          */
         (irqfct)(&_estack),        /* The initial stack pointer */
-        //(void (*)(void))((unsigned long)pulStack + sizeof(pulStack)),  /* The initial stack pointer TODO: remove after tests */
         Reset_Handler,             /* Reset Handler */
         NMI_Handler,               /* NMI Handler */
         HardFault_Handler,         /* Hard Fault Handler */
@@ -211,7 +206,6 @@ void (* const g_pfnVectors[])(void) =
 void Reset_Handler(void)
 {
     unsigned long *pulSrc, *pulDest;
-    static unsigned long SSSSStack = (unsigned long)&_estack;
 
     /* Initialize the System */
     SystemInit();
@@ -230,14 +224,13 @@ void Reset_Handler(void)
     }
 
     /* Copy the fastcode which shall be executed from ROM to SRAM */
-//    pulSrc = &_sifastcode;
-//    for( pulDest = &_sfastcode; pulDest < &_efastcode; )
-//    {
-//        *(pulDest++) = *(pulSrc++);
-//    }
+    pulSrc = &_sifastcode;
+    for( pulDest = &_sfastcode; pulDest < &_efastcode; )
+    {
+        *(pulDest++) = *(pulSrc++);
+    }
 
     /* Call the application's entry point */
-    SSSSStack--;
     main();
 
     while(1)

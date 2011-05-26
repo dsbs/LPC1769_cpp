@@ -159,7 +159,9 @@ SECTIONS
     _etext = .;
     PROVIDE(etext = .);
     
-    _sifastcode = .;/* TODO: */
+    /* Provide to the code ROM address of the start of fast code */
+    _sifastcode = .;
+    PROVIDE(sifastcode = .);
   } >rom
 
   /* The exception-handling index tables for ARM uC */ 
@@ -300,17 +302,18 @@ SECTIONS
    
 
   /* Stack section */
-  . = ORIGIN(ram1) + LENGTH(ram1) - 0x2000;
+  /* Define stack size */
+  STACK_SIZE = 0x200;
+  . = ORIGIN(ram1) + LENGTH(ram1) - STACK_SIZE;
+  /*. = 0x10007E00;*/
   .stack (NOLOAD):
   {
-    . = ALIGN(8); 
+    /* stack */
     *(.stack)
-    . = ALIGN(8);
+          
     /* Provide stack end address */
     _estack = ORIGIN(ram1) + LENGTH(ram1);
     PROVIDE(estack = ORIGIN(ram1) + LENGTH(ram1));
-    /*_estack = .;
-    PROVIDE(estack = .);*/
   } >ram1
 
 

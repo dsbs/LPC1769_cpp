@@ -8,10 +8,8 @@ ABBREVIATIONS
 
 IN PROGRESS
 ==============
-* __DB:__ Linker script recognize all sections check which are needed
-* __DB:__ Update startup file. Add: fastcode, heap, stack, ram2, ram3 sections(already done in linker)
 * __DB:__ Test fastcode if this is working properly
-* __DB:__ Set the initial stack pointer at the end of the RAM1 area
+* __DB:__ Test that stack is properly set up and is working fine. In map file it's look OK, but need to be tested
 
 PENDING
 ==============
@@ -35,4 +33,7 @@ DONE
 * __DS:__ File format for TODO items ;)
 * __DS:__ listings not created during compilation
 * __DS:__ dependences not created during compilation
+* __DB:__ Set the initial stack pointer at the end of the RAM1 area
+* __DB:__ Update startup file. Add: fastcode, heap, stack, ram2, ram3 sections(already done in linker)
+* __DB:__ Linker script recognize all sections check which are needed
 
