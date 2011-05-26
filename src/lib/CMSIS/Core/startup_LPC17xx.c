@@ -22,7 +22,7 @@
 
 /*
  * Updated to LPC1769 and to adjust to new linker file:
- *
+ * TODO: List of updates
  * Dawid Bazan <dawidbazan@gmail.com>
  * Dariusz Synowiec <devemouse@gmail.com>
  *
@@ -113,11 +113,11 @@ extern unsigned long _edatar3;   /* end address for the .datar3(ram3) section. d
 
 
 /* Private typedef -----------------------------------------------------------*/
+typedef void( *const irqfct )( void );
+
 /* function prototypes ------------------------------------------------------*/
 void Reset_Handler(void) __attribute__((__interrupt__));
 extern int main(void);
-
-typedef void( *const irqfct )( void );
 
 
 /******************************************************************************
@@ -127,10 +127,15 @@ typedef void( *const irqfct )( void );
 * 0x0000.0000.
 *
 ******************************************************************************/
-#define STACK_SIZE                              0x00000200
-
-__attribute__ ((section(".stack")))
-/* static */ unsigned long pulStack[STACK_SIZE];
+//TODO: remove after tests
+/*
+ *
+ * #define STACK_SIZE                              0x00000200
+ *
+ * __attribute__ ((section(".stack")))
+ * /* static *//* unsigned long pulStack[STACK_SIZE];
+ *
+ */
 
 
 __attribute__ ((section(".isr_vector")))
@@ -140,8 +145,8 @@ void (* const g_pfnVectors[])(void) =
          * The Cortex-M3 interrupt controller (NVIC) will need stack address before
          * it can jump to the handler. Hence, it’s put as the first thing on the interrupt table
          */
-        (irqfct)((unsigned long)&_estack),                   /* The initial stack pointer */
-        //(void (*)(void))((unsigned long)pulStack + sizeof(pulStack)),  /* The initial stack pointer */
+        (irqfct)(&_estack),        /* The initial stack pointer */
+        //(void (*)(void))((unsigned long)pulStack + sizeof(pulStack)),  /* The initial stack pointer TODO: remove after tests */
         Reset_Handler,             /* Reset Handler */
         NMI_Handler,               /* NMI Handler */
         HardFault_Handler,         /* Hard Fault Handler */
@@ -158,7 +163,7 @@ void (* const g_pfnVectors[])(void) =
         PendSV_Handler,            /* PendSV Handler */
         SysTick_Handler,           /* SysTick Handler */
 
-		// External Interrupts
+		  /* External Interrupts */
         WDT_IRQHandler,            /* Watchdog Timer */
         TIMER0_IRQHandler,         /* Timer0 */
         TIMER1_IRQHandler,         /* Timer1 */
@@ -206,6 +211,7 @@ void (* const g_pfnVectors[])(void) =
 void Reset_Handler(void)
 {
     unsigned long *pulSrc, *pulDest;
+    static unsigned long SSSSStack = (unsigned long)&_estack;
 
     /* Initialize the System */
     SystemInit();
@@ -231,6 +237,7 @@ void Reset_Handler(void)
 //    }
 
     /* Call the application's entry point */
+    SSSSStack--;
     main();
 
     while(1)

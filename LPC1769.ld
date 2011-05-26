@@ -24,7 +24,7 @@ MEMORY
   rom(rw)   : ORIGIN = 0x00000000, LENGTH = 512K
   
   /* On-chip main SRAM: 0x1000 0000 - 0x1000 7FFF */ 
-  ram1(rwx)  : ORIGIN = 0x10000000, LENGTH =  32K
+  ram1(rwx)  : ORIGIN = 0x10000000, LENGTH = 32K
    
   /* 
    * On-chip SRAM AHB SRAM bank 0 and 1(may be reserved for Ethernet and USB): 0x2007 C000 - 0x2008 3FFF 
@@ -300,15 +300,17 @@ SECTIONS
    
 
   /* Stack section */
-  /*. = ORIGIN(ram1) + LENGTH(ram1) - 0x2000;*/
+  . = ORIGIN(ram1) + LENGTH(ram1) - 0x2000;
   .stack (NOLOAD):
   {
+    . = ALIGN(8); 
     *(.stack)
+    . = ALIGN(8);
     /* Provide stack end address */
-    /*_estack = ORIGIN(ram1) + LENGTH(ram1);
-    PROVIDE(estack = ORIGIN(ram1) + LENGTH(ram1));*/
-    _estack = .;
-    PROVIDE(estack = .);
+    _estack = ORIGIN(ram1) + LENGTH(ram1);
+    PROVIDE(estack = ORIGIN(ram1) + LENGTH(ram1));
+    /*_estack = .;
+    PROVIDE(estack = .);*/
   } >ram1
 
 

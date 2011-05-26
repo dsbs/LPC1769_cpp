@@ -84,17 +84,23 @@ __INLINE static void LED_Off (uint32_t led) {
  *****************************************************************************/
 int main(void)
 {
+   int i;
+   static int j;
 	  if (SysTick_Config(12 / 1000)) { /* Setup SysTick Timer for 1 msec interrupts  */
 	    while (1);                                  /* Capture error */
+
 	  }
 
 	  LED_Config();
 
 	  while(1) {
+	     i++;
+	       j--;
 	    LED_On ((1<<28));                           /* Turn on the LED. */
 	    Delay (100);                                /* delay  100 Msec */
 	    LED_Off ((1<<28));                          /* Turn off the LED. */
 	    Delay (100);                                /* delay  100 Msec */
+
 	  }
 	  return 0;
 }
