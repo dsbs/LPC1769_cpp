@@ -1,4 +1,4 @@
-#include "Lamp.h"
+#include "lamp.h"
 
 
 Lamp::Lamp(Pin pin, bool initial_state = false, bool inverted = false) 
