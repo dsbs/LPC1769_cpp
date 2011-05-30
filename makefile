@@ -66,15 +66,6 @@ ASOBJS     = $(addprefix $(OBJDIR)/,$(ASRCS:.s=.o))
 OBJS = $(COBJS) $(CPPOBJS) $(ASOBJS)
 
 ###########################################################################
-# Compiler/Linker rules selection depending on file group
-###########################################################################
-# TODO: If you remove those lines the object files can not be generated
-THUMB = 
-$(COBJS)      : CFLAGS   += $(THUMB)
-$(CPPOBJS)    : CPPFLAGS += $(THUMB)
-$(ASOBJS)     : ASFLAGS  += $(THUMB)
-
-###########################################################################
 # Targets
 ###########################################################################
 # Default target.
@@ -249,3 +240,5 @@ OOCD_CL+=-c shutdown
 ###########################################################################
 .PHONY : all help size gccversion build elf hex bin lss sym clean createdirs
 .DEFAULT_GOAL := all
+# prevent make from deleting *.obj files
+.SECONDARY: $(OBJS)
