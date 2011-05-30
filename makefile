@@ -44,6 +44,7 @@ LSTDIR  = $(OUTDIR)/lst
 LOGDIR  = $(OUTDIR)/log
 LOGFILE = $(LOGDIR)/$(TARGET).log
 
+# Display or pipe the output of a command and copy it into a log file
 TEE     = tee -a $(LOGFILE)
 
 ###########################################################################
@@ -59,17 +60,16 @@ VPATH = $(SUBDIRS)
 # Define all object files based on source files to be compiled
 ###########################################################################
 COBJS      = $(addprefix $(OBJDIR)/,$(CSRCS:.c=.o))
-COBJSARM   = $(addprefix $(OBJDIR)/,$(CSRCSARM:.c=.o))
 CPPOBJS    = $(addprefix $(OBJDIR)/,$(CPPSRCS:.cpp=.o))
-CPPOBJSARM = $(addprefix $(OBJDIR)/,$(CPPSRCSARM:.cpp=.o))
 ASOBJS     = $(addprefix $(OBJDIR)/,$(ASRCS:.s=.o))
-ASOBJSARM  = $(addprefix $(OBJDIR)/,$(ASRCSARM:.s=.o))
 
-OBJS = $(COBJS) $(COBJSARM) $(CPPOBJS) $(CPPOBJSARM) $(ASOBJS) $(ASOBJSARM)
+OBJS = $(COBJS) $(CPPOBJS) $(ASOBJS)
 
 ###########################################################################
 # Compiler/Linker rules selection depending on file group
 ###########################################################################
+# TODO: If you remove those lines the object files can not be generated
+THUMB = 
 $(COBJS)      : CFLAGS   += $(THUMB)
 $(CPPOBJS)    : CPPFLAGS += $(THUMB)
 $(ASOBJS)     : ASFLAGS  += $(THUMB)
@@ -162,7 +162,7 @@ $(OUTDIR)/%.bin: $(OUTDIR)/%.elf
 # -h, --section-headers # Display summary information from the section headers
 #                       # of the objfile.
 # -S, --source          # Display source code intermixed with disassembly, if
-#                       # possible. Implies ‘-d’.
+#                       # possible. Implies '-d'.
 # -d, --disassemble     # Display the assembler mnemonics for the machine
 #                       # instructions from objfile.
 # -C, --demangle        # change compiler generated names to readable ones.

@@ -75,6 +75,22 @@ __INLINE static void LED_Off (uint32_t led) {
   LPC_GPIO1->FIOPIN &= ~(led);                  /* Turn Off LED */
 }
 
+__attribute__ ((section(".fastcode")))
+void fastCodeFunct(void);
+
+typedef union
+{
+   struct
+   {
+      int b1:1;
+      int b2:1;
+      int b3:1;
+      int b4:1;
+      int b5:27;
+   };
+   int all;
+}Bits;
+
 /**************************************************************************//**
  * main
  * Function from which everything starts...
@@ -86,6 +102,21 @@ int main(void)
 {
    int i;
    static int j;
+
+   static Bits bits;
+   bits.all = 0xFFFFFFFF;
+   bits.b1 = 0;
+   bits.b5 = 0;
+   if(1==bits.b1)
+   {
+      bits.b2 = 0;
+   }
+   else
+   {
+      bits.b2 = 1;
+   }
+
+   fastCodeFunct();
 	  if (SysTick_Config(12 / 1000)) { /* Setup SysTick Timer for 1 msec interrupts  */
 	    while (1);                                  /* Capture error */
 
@@ -105,3 +136,13 @@ int main(void)
 	  return 0;
 }
 
+
+void fastCodeFunct(void)
+{
+   //int dd = SysTick_Config(12 / 1000);
+   LED_Config();
+   LED_On ((1<<28));                           /* Turn on the LED. */
+   Delay (100);                                /* delay  100 Msec */
+   LED_Off ((1<<28));                          /* Turn off the LED. */
+   Delay (100);                                /* delay  100 Msec */
+}
