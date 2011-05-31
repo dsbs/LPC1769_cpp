@@ -184,22 +184,22 @@ $(OUTDIR)/%.elf: $(OBJS)
 $(OBJDIR)/%.o: %.s
 	@echo '  AS  $(<F) > $(@F)' | $(TEE)
 	@echo '$(AS) -c $(ASFLAGS) $< -o $@' >> $(LOGFILE)
-	@$(AS) -c $(ASFLAGS) $< -o $@; \
-	sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
+	@$(AS) -c $(ASFLAGS) $< -o $@
+	@sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
 	$(RM) -f $(*F).tmp | $(TEE)
 
 $(OBJDIR)/%.o: %.c
 	@echo '  CC  $(<F) > $(@F)' | $(TEE)
 	@echo '$(CC) -c $(CFLAGS) $< -o $@' >> $(LOGFILE)
-	@$(CC) -c $(CFLAGS) $< -o $@; \
-	sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
+	@$(CC) -c $(CFLAGS) $< -o $@
+	@sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
 	$(RM) -f $(*F).tmp | $(TEE)
 
 $(OBJDIR)/%.o: %.cpp
 	@echo '  CPP $(<F) > $(@F)' | $(TEE)
 	@echo '$(CPP) -c $(CPPFLAGS) $< -o $@' >> $(LOGFILE)
-	@$(CPP) -c $(CPPFLAGS) $< -o $@; \
-	sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
+	@$(CPP) -c $(CPPFLAGS) $< -o $@
+	@sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
 	$(RM) -f $(*F).tmp | $(TEE)
 
 ###########################################################################
