@@ -84,17 +84,14 @@ CPPFLAGS = \
 #                                  # directive to the source or pass the '-mthumb' option directly to the assembler
 #                                  # by prefixin gi twit '-Wa'
 # -Wa, -gdwarf-2 \                 # Debugging format
-# -x assembler-with-cpp \          # Source files C++ for assembler
-# -D__ASSEMBLY__ \                 # Allows include files in assemler
-#                                  # -Wa -pass to the assembler, -adhlns -create assembler listing
+#                                  # -adhlns -create assembler listing
 ASFLAGS = \
-          $(LSTGEN) \
-          $(DEPGEN) \
+          -adhlns=$(LSTDIR)/$(*F).lst \
+          -MD -MP $(*F).tmp \
+          -mthumb \
           $(patsubst %,-I%,$(SUBDIRS)) -I. \
           -mcpu=cortex-m3 \
-          -Wa, -gdwarf-2 \
-          -x assembler-with-cpp \
-          -D__ASSEMBLY__
+          -gdwarf-2 
 
 # Linker flags
 # --warn-common                    # Warn when a common symbol is combined with another common
