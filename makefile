@@ -46,7 +46,7 @@ LOGDIR  = $(OUTDIR)/log
 LOGFILE = $(LOGDIR)/$(TARGET).log
 
 # Display or pipe the output of a command and copy it into a log file
-TEE     = tee -a $(LOGFILE)
+TEE     = 2>&1 | tee -a $(LOGFILE)
 
 ###########################################################################
 # included makefiles, input path definitions
@@ -71,7 +71,7 @@ OBJS = $(COBJS) $(CPPOBJS) $(ASOBJS)
 ###########################################################################
 # Default target.
 all: createdirs gccversion build size
-	@echo '---- $(TARGET) built:' | $(TEE)
+	@echo '---- $(TARGET) built:' $(TEE)
 
 # Create output directories.
 createdirs:
@@ -101,9 +101,9 @@ bin: $(OUTDIR)/$(TARGET).bin
 #  Format Compatibility(A-system default, B-Berkeley's similar)
 #  Size data type(d-digital, o-octal, x-hexadecimal)
 size: build
-	@echo ' '	 | $(TEE)
+	@echo ' '	 $(TEE)
 	@echo '$(SIZE) -A -d --totals $(OUTDIR)/$(TARGET).elf' >> $(LOGFILE)
-	@$(SIZE) -A -d --totals $(OUTDIR)/$(TARGET).elf | $(TEE)
+	@$(SIZE) -A -d --totals $(OUTDIR)/$(TARGET).elf $(TEE)
 
 # Target: clean project.
 clean:
@@ -136,16 +136,16 @@ doc: createdirs
 # Create final output file (.hex) from ELF output file.
 # --output-target ihex  # Write the output file using the ihex object format
 $(OUTDIR)/%.hex: $(OUTDIR)/%.elf
-	@echo '  OBJCOPY  $(+F) > $(@F)  - hex file' | $(TEE)
+	@echo '  OBJCOPY  $(+F) > $(@F)  - hex file' $(TEE)
 	@echo '$(OBJCOPY) -O ihex $< $@' >> $(LOGFILE)
-	@$(OBJCOPY) --output-target ihex $< $@ | $(TEE)
+	@$(OBJCOPY) --output-target ihex $< $@ $(TEE)
 	
 # Create final output file (.bin) from ELF output file.
 # --output-target binary  # Write the output file using the binary object format
 $(OUTDIR)/%.bin: $(OUTDIR)/%.elf
-	@echo '  OBJCOPY  $(+F) > $(@F)  - binary file' | $(TEE)
+	@echo '  OBJCOPY  $(+F) > $(@F)  - binary file' $(TEE)
 	@echo '$(OBJCOPY) -O binary $< $@' >> $(LOGFILE)
-	@$(OBJCOPY) -O binary $< $@ | $(TEE)
+	@$(OBJCOPY) -O binary $< $@ $(TEE)
 
 # Create extended listing file/disassambly from ELF output file.
 # using objdump testing: option -C
@@ -158,48 +158,48 @@ $(OUTDIR)/%.bin: $(OUTDIR)/%.elf
 # -C, --demangle        # change compiler generated names to readable ones.
 # -r, --reloc           # Print the relocation entries of the file.
 $(OUTDIR)/%.lss: $(OUTDIR)/%.elf
-	@echo '  OBJDUMP  $(+F) > $(@F)  - extended listing/disassembly file' | $(TEE)
+	@echo '  OBJDUMP  $(+F) > $(@F)  - extended listing/disassembly file' $(TEE)
 	@echo '$(OBJDUMP) -h -S -C -r $< > $@' >> $(LOGFILE)
-	@$(OBJDUMP) --section-headers --source --demangle --reloc $< > $@ | $(TEE)
+	@$(OBJDUMP) --section-headers --source --demangle --reloc $< > $@ $(TEE)
 
 # Create a symbol table from ELF output file.
 # -n, --numeric-sort # Sort symbols numerically by their addresses, rather
 #                    # than alphabetically by their names
 $(OUTDIR)/%.sym: $(OUTDIR)/%.elf
-	@echo '  NM       $(+F) > $(@F)  - symbol file' | $(TEE)
+	@echo '  NM       $(+F) > $(@F)  - symbol file' $(TEE)
 	@echo '$(NM) --numeric-sort $< > $@' >> $(LOGFILE)
-	@$(NM) -n $< > $@ | $(TEE)
+	@$(NM) -n $< > $@ $(TEE)
 
 # Link: create ELF output file from object files.
 $(OUTDIR)/%.elf: $(OBJS)
-	@echo ' ' | $(TEE)
-	@echo '  LINK     $(filter %.o,$(+F)) > $(@F)' | $(TEE)
+	@echo ' ' $(TEE)
+	@echo '  LINK     $(filter %.o,$(+F)) > $(@F)' $(TEE)
 	@echo '$(LD) $(LDFLAGS) $(OBJS) --output $@ ' >> $(LOGFILE)
-	@$(LD) $(LDFLAGS) $(OBJS) --output $@ | $(TEE)
+	@$(LD) $(LDFLAGS) $(OBJS) --output $@ $(TEE)
 
 ###########################################################################
 # Compile
 ###########################################################################
 $(OBJDIR)/%.o: %.s
-	@echo '  AS  $(<F) > $(@F)' | $(TEE)
+	@echo '  AS  $(<F) > $(@F)' $(TEE)
 	@echo '$(AS) -c $(ASFLAGS) $< -o $@' >> $(LOGFILE)
-	@$(AS) -c $(ASFLAGS) $< -o $@; \
-	sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
-	$(RM) -f $(*F).tmp | $(TEE)
+	@$(AS) -c $(ASFLAGS) $< -o $@ $(TEE)
+	@sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
+	$(RM) -f $(*F).tmp $(TEE)
 
 $(OBJDIR)/%.o: %.c
-	@echo '  CC  $(<F) > $(@F)' | $(TEE)
+	@echo '  CC  $(<F) > $(@F)' $(TEE)
 	@echo '$(CC) -c $(CFLAGS) $< -o $@' >> $(LOGFILE)
-	@$(CC) -c $(CFLAGS) $< -o $@; \
-	sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
-	$(RM) -f $(*F).tmp | $(TEE)
+	@$(CC) -c $(CFLAGS) $< -o $@ $(TEE)
+	@sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
+	$(RM) -f $(*F).tmp $(TEE)
 
 $(OBJDIR)/%.o: %.cpp
-	@echo '  CPP $(<F) > $(@F)' | $(TEE)
+	@echo '  CPP $(<F) > $(@F)' $(TEE)
 	@echo '$(CPP) -c $(CPPFLAGS) $< -o $@' >> $(LOGFILE)
-	@$(CPP) -c $(CPPFLAGS) $< -o $@; \
-	sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
-	$(RM) -f $(*F).tmp | $(TEE)
+	@$(CPP) -c $(CPPFLAGS) $< -o $@ $(TEE)
+	@sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
+	$(RM) -f $(*F).tmp $(TEE)
 
 ###########################################################################
 # Options for OpenOCD flash-programming

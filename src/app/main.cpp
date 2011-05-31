@@ -28,7 +28,6 @@
 
 //#define VERSION_STRING "V1.2.0 12/2009"
 
-
 volatile uint32_t msTicks;                            /* counts 1ms timeTicks */
 /*----------------------------------------------------------------------------
   SysTick_Handler
