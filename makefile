@@ -18,7 +18,7 @@ help:
 	@echo ' Files are generated in release folder                                             '
 
 ###########################################################################
-# Tool chain files and shell commands
+# Tool chain files 
 ###########################################################################
 TCHAIN_PREFIX = arm-none-eabi-
 CC      = $(TCHAIN_PREFIX)gcc
@@ -29,6 +29,7 @@ OBJCOPY = $(TCHAIN_PREFIX)objcopy
 OBJDUMP = $(TCHAIN_PREFIX)objdump
 SIZE    = $(TCHAIN_PREFIX)size
 NM      = $(TCHAIN_PREFIX)nm
+OOCD    = openocd
 
 ###########################################################################
 # Output path definitions
@@ -124,8 +125,7 @@ clean:
 # use following dependencies after implementing this target
 #flash: $(OUTDIR)/$(TARGET).elf
 flash:
-	$(error Flashing with OPENOCD NOT IMPLEMETED)
-	#$(OOCD_EXE) $(OOCD_CL)
+	$(OOCD) $(OOCD_CL)
 
 doc: createdirs
 	@doxygen doxyfile 2>&1
@@ -205,33 +205,39 @@ $(OBJDIR)/%.o: %.cpp
 ###########################################################################
 # Options for OpenOCD flash-programming
 ###########################################################################
-# see openocd.pdf/openocd.texi for further information
-############################################################TBD: adjust to linux/lpc1769
-OOCD_LOADFILE+=$(OUTDIR)/$(TARGET).elf
-## Open OCD exec file
-OOCD_EXE=openocd
-## debug level
-OOCD_CL=-d0
-#OOCD_CL=-d3
-# interface and board/target settings (using the OOCD target-library here)
-## OOCD_CL+=-f interface/jtagkey2.cfg -f target/stm32.cfg
-OOCD_CL+=-f interface/jtagkey.cfg -f target/stm32.cfg
-# initialize
-OOCD_CL+=-c init
-# enable "fast mode" - can be disabled for tests
-OOCD_CL+=-c "fast enable"
-# show the targets
-OOCD_CL+=-c targets
-# commands to prepare flash-write
-OOCD_CL+= -c "reset halt"
-# increase JTAG frequency a little bit - can be disabled for tests
-OOCD_CL+= -c "jtag_khz 1200"
-# flash-write and -verify
-OOCD_CL+=-c "flash write_image erase $(OOCD_LOADFILE)" -c "verify_image $(OOCD_LOADFILE)"
-# reset target
-OOCD_CL+=-c "reset run"
-# terminate OOCD after programming
-OOCD_CL+=-c shutdown
+# Provide path and name for elf file which will be flashed to uC
+OOCD_LOADFILE += $(OUTDIR)/$(TARGET).elf
+
+# Specify the JTAG interface which will be used to flash
+OOCD_CL += -f interface/oocdlink.cfg
+
+# Specify target uC which will be flashed. 
+# TODO: prepare for lpc1769, send to openocd team
+# TODO: In the next openocd release this file should be included to /target group, then link directly to openocd/target/lpc1769.cfg
+OOCD_CL += -f lpc1769.cfg
+
+# Debug level, 0 = do not output debug messages for openocd
+OOCD_CL = -d0
+
+
+
+
+## initialize
+#OOCD_CL+=-c init
+## enable "fast mode" - can be disabled for tests
+#OOCD_CL+=-c "fast enable"
+## show the targets
+#OOCD_CL+=-c targets
+## commands to prepare flash-write
+#OOCD_CL+= -c "reset halt"
+## increase JTAG frequency a little bit - can be disabled for tests
+#OOCD_CL+= -c "jtag_khz 1200"
+## flash-write and -verify
+#OOCD_CL+=-c "flash write_image erase $(OOCD_LOADFILE)" -c "verify_image $(OOCD_LOADFILE)"
+## reset target
+#OOCD_CL+=-c "reset run"
+## terminate OOCD after programming
+#OOCD_CL+=-c shutdown
 
 -include $(DEPDIR)/*
 
