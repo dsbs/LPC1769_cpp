@@ -121,12 +121,11 @@ clean:
 	@echo ' '
 	@echo '---- Cleaned'
 
-# TBD: flash
-# use following dependencies after implementing this target
-#flash: $(OUTDIR)/$(TARGET).elf
+# Flash uC with build target
 flash:
-	$(OOCD) $(OOCD_CL)
+	$(OOCD) $(OOCD_SETUP) $(OOCD_FLASH)
 
+# Generate project documentation	
 doc: createdirs
 	@doxygen doxyfile 2>&1
 	@cat release/log/doxygen.log
@@ -205,40 +204,58 @@ $(OBJDIR)/%.o: %.cpp
 ###########################################################################
 # Options for OpenOCD flash-programming
 ###########################################################################
-# Provide path and name for elf file which will be flashed to uC
-OOCD_LOADFILE += $(OUTDIR)/$(TARGET).elf
+# Set up the JTAG interface
 
 # Specify the JTAG interface which will be used to flash
-OOCD_CL += -f interface/oocdlink.cfg
+OOCD_SETUP = -f interface/oocdlink.cfg
 
 # Specify target uC which will be flashed. 
 # TODO: prepare for lpc1769, send to openocd team
 # TODO: In the next openocd release this file should be included to /target group, then link directly to openocd/target/lpc1769.cfg
-OOCD_CL += -f lpc1769.cfg
+OOCD_SETUP += -f lpc1769.cfg
 
 # Debug level, 0 = do not output debug messages for openocd
-OOCD_CL = -d0
+OOCD_SETUP += -d0
+
+# Set up JTAG frequency. The interface config file set up the default frequence, here it will be overwirtten
+OOCD_SETUP += -c "jtag_khz 1200"
 
 
+# FLASH via JTAG
+
+# Provide path and name for elf file which will be flashed to uC
+OOCD_LOADFILE = $(OUTDIR)/$(TARGET).elf
+
+# This command terminates the configuration stage and enters the run stage
+# TODO: do we need init_jtag as well?
+OOCD_FLASH = -c init
+
+# enable "fast mode" - can be disabled for tests
+# TODO: This might not be needed, read manual again, test with this option enabled and disabled 
+# OOCD_FLASH += -c "fast enable"
+
+# Show connected targets
+OOCD_FLASH+=-c targets
+
+# Immediately halt the target
+# TODO: Do we need this? Why not "reset init".  Also why this command need to use the character '"' and for e.g. command targets(above) doesn't
+OOCD_FLASH+= -c "reset halt"
+
+# Flash and verify
+# TODO: Do we need to erase mem everz time we flash? Prepare 512k flash file and perform time measurements for reference
+# TODO: DO we need to verify? 
+OOCD_FLASH+=-c "flash write_image erase $(OOCD_LOADFILE) elf" -c " verify_image $(OOCD_LOADFILE)"
+
+# Let the target run
+OOCD_FLASH+=-c "reset run"
+
+# Close the OpenOCD daemon, disconnecting all clients (GDB, telnet, other)
+OOCD_FLASH+=-c shutdown
 
 
-## initialize
-#OOCD_CL+=-c init
-## enable "fast mode" - can be disabled for tests
-#OOCD_CL+=-c "fast enable"
-## show the targets
-#OOCD_CL+=-c targets
-## commands to prepare flash-write
-#OOCD_CL+= -c "reset halt"
-## increase JTAG frequency a little bit - can be disabled for tests
-#OOCD_CL+= -c "jtag_khz 1200"
-## flash-write and -verify
-#OOCD_CL+=-c "flash write_image erase $(OOCD_LOADFILE)" -c "verify_image $(OOCD_LOADFILE)"
-## reset target
-#OOCD_CL+=-c "reset run"
-## terminate OOCD after programming
-#OOCD_CL+=-c shutdown
-
+###########################################################################
+# Include all dependences TODO: Why this must be here included? Put the explanation
+###########################################################################
 -include $(DEPDIR)/*
 
 ###########################################################################

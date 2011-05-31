@@ -24,6 +24,8 @@ PENDING
 * When compilation of some cpp or c file fails, the build process is not terminated. 
   Linker still tries to link not existed object files
 * Create assembler file and try to compile, test if properly passed compiler switches to asm.
+* Investigate if when creating output file we can fill out empty flash space with some pattern like for e.g. 0x00
+  Do we need this? will it be useful somehow?
 
 
 DONE
