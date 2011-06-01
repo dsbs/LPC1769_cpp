@@ -28,11 +28,12 @@
  * - Added addresses for the section ram2 and ram3 (separate banks of memory)
  * - Updated Reset_Handler() function with call of SystemInit(), initialization of ram memory, jump to main()
  * - Minor fixes: comments, this header description
+ * - Added missing CAN and USB interrupt vectors, updated descriptions
  *
  * Dawid Bazan <dawidbazan@gmail.com>
  * Dariusz Synowiec <devemouse@gmail.com>
  *
- * Last update on May 2011
+ * Last update on June 2011
  */
 
 
@@ -92,6 +93,9 @@ void WEAK      	RIT_IRQHandler(void);            /* Repetitive Interrupt Timer *
 void WEAK      	MCPWM_IRQHandler(void);          /* Motor Control PWM */
 void WEAK      	QEI_IRQHandler(void);            /* Quadrature Encoder Interface */
 void WEAK      	PLL1_IRQHandler(void);           /* PLL1 (USB PLL) */
+void WEAK         USBActivity_IRQHandler(void);    /* USB Activity */
+void WEAK         CANActivity_IRQHandler(void);    /* CAN Activity */
+
 
 
 
@@ -140,58 +144,63 @@ void (* const g_pfnVectors[])(void) =
         /*
          * The Cortex-M3 interrupt controller (NVIC) will need stack address before
          * it can jump to the handler. Hence, it’s put as the first thing on the interrupt table
+         *
+         * Interrupt function addresses sorted by Exception number
+         *
          */
-        (irqfct)(&_estack),        /* The initial stack pointer */
-        Reset_Handler,             /* Reset Handler */
-        NMI_Handler,               /* NMI Handler */
-        HardFault_Handler,         /* Hard Fault Handler */
-        MemManage_Handler,         /* MPU Fault Handler */
-        BusFault_Handler,          /* Bus Fault Handler */
-        UsageFault_Handler,        /* Usage Fault Handler */
-        0,                         /* Reserved */
-        0,                         /* Reserved */
-        0,                         /* Reserved */
-        0,                         /* Reserved */
-        SVC_Handler,               /* SVCall Handler */
-        DebugMon_Handler,          /* Debug Monitor Handler */
-        0,                         /* Reserved */
-        PendSV_Handler,            /* PendSV Handler */
-        SysTick_Handler,           /* SysTick Handler */
+        (irqfct)(&_estack),        /* 0  - The initial stack pointer */
+        Reset_Handler,             /* 1  - Reset Handler */
+        NMI_Handler,               /* 2  - NMI Handler */
+        HardFault_Handler,         /* 3  - Hard Fault Handler */
+        MemManage_Handler,         /* 4  - MPU Fault Handler */
+        BusFault_Handler,          /* 5  - Bus Fault Handler */
+        UsageFault_Handler,        /* 6  - Usage Fault Handler */
+        0,                         /* 7  - Reserved */
+        0,                         /* 8  - Reserved */
+        0,                         /* 9  - Reserved */
+        0,                         /* 10 - Reserved */
+        SVC_Handler,               /* 11 - SVCall Handler */
+        DebugMon_Handler,          /* 12 - Debug Monitor Handler */
+        0,                         /* 13 - Reserved */
+        PendSV_Handler,            /* 14 - PendSV Handler */
+        SysTick_Handler,           /* 15 - SysTick Handler */
 
 		  /* External Interrupts */
-        WDT_IRQHandler,            /* Watchdog Timer */
-        TIMER0_IRQHandler,         /* Timer0 */
-        TIMER1_IRQHandler,         /* Timer1 */
-        TIMER2_IRQHandler,         /* Timer2 */
-        TIMER3_IRQHandler,         /* Timer3 */
-        UART0_IRQHandler,          /* UART0 */
-        UART1_IRQHandler,          /* UART1 */
-        UART2_IRQHandler,          /* UART2 */
-        UART3_IRQHandler,          /* UART3 */
-        PWM1_IRQHandler,           /* PWM1 */
-        I2C0_IRQHandler,           /* I2C0 */
-        I2C1_IRQHandler,           /* I2C1 */
-        I2C2_IRQHandler,           /* I2C2 */
-        SPI_IRQHandler,            /* SPI */
-        SSP0_IRQHandler,           /* SSP0 */
-        SSP1_IRQHandler,           /* SSP1 */
-        PLL0_IRQHandler,           /* PLL0 (Main PLL) */
-        RTC_IRQHandler,            /* Real Time Clock */
-        EINT0_IRQHandler,          /* External Interrupt 0 */
-        EINT1_IRQHandler,          /* External Interrupt 1 */
-        EINT2_IRQHandler,          /* External Interrupt 2 */
-        EINT3_IRQHandler,          /* External Interrupt 3 */
-        ADC_IRQHandler,            /* A/D Converter */
-        BOD_IRQHandler,            /* Brown Out Detect */
-        USB_IRQHandler,            /* USB */
-        CAN_IRQHandler,            /* CAN */
-        DMA_IRQHandler,            /* GP DMA */
-        I2S_IRQHandler,            /* I2S */
-        ENET_IRQHandler,           /* Ethernet */
-        RIT_IRQHandler,            /* Repetitive Interrupt Timer */
-        MCPWM_IRQHandler,          /* Motor Control PWM */
-        QEI_IRQHandler,            /* Quadrature Encoder Interface */
-        PLL1_IRQHandler,           /* PLL1 (USB PLL) */
+        WDT_IRQHandler,            /* 16 - Watchdog Timer */
+        TIMER0_IRQHandler,         /* 17 - Timer0 */
+        TIMER1_IRQHandler,         /* 18 - Timer1 */
+        TIMER2_IRQHandler,         /* 19 - Timer2 */
+        TIMER3_IRQHandler,         /* 20 - Timer3 */
+        UART0_IRQHandler,          /* 21 - UART0 */
+        UART1_IRQHandler,          /* 22 - UART1 */
+        UART2_IRQHandler,          /* 23 - UART2 */
+        UART3_IRQHandler,          /* 24 - UART3 */
+        PWM1_IRQHandler,           /* 25 - PWM1 */
+        I2C0_IRQHandler,           /* 26 - I2C0 */
+        I2C1_IRQHandler,           /* 27 - I2C1 */
+        I2C2_IRQHandler,           /* 28 - I2C2 */
+        SPI_IRQHandler,            /* 29 - SPI */
+        SSP0_IRQHandler,           /* 30 - SSP0 */
+        SSP1_IRQHandler,           /* 31 - SSP1 */
+        PLL0_IRQHandler,           /* 32 - PLL0 (Main PLL) */
+        RTC_IRQHandler,            /* 33 - Real Time Clock */
+        EINT0_IRQHandler,          /* 34 - External Interrupt 0 */
+        EINT1_IRQHandler,          /* 35 - External Interrupt 1 */
+        EINT2_IRQHandler,          /* 36 - External Interrupt 2 */
+        EINT3_IRQHandler,          /* 37 - External Interrupt 3 */
+        ADC_IRQHandler,            /* 38 - A/D Converter */
+        BOD_IRQHandler,            /* 39 - Brown Out Detect */
+        USB_IRQHandler,            /* 40 - USB */
+        CAN_IRQHandler,            /* 41 - CAN */
+        DMA_IRQHandler,            /* 42 - GP DMA */
+        I2S_IRQHandler,            /* 43 - I2S */
+        ENET_IRQHandler,           /* 44 - Ethernet */
+        RIT_IRQHandler,            /* 45 - Repetitive Interrupt Timer */
+        MCPWM_IRQHandler,          /* 46 - Motor Control PWM */
+        QEI_IRQHandler,            /* 47 - Quadrature Encoder Interface */
+        PLL1_IRQHandler,           /* 48 - PLL1 (USB PLL) */
+        USBActivity_IRQHandler,    /* 49 - USB Activity */
+        CANActivity_IRQHandler     /* 50 - CAN Activity */
 };
 
 /*******************************************************************************
@@ -288,6 +297,8 @@ void Reset_Handler(void)
 #pragma weak MCPWM_IRQHandler = Default_Handler          /* Motor Control PWM */
 #pragma weak QEI_IRQHandler = Default_Handler            /* Quadrature Encoder Interface */
 #pragma weak PLL1_IRQHandler = Default_Handler           /* PLL1 (USB PLL) */
+#pragma weak USBActivity_IRQHandler = Default_Handler    /* USB Activity */
+#pragma weak CANActivity_IRQHandler = Default_Handler    /* CAN Activity */
 
 //*****************************************************************************
 //

@@ -22,6 +22,16 @@
  *
  ******************************************************************************/
 
+/*
+ * Updated for LPC1769:
+ * - Added __RAM_MODE__ definition which is used in system_LPC17xx.h file
+ *
+ * Dawid Bazan <dawidbazan@gmail.com>
+ * Dariusz Synowiec <devemouse@gmail.com>
+ *
+ * Last update on June 2011
+ */
+
 
 #ifndef __SYSTEM_LPC17xx_H
 #define __SYSTEM_LPC17xx_H
@@ -36,6 +46,7 @@ extern "C" {
  * @{
  */
 
+#define __RAM_MODE__ 0
 
 extern uint32_t SystemCoreClock;     /*!< System Clock Frequency (Core Clock)  */
 

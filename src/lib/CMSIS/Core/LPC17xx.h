@@ -23,9 +23,10 @@
  ******************************************************************************/
 
 /*
- * Updated to LPC1769:
+ * Updated for LPC1769:
  * - DMA Select structure updated to keep the same format
  * - Updated GPIO bits to have access to single pins
+ * - Added missing HardFault_IRQn interrupt
  *
  * Dawid Bazan <dawidbazan@gmail.com>
  * Dariusz Synowiec <devemouse@gmail.com>
@@ -50,8 +51,9 @@
 /** @brief IRQ interrupt source definition */
 typedef enum IRQn
 {
-/******  Cortex-M3 Processor Exceptions Numbers ***************************************************/
+/******  Cortex-M3 Processor Interrupt Numbers ****************************************************/
   NonMaskableInt_IRQn           = -14,      /*!< 2 Non Maskable Interrupt                         */
+  HardFault_IRQn                = -13,      /*!< 3 Cortex-M3 Hard Fault Interrupt                 */
   MemoryManagement_IRQn         = -12,      /*!< 4 Cortex-M3 Memory Management Interrupt          */
   BusFault_IRQn                 = -11,      /*!< 5 Cortex-M3 Bus Fault Interrupt                  */
   UsageFault_IRQn               = -10,      /*!< 6 Cortex-M3 Usage Fault Interrupt                */
@@ -60,7 +62,7 @@ typedef enum IRQn
   PendSV_IRQn                   = -2,       /*!< 14 Cortex-M3 Pend SV Interrupt                   */
   SysTick_IRQn                  = -1,       /*!< 15 Cortex-M3 System Tick Interrupt               */
 
-/******  LPC17xx Specific Interrupt Numbers *******************************************************/
+/******  LPC17xx Specific Interrupt Numbers  ******************************************************/
   WDT_IRQn                      = 0,        /*!< Watchdog Timer Interrupt                         */
   TIMER0_IRQn                   = 1,        /*!< Timer0 Interrupt                                 */
   TIMER1_IRQn                   = 2,        /*!< Timer1 Interrupt                                 */
@@ -95,7 +97,7 @@ typedef enum IRQn
   QEI_IRQn                      = 31,       /*!< Quadrature Encoder Interface Interrupt           */
   PLL1_IRQn                     = 32,       /*!< PLL1 Lock (USB PLL) Interrupt                    */
   USBActivity_IRQn				  = 33,		  /*!< USB Activity Interrupt 						        */
-  CANActivity_IRQn				  = 34,		  /*!< CAN Activity Interrupt 						        */
+  CANActivity_IRQn				  = 34		  /*!< CAN Activity Interrupt 						        */
 } IRQn_Type;
 
 
