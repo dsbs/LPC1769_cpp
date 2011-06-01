@@ -51,15 +51,15 @@ __INLINE static void Delay (uint32_t dlyTicks) {
  *------------------------------------------------------------------------------*/
 __INLINE static void LED_Config(void) {
 
-  LPC_GPIO1->FIODIR = 0xB0000000;               /* LEDs PORT1 are Output */
+  LPC_GPIO1->FIODIR0b.b1 = 1; //1-output pin, 0-input pin
 }
 
 /*------------------------------------------------------------------------------
   Switch on LEDs
  *------------------------------------------------------------------------------*/
-__INLINE static void LED_On (uint32_t led) {
+__INLINE static void LED_On () {
 
-  LPC_GPIO1->FIOPIN |=  (led);                  /* Turn On  LED */
+  LPC_GPIO1->FIOPIN0b.b0 = 0;                  /* 0 - Turn On  LED */
 }
 
 /**************************************************************************//**
@@ -69,9 +69,9 @@ __INLINE static void LED_On (uint32_t led) {
  * @param uint32_t led channel
  *
  *****************************************************************************/
-__INLINE static void LED_Off (uint32_t led) {
+__INLINE static void LED_Off () {
 
-  LPC_GPIO1->FIOPIN &= ~(led);                  /* Turn Off LED */
+   LPC_GPIO1->FIOPIN0b.b0 = 1;                  /* 1 - Turn Off LED */
 }
 
 __attribute__ ((section(".fastcode")))
@@ -99,36 +99,36 @@ typedef union
  *****************************************************************************/
 int main(void)
 {
-   int i;
-   static int j;
-
-   static Bits bits;
-   bits.all = 0xFFFFFFFF;
-   bits.b1 = 0;
-   bits.b5 = 0;
-   if(1==bits.b1)
-   {
-      bits.b2 = 0;
-   }
-   else
-   {
-      bits.b2 = 1;
-   }
-
-   fastCodeFunct();
-	  if (SysTick_Config(12 / 1000)) { /* Setup SysTick Timer for 1 msec interrupts  */
-	    while (1);                                  /* Capture error */
-
-	  }
+//   int i;
+//   static int j;
+//
+//   static Bits bits;
+//   bits.all = 0xFFFFFFFF;
+//   bits.b1 = 0;
+//   bits.b5 = 0;
+//   if(1==bits.b1)
+//   {
+//      bits.b2 = 0;
+//   }
+//   else
+//   {
+//      bits.b2 = 1;
+//   }
+//
+//   fastCodeFunct();
+//	  if (SysTick_Config(12 / 1000)) { /* Setup SysTick Timer for 1 msec interrupts  */
+//	    while (1);                                  /* Capture error */
+//
+//	  }
 
 	  LED_Config();
 
 	  while(1) {
-	     i++;
-	       j--;
-	    LED_On ((1<<28));                           /* Turn on the LED. */
+//	     i++;
+//	       j--;
+	    LED_On ();                           /* Turn on the LED. */
 	    Delay (100);                                /* delay  100 Msec */
-	    LED_Off ((1<<28));                          /* Turn off the LED. */
+	    LED_Off ();                          /* Turn off the LED. */
 	    Delay (100);                                /* delay  100 Msec */
 
 	  }
@@ -140,8 +140,8 @@ void fastCodeFunct(void)
 {
    //int dd = SysTick_Config(12 / 1000);
    LED_Config();
-   LED_On ((1<<28));                           /* Turn on the LED. */
+   LED_On ();                           /* Turn on the LED. */
    Delay (100);                                /* delay  100 Msec */
-   LED_Off ((1<<28));                          /* Turn off the LED. */
+   LED_Off ();                          /* Turn off the LED. */
    Delay (100);                                /* delay  100 Msec */
 }

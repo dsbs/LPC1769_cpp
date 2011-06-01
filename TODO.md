@@ -11,6 +11,7 @@ IN PROGRESS
 * template files for c, cpp and h (remember about doxygen)
 * __DB:__ Test fastcode if this is working properly
 * __DB:__ Test that stack is properly set up and is working fine. In map file it's look OK, but need to be tested
+* __DB:__ Update LPC17xx.h with bitfields for GPIO to get access to single PINs
 
 PENDING
 ==============
