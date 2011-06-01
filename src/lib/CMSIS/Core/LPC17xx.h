@@ -22,6 +22,17 @@
  *
  ******************************************************************************/
 
+/*
+ * Updated to LPC1769:
+ * - DMA Select structure updated to keep the same format
+ * - Updated GPIO bits to have access to single pins
+ *
+ * Dawid Bazan <dawidbazan@gmail.com>
+ * Dariusz Synowiec <devemouse@gmail.com>
+ *
+ * Last update on June 2011
+ */
+
 
 #ifndef __LPC17xx_H__
 #define __LPC17xx_H__
@@ -83,8 +94,8 @@ typedef enum IRQn
   MCPWM_IRQn                    = 30,       /*!< Motor Control PWM Interrupt                      */
   QEI_IRQn                      = 31,       /*!< Quadrature Encoder Interface Interrupt           */
   PLL1_IRQn                     = 32,       /*!< PLL1 Lock (USB PLL) Interrupt                    */
-  USBActivity_IRQn				= 33,		/*!< USB Activity Interrupt 						  */
-  CANActivity_IRQn				= 34,		/*!< CAN Activity Interrupt 						  */
+  USBActivity_IRQn				  = 33,		  /*!< USB Activity Interrupt 						        */
+  CANActivity_IRQn				  = 34,		  /*!< CAN Activity Interrupt 						        */
 } IRQn_Type;
 
 
@@ -189,6 +200,18 @@ typedef struct
 } LPC_PINCON_TypeDef;
 
 /*------------- General Purpose Input/Output (GPIO) --------------------------*/
+typedef struct
+{
+   __IO uint8_t   b7;
+   __IO uint8_t   b6;
+   __IO uint8_t   b5;
+   __IO uint8_t   b4;
+   __IO uint8_t   b3;
+   __IO uint8_t   b2;
+   __IO uint8_t   b1;
+   __IO uint8_t   b0;
+} GPIO_bit_t;
+
 /** @brief General Purpose Input/Output (GPIO) register structure definition */
 typedef struct
 {
@@ -204,6 +227,12 @@ typedef struct
       __IO uint8_t  FIODIR2;
       __IO uint8_t  FIODIR3;
     };
+    struct {
+       __IO GPIO_bit_t FIODIR0b;
+       __IO GPIO_bit_t FIODIR1b;
+       __IO GPIO_bit_t FIODIR2b;
+       __IO GPIO_bit_t FIODIR3b;
+    };
   };
   uint32_t RESERVED0[3];
   union {
@@ -218,6 +247,12 @@ typedef struct
       __IO uint8_t  FIOMASK2;
       __IO uint8_t  FIOMASK3;
     };
+    struct {
+       __IO GPIO_bit_t FIOMASK0b;
+       __IO GPIO_bit_t FIOMASK1b;
+       __IO GPIO_bit_t FIOMASK2b;
+       __IO GPIO_bit_t FIOMASK3b;
+    };
   };
   union {
     __IO uint32_t FIOPIN;
@@ -230,6 +265,12 @@ typedef struct
       __IO uint8_t  FIOPIN1;
       __IO uint8_t  FIOPIN2;
       __IO uint8_t  FIOPIN3;
+    };
+    struct {
+       __IO GPIO_bit_t FIOPIN0b;
+       __IO GPIO_bit_t FIOPIN1b;
+       __IO GPIO_bit_t FIOPIN2b;
+       __IO GPIO_bit_t FIOPIN3b;
     };
   };
   union {
@@ -244,6 +285,12 @@ typedef struct
       __IO uint8_t  FIOSET2;
       __IO uint8_t  FIOSET3;
     };
+    struct {
+       __IO GPIO_bit_t FIOSET0b;
+       __IO GPIO_bit_t FIOSET1b;
+       __IO GPIO_bit_t FIOSET2b;
+       __IO GPIO_bit_t FIOSET3b;
+    };
   };
   union {
     __O  uint32_t FIOCLR;
@@ -256,6 +303,12 @@ typedef struct
       __O  uint8_t  FIOCLR1;
       __O  uint8_t  FIOCLR2;
       __O  uint8_t  FIOCLR3;
+    };
+    struct {
+       __IO GPIO_bit_t FIOCLR0b;
+       __IO GPIO_bit_t FIOCLR1b;
+       __IO GPIO_bit_t FIOCLR2b;
+       __IO GPIO_bit_t FIOCLR3b;
     };
   };
 } LPC_GPIO_TypeDef;
@@ -765,6 +818,12 @@ typedef struct                          /* Common Registers                   */
   __IO uint32_t DMACSync;
 } LPC_GPDMA_TypeDef;
 
+/** @brief  General Purpose Direct Memory Access (GPDMA) request register definition */
+typedef struct                          /* Select between UART and GDPMA      */
+{
+   __IO uint32_t DMASEL;
+} LPC_GPDMA_SEL_TypeDef;
+
 /** @brief  General Purpose Direct Memory Access Channel (GPDMACH) register structure definition */
 typedef struct                          /* Channel Registers                  */
 {
@@ -985,6 +1044,7 @@ typedef struct
 #define LPC_CAN1_BASE         (LPC_APB0_BASE + 0x44000)
 #define LPC_CAN2_BASE         (LPC_APB0_BASE + 0x48000)
 #define LPC_I2C1_BASE         (LPC_APB0_BASE + 0x5C000)
+#define LPC_GPDMA_SEL_BASE    (LPC_APB0_BASE + 0x0C1C4)//TODO: Datasheet address is 0x400F C1C4
 
 /* APB1 peripherals                                                           */
 #define LPC_SSP0_BASE         (LPC_APB1_BASE + 0x08000)
@@ -1061,7 +1121,7 @@ typedef struct
 #define LPC_QEI               ((LPC_QEI_TypeDef       *) LPC_QEI_BASE      )
 #define LPC_EMAC              ((LPC_EMAC_TypeDef      *) LPC_EMAC_BASE     )
 #define LPC_GPDMA             ((LPC_GPDMA_TypeDef     *) LPC_GPDMA_BASE    )
-#define DMAREQSEL             (*(__IO uint32_t *)  ( 0x4000C1C4))
+#define LPC_DMAREQSEL         ((LPC_GPDMA_SEL_TypeDef *) LPC_GPDMA_SEL_BASE)
 #define LPC_GPDMACH0          ((LPC_GPDMACH_TypeDef   *) LPC_GPDMACH0_BASE )
 #define LPC_GPDMACH1          ((LPC_GPDMACH_TypeDef   *) LPC_GPDMACH1_BASE )
 #define LPC_GPDMACH2          ((LPC_GPDMACH_TypeDef   *) LPC_GPDMACH2_BASE )
