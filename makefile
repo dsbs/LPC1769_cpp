@@ -25,6 +25,7 @@ CC      = $(TCHAIN_PREFIX)gcc
 CPP     = $(TCHAIN_PREFIX)g++
 LD      = $(TCHAIN_PREFIX)ld
 AR      = $(TCHAIN_PREFIX)ar
+AS      = $(TCHAIN_PREFIX)as
 OBJCOPY = $(TCHAIN_PREFIX)objcopy
 OBJDUMP = $(TCHAIN_PREFIX)objdump
 SIZE    = $(TCHAIN_PREFIX)size
@@ -182,8 +183,8 @@ $(OUTDIR)/%.elf: $(OBJS)
 ###########################################################################
 $(OBJDIR)/%.o: %.s
 	@echo '  AS  $(<F) > $(@F)' $(TEE)
-	@echo '$(AS) -c $(ASFLAGS) $< -o $@' >> $(LOGFILE)
-	@$(AS) -c $(ASFLAGS) $< -o $@ $(TEE)
+	@echo '$(AS) $(ASFLAGS) $< -o $@' >> $(LOGFILE)
+	@$(AS) $(ASFLAGS) $< -o $@ $(TEE)
 	@sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
 	$(RM) -f $(*F).tmp $(TEE)
 
