@@ -29,6 +29,7 @@
  * - Updated Reset_Handler() function with call of SystemInit(), initialization of ram memory, jump to main()
  * - Minor fixes: comments, this header description
  * - Added missing CAN and USB interrupt vectors, updated descriptions
+ * - Removed unnecessary include
  *
  * Dawid Bazan <dawidbazan@gmail.com>
  * Dariusz Synowiec <devemouse@gmail.com>
@@ -37,8 +38,8 @@
  */
 
 
-#include "LPC17xx.h"
 #include "system_LPC17xx.h"
+
 
 #define WEAK __attribute__ ((weak))
 //*****************************************************************************
@@ -203,51 +204,6 @@ void (* const g_pfnVectors[])(void) =
         CANActivity_IRQHandler     /* 50 - CAN Activity */
 };
 
-/*******************************************************************************
-* Function Name  : Reset_Handler
-* Description    : This is the code that gets called when the processor first starts execution
-*		       following a reset event.  Only the absolutely necessary set is performed,
-*		       after which the application supplied main() routine is called.
-* Input          :
-* Output         :
-* Return         :
-*******************************************************************************/
-void Reset_Handler(void)
-{
-    unsigned long *pulSrc, *pulDest;
-
-    /* Initialize the System */
-    SystemInit();
-
-    /* Copy the data segment initializers from flash to SRAM in ROM mode */
-    pulSrc = &_sidata;
-    for( pulDest = &_sdata; pulDest < &_edata; )
-    {
-        *(pulDest++) = *(pulSrc++);
-    }
-
-    /* Zero fill the bss segment */
-    for( pulDest = &_sbss; pulDest < &_ebss; )
-    {
-        *(pulDest++) = 0;
-    }
-
-    /* Copy the fastcode which shall be executed from ROM to SRAM */
-    pulSrc = &_sifastcode;
-    for( pulDest = &_sfastcode; pulDest < &_efastcode; )
-    {
-        *(pulDest++) = *(pulSrc++);
-    }
-
-    /* Call the application's entry point */
-    main();
-
-    while(1)
-    {
-       /* The application entry point shall not be left, in case it did ten go into an infinite loop */
-    }
-}
-
 //*****************************************************************************
 //
 // Provide weak aliases for each Exception handler to the Default_Handler.
@@ -299,6 +255,52 @@ void Reset_Handler(void)
 #pragma weak PLL1_IRQHandler = Default_Handler           /* PLL1 (USB PLL) */
 #pragma weak USBActivity_IRQHandler = Default_Handler    /* USB Activity */
 #pragma weak CANActivity_IRQHandler = Default_Handler    /* CAN Activity */
+
+
+/*******************************************************************************
+* Function Name  : Reset_Handler
+* Description    : This is the code that gets called when the processor first starts execution
+*            following a reset event.  Only the absolutely necessary set is performed,
+*            after which the application supplied main() routine is called.
+* Input          :
+* Output         :
+* Return         :
+*******************************************************************************/
+void Reset_Handler(void)
+{
+    unsigned long *pulSrc, *pulDest;
+
+    /* Initialize the System */
+    SystemInit();
+
+    /* Copy the data segment initializers from flash to SRAM in ROM mode */
+    pulSrc = &_sidata;
+    for( pulDest = &_sdata; pulDest < &_edata; )
+    {
+        *(pulDest++) = *(pulSrc++);
+    }
+
+    /* Zero fill the bss segment */
+    for( pulDest = &_sbss; pulDest < &_ebss; )
+    {
+        *(pulDest++) = 0;
+    }
+
+    /* Copy the fastcode which shall be executed from ROM to SRAM */
+    pulSrc = &_sifastcode;
+    for( pulDest = &_sfastcode; pulDest < &_efastcode; )
+    {
+        *(pulDest++) = *(pulSrc++);
+    }
+
+    /* Call the application's entry point */
+    main();
+
+    while(1)
+    {
+       /* The application entry point shall not be left, in case it did ten go into an infinite loop */
+    }
+}
 
 //*****************************************************************************
 //
