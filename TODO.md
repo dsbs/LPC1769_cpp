@@ -23,7 +23,8 @@ PENDING
   or the additional sections are needed to use bitfield operations
 * Investigate if when creating output file we can fill out empty flash space with some pattern like for e.g. 0x00
   Do we need this? will it be useful somehow?
-* Compare linker script with the default provided by CMSIS for LPC17xx, see if wee need to update some sections  
+* Compare linker script with the default provided by CMSIS for LPC17xx, see if wee need to update some sections 
+* Format the code with specified rules(specifie those rules) 
 
 
 DONE
