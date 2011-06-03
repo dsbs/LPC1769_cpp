@@ -208,12 +208,13 @@ $(OBJDIR)/%.o: %.cpp
 # Set up the JTAG interface
 
 # Specify the JTAG interface which will be used to flash
-OOCD_SETUP = -f interface/oocdlink.cfg
+# interface/oocdlink.cfg
+OOCD_SETUP = -f openocd.cfg
 
 # Specify target uC which will be flashed. 
 # TODO: prepare for lpc1769, send to openocd team
 # TODO: In the next openocd release this file should be included to /target group, then link directly to openocd/target/lpc1769.cfg
-OOCD_SETUP += -f target/lpc1768.cfg
+# OOCD_SETUP += -f target/lpc1768.cfg
 
 # Debug level, 0 = do not output debug messages for openocd
 OOCD_SETUP += -d0
