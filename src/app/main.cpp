@@ -51,7 +51,8 @@ __INLINE static void Delay (uint32_t dlyTicks) {
  *------------------------------------------------------------------------------*/
 __INLINE static void LED_Config(void) {
 
-  LPC_GPIO1->FIODIR0b.b1 = 1; //1-output pin, 0-input pin
+   LPC_SC->PCONP |= ( 1 << 15 ); // power up GPIO
+  LPC_GPIO1->FIODIR = 1; //1-output pin, 0-input pin
 }
 
 /*------------------------------------------------------------------------------
@@ -59,7 +60,7 @@ __INLINE static void LED_Config(void) {
  *------------------------------------------------------------------------------*/
 __INLINE static void LED_On () {
 
-  LPC_GPIO1->FIOPIN0b.b0 = 0;                  /* 0 - Turn On  LED */
+  LPC_GPIO1->FIOPIN = 0;                  /* 0 - Turn On  LED */
 }
 
 /**************************************************************************//**
@@ -71,7 +72,7 @@ __INLINE static void LED_On () {
  *****************************************************************************/
 __INLINE static void LED_Off () {
 
-   LPC_GPIO1->FIOPIN0b.b0 = 1;                  /* 1 - Turn Off LED */
+   LPC_GPIO1->FIOPIN = 1;                  /* 1 - Turn Off LED */
 }
 
 __attribute__ ((section(".fastcode")))
@@ -89,6 +90,15 @@ typedef union
    };
    int all;
 }Bits;
+
+volatile uint32_t temp;
+void _delay(uint32_t del);
+
+void _delay(uint32_t del){
+   uint32_t i;
+   for(i=0;i<del;i++)
+       temp = i;
+}
 
 /**************************************************************************//**
  * main
@@ -121,27 +131,39 @@ int main(void)
 //
 //	  }
 
-	  LED_Config();
+//	  LED_Config();
+//
+//	  while(1) {
+////	     i++;
+////	       j--;
+//	    LED_Off ();                           /* Turn on the LED. */
+//	    Delay (100);                                /* delay  100 Msec */
+//	    LED_Off ();                          /* Turn off the LED. */
+//	    Delay (100);                                /* delay  100 Msec */
+//
+//	  }
+//	  return 0;
 
-	  while(1) {
-//	     i++;
-//	       j--;
-	    LED_On ();                           /* Turn on the LED. */
-	    Delay (100);                                /* delay  100 Msec */
-	    LED_Off ();                          /* Turn off the LED. */
-	    Delay (100);                                /* delay  100 Msec */
-
-	  }
-	  return 0;
+   LPC_SC->PCONP |= ( 1 << 15 ); // power up GPIO
+   LPC_GPIO1->FIODIR = 0xFFFFFFFF;
+   LPC_GPIO1->FIOMASK = 0xFFFFFFFF;
+   while(1)
+   {
+       LPC_GPIO1->FIOSET = 0xFFFFFFFF;
+       _delay( 1 << 2 );
+       LPC_GPIO1->FIOCLR = 0x00000000;
+       _delay( 1 << 2 );
+   }
+   return 0;
 }
 
 
 void fastCodeFunct(void)
 {
    //int dd = SysTick_Config(12 / 1000);
-   LED_Config();
-   LED_On ();                           /* Turn on the LED. */
-   Delay (100);                                /* delay  100 Msec */
-   LED_Off ();                          /* Turn off the LED. */
-   Delay (100);                                /* delay  100 Msec */
+//   LED_Config();
+//   LED_On ();                           /* Turn on the LED. */
+//   Delay (100);                                /* delay  100 Msec */
+//   LED_Off ();                          /* Turn off the LED. */
+//   Delay (100);                                /* delay  100 Msec */
 }
