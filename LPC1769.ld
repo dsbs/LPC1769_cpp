@@ -86,7 +86,10 @@ SECTIONS
      * hardware bug for VFP11 coprocessor hardware,
      */
     *(.vfp11_veneer)
-    
+
+    /* TODO: description is needed */
+    *(.ARM.extab* .gnu.linkonce.armextab.*)
+
     /* This section holds Language Specific Data */
     *(.gcc_except_table)
     
@@ -303,8 +306,8 @@ SECTIONS
 
   /* Stack section */
   /* Define stack size */
-  STACK_SIZE = 0x200;
-  . = ORIGIN(ram1) + LENGTH(ram1) - STACK_SIZE;
+  /*STACK_SIZE = 0x200;*/
+  /*. = ORIGIN(ram1) + LENGTH(ram1) - STACK_SIZE;*/
   /*. = 0x10007E00;*/
   .stack (NOLOAD):
   {

@@ -213,7 +213,7 @@ OOCD_SETUP = -f interface/oocdlink.cfg
 # Specify target uC which will be flashed. 
 # TODO: prepare for lpc1769, send to openocd team
 # TODO: In the next openocd release this file should be included to /target group, then link directly to openocd/target/lpc1769.cfg
-OOCD_SETUP += -f lpc1769.cfg
+OOCD_SETUP += -f target/lpc1768.cfg
 
 # Debug level, 0 = do not output debug messages for openocd
 OOCD_SETUP += -d0
@@ -240,18 +240,19 @@ OOCD_FLASH+=-c targets
 
 # Immediately halt the target
 # TODO: Do we need this? Why not "reset init".  Also why this command need to use the character '"' and for e.g. command targets(above) doesn't
-OOCD_FLASH+= -c "reset halt"
+OOCD_FLASH+= -c "reset init"
 
 # Flash and verify
 # TODO: Do we need to erase mem everz time we flash? Prepare 512k flash file and perform time measurements for reference
 # TODO: DO we need to verify? 
-OOCD_FLASH+=-c "flash write_image erase $(OOCD_LOADFILE) elf" -c " verify_image $(OOCD_LOADFILE)"
+#OOCD_FLASH+=-c "flash write_image erase $(OOCD_LOADFILE)" -c " verify_image $(OOCD_LOADFILE)"
+OOCD_FLASH+=-c "flash write_image erase $(OOCD_LOADFILE)"
 
 # Let the target run
 OOCD_FLASH+=-c "reset run"
 
-# Close the OpenOCD daemon, disconnecting all clients (GDB, telnet, other)
-OOCD_FLASH+=-c shutdown
+# Close the OpenOCD daemon, disconnecting all clients (GDB, telnet, other) TODO: Don't know if this is needed
+# OOCD_FLASH+=-c shutdown
 
 
 ###########################################################################
