@@ -145,14 +145,14 @@ int main(void)
 //	  return 0;
 
    LPC_SC->PCONP |= ( 1 << 15 ); // power up GPIO
-   LPC_GPIO1->FIODIR = 0xFFFFFFFF;
-   LPC_GPIO1->FIOMASK = 0xFFFFFFFF;
+   LPC_GPIO1->FIODIR = 0x04000000;//P1.26
+   LPC_GPIO1->FIOMASK = 0x04000000;
    while(1)
    {
-       LPC_GPIO1->FIOSET = 0xFFFFFFFF;
-       _delay( 1 << 2 );
-       LPC_GPIO1->FIOCLR = 0x00000000;
-       _delay( 1 << 2 );
+       LPC_GPIO1->FIOSET = 0x04000000;
+       Delay (100);
+       LPC_GPIO1->FIOCLR = 0x04000000;
+       Delay (100);
    }
    return 0;
 }

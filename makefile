@@ -210,17 +210,18 @@ $(OBJDIR)/%.o: %.cpp
 # Specify the JTAG interface which will be used to flash
 # interface/oocdlink.cfg
 OOCD_SETUP = -f openocd.cfg
+#OOCD_SETUP = -f oocdlink.cfg
 
 # Specify target uC which will be flashed. 
 # TODO: prepare for lpc1769, send to openocd team
 # TODO: In the next openocd release this file should be included to /target group, then link directly to openocd/target/lpc1769.cfg
-# OOCD_SETUP += -f target/lpc1768.cfg
+# OOCD_SETUP += -f lpc1768.cfg
 
 # Debug level, 0 = do not output debug messages for openocd
-OOCD_SETUP += -d0
+#OOCD_SETUP += -d0
 
 # Set up JTAG frequency. The interface config file set up the default frequence, here it will be overwirtten
-OOCD_SETUP += -c "jtag_khz 1200"
+#OOCD_SETUP += -c "jtag_khz 1200"
 
 
 # FLASH via JTAG
