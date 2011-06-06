@@ -394,8 +394,11 @@
 
 
 /* F_cco0 = (2 * M * F_in) / N  */
+/* Multiply PLL input CLK by M( from 6 to 215 ) */
 #define __M               (((PLL0CFG_Val      ) & 0x7FFF) + 1)
+/* Pre-Divider PLL input CLK by N( from 1 to 256 ) plus additional values( see LPC17xx manual ) */
 #define __N               (((PLL0CFG_Val >> 16) & 0x00FF) + 1)
+/* The frequency of the PLLCLK (output of the PLL Current Controlled Oscillator) */
 #define __FCCO(__F_IN)    ((2 * __M * __F_IN) / __N)
 #define __CCLK_DIV        (((CCLKCFG_Val      ) & 0x00FF) + 1)
 
@@ -498,64 +501,96 @@ void SystemCoreClockUpdate (void)            /* Get Core Clock Frequency      */
  */
 void SystemInit (void)
 {
-#if (CLOCK_SETUP)                       /* Clock Setup                        */
-  LPC_SC->SCS       = SCS_Val;
-  if (LPC_SC->SCS & (1 << 5)) {             /* If Main Oscillator is enabled  */
-    while ((LPC_SC->SCS & (1<<6)) == 0);/* Wait for Oscillator to be ready    */
+   //TODO: bitfields for control registers
+#if (CLOCK_SETUP)                        /* Clock Setup */
+  LPC_SC->SCS       = SCS_Val;           /* Enable Main Oscillator and start up if HW crystal is placed */
+  //TBD: see  OSCRANGE bit in SCS register. The Main Oscillator can be speed upt to 25MHz
+  if (LPC_SC->SCS & (1 << 5))            /* If Main Oscillator is enabled  */
+  {
+    while ((LPC_SC->SCS & (1<<6)) == 0); /* Wait for Oscillator to be ready */
   }
 
-  LPC_SC->CCLKCFG   = CCLKCFG_Val;      /* Setup Clock Divider                */
-  /* Periphral clock must be selected before PLL0 enabling and connecting
+  LPC_SC->CCLKCFG   = CCLKCFG_Val;       /* Setup Clock Divider - PLLCLK is divided by 4 to produce the CPU clock */
+  /*
+   * Peripheral clock must be selected before PLL0 enabling and connecting
    * - according errata.lpc1768-16.March.2010 -
    */
-  LPC_SC->PCLKSEL0  = PCLKSEL0_Val;     /* Peripheral Clock Selection         */
+  LPC_SC->PCLKSEL0  = PCLKSEL0_Val;     /* Peripheral Clock Selection - Reset all to 0 */
   LPC_SC->PCLKSEL1  = PCLKSEL1_Val;
 
 #if (PLL0_SETUP)
-  LPC_SC->CLKSRCSEL = CLKSRCSEL_Val;    /* Select Clock Source for PLL0       */
+  LPC_SC->CLKSRCSEL = CLKSRCSEL_Val;    /* Select Clock Source for PLL0 - Selects the main oscillator as the PLL0 clock source */
 
-  LPC_SC->PLL0CFG   = PLL0CFG_Val;      /* configure PLL0                     */
+  LPC_SC->PLL0CFG   = PLL0CFG_Val;      /* configure PLL0 *///TBD: bitfields so needed here! This sets up M and N value for PLL0
   LPC_SC->PLL0FEED  = 0xAA;
   LPC_SC->PLL0FEED  = 0x55;
 
-  LPC_SC->PLL0CON   = 0x01;             /* PLL0 Enable                        */
+  LPC_SC->PLL0CON   = 0x01;             /* PLL0 Enable */
+  /*
+   * The PLL0 feed sequence must be written to this register in order for
+   * PLL0 configuration and control register changes to take effect.
+   */
   LPC_SC->PLL0FEED  = 0xAA;
   LPC_SC->PLL0FEED  = 0x55;
-  while (!(LPC_SC->PLL0STAT & (1<<26)));/* Wait for PLOCK0                    */
+  while (!(LPC_SC->PLL0STAT & (1<<26)));/* Wait for PLOCK0 */
 
-  LPC_SC->PLL0CON   = 0x03;             /* PLL0 Enable & Connect              */
+  LPC_SC->PLL0CON   = 0x03;             /* PLL0 Enable & Connect */
+  /*
+   * The PLL0 feed sequence must be written to this register in order for
+   * PLL0 configuration and control register changes to take effect.
+   */
   LPC_SC->PLL0FEED  = 0xAA;
   LPC_SC->PLL0FEED  = 0x55;
   while (!(LPC_SC->PLL0STAT & ((1<<25) | (1<<24))));/* Wait for PLLC0_STAT & PLLE0_STAT */
 #endif
 
+/*
+ * PLL1 receives its clock input from the main oscillator only and can be used to
+ * provide a fixed 48 MHz clock only to the USB subsystem. This is an option in addition to the
+ * possibility of generating the USB clock from PLL0
+ */
 #if (PLL1_SETUP)
-  LPC_SC->PLL1CFG   = PLL1CFG_Val;
+  LPC_SC->PLL1CFG   = PLL1CFG_Val; //TBD: bitfields so needed here! This sets up M and N value for PLL1
   LPC_SC->PLL1FEED  = 0xAA;
   LPC_SC->PLL1FEED  = 0x55;
 
-  LPC_SC->PLL1CON   = 0x01;             /* PLL1 Enable                        */
+  LPC_SC->PLL1CON   = 0x01;             /* PLL1 Enable */
+  /*
+   * The PLL1 feed sequence must be written to this register in order for
+   * PLL1 configuration and control register changes to take effect.
+   */
   LPC_SC->PLL1FEED  = 0xAA;
   LPC_SC->PLL1FEED  = 0x55;
-  while (!(LPC_SC->PLL1STAT & (1<<10)));/* Wait for PLOCK1                    */
+  while (!(LPC_SC->PLL1STAT & (1<<10)));/* Wait for PLOCK1 */
 
-  LPC_SC->PLL1CON   = 0x03;             /* PLL1 Enable & Connect              */
+  LPC_SC->PLL1CON   = 0x03;             /* PLL1 Enable & Connect */
+  /*
+   * The PLL1 feed sequence must be written to this register in order for
+   * PLL1 configuration and control register changes to take effect.
+   */
   LPC_SC->PLL1FEED  = 0xAA;
   LPC_SC->PLL1FEED  = 0x55;
   while (!(LPC_SC->PLL1STAT & ((1<< 9) | (1<< 8))));/* Wait for PLLC1_STAT & PLLE1_STAT */
 #else
   LPC_SC->USBCLKCFG = USBCLKCFG_Val;    /* Setup USB Clock Divider            */
 #endif
-  LPC_SC->PCONP     = PCONP_Val;        /* Power Control for Peripherals      */
+  LPC_SC->PCONP     = PCONP_Val;        /* Power Control for Peripherals */
 
-  LPC_SC->CLKOUTCFG = CLKOUTCFG_Val;    /* Clock Output Configuration         */
+/*
+ * The CLKOUTCFG register controls the selection of the internal clock that appears on the
+ * CLKOUT pin(P1.27) and allows dividing the clock by an integer value up to 16
+ * TBD: bitfileds would be very nice.
+ */
+  LPC_SC->CLKOUTCFG = CLKOUTCFG_Val;    /* Clock Output Configuration */
 #endif
 
-#if (FLASH_SETUP == 1)                  /* Flash Accelerator Setup            */
+#if (FLASH_SETUP == 1)                  /* Flash Accelerator Setup */
   LPC_SC->FLASHCFG  = FLASHCFG_Val;
+  //TODO: currently: Flash accesses use 4 CPU clocks. Use for up to 80 MHz CPU clock. Can be set to 120MHz!
 #endif
 
 //  Set Vector table offset value
+  //TODO: Decription update
 #if (__RAM_MODE__==1)
   SCB->VTOR  = 0x10000000 & 0x3FFFFF80;
 #else

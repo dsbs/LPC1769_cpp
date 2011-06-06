@@ -20,6 +20,18 @@
  * CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
  *
  ******************************************************************************/
+
+/*
+ * Updated for LPC1769:
+ * - Definitions which are for core cm3 were moved from LPC17xx.h
+ *
+ * Dawid Bazan <dawidbazan@gmail.com>
+ * Dariusz Synowiec <devemouse@gmail.com>
+ *
+ * Last update on June 2011
+ */
+
+
 #if defined ( __ICCARM__ )
  #pragma system_include  /* treat file as system include file for MISRA check */
 #endif
@@ -97,6 +109,12 @@
 #endif
 #define     __O     volatile             /*!< defines 'write only' permissions                */
 #define     __IO    volatile             /*!< defines 'read / write' permissions              */
+
+
+/* Configuration of the Cortex-M3 Processor and Core Peripherals */
+#define __MPU_PRESENT             1         /*!< MPU present or not                               */
+#define __NVIC_PRIO_BITS          5         /*!< Number of Bits used for Priority Levels          */
+#define __Vendor_SysTickConfig    0         /*!< Set to 1 if different SysTick Config is used     */
 
 /*@} end of group CMSIS_core_definitions */
 
@@ -1119,7 +1137,7 @@ static __INLINE void NVIC_SystemReset(void)
 
 /** \brief  System Tick Configuration
 
-    This function initialises the system tick timer and its interrupt and start the system tick timer.
+    This function initializes the system tick timer and its interrupt and start the system tick timer.
     Counter is in free running mode to generate periodical interrupts.
 
     \param [in]  ticks  Number of ticks between two interrupts

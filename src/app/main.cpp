@@ -29,10 +29,12 @@
 //#define VERSION_STRING "V1.2.0 12/2009"
 
 volatile uint32_t msTicks;                            /* counts 1ms timeTicks */
+
 /*----------------------------------------------------------------------------
   SysTick_Handler
  *----------------------------------------------------------------------------*/
-void SysTick_Handler(void) {
+void SysTick_Handler(void)
+{
   msTicks++;                        /* increment counter necessary in Delay() */
 }
 
@@ -144,6 +146,7 @@ int main(void)
 //	  }
 //	  return 0;
 
+   (void)SysTick_Config(1000);
    LPC_SC->PCONP |= ( 1 << 15 ); // power up GPIO
    LPC_GPIO1->FIODIR = 0x04000000;//P1.26
    LPC_GPIO1->FIOMASK = 0x04000000;

@@ -27,6 +27,7 @@
  * - DMA Select structure updated to keep the same format
  * - Updated GPIO bits to have access to single pins
  * - Added missing HardFault_IRQn interrupt
+ * - Definitions which were used only in core_cm3.h were moved there
  *
  * Dawid Bazan <dawidbazan@gmail.com>
  * Dariusz Synowiec <devemouse@gmail.com>
@@ -100,17 +101,6 @@ typedef enum IRQn
   CANActivity_IRQn				  = 34		  /*!< CAN Activity Interrupt 						        */
 } IRQn_Type;
 
-
-/*
- * ==========================================================================
- * ----------- Processor and Core Peripheral Section ------------------------
- * ==========================================================================
- */
-
-/* Configuration of the Cortex-M3 Processor and Core Peripherals */
-#define __MPU_PRESENT             1         /*!< MPU present or not                               */
-#define __NVIC_PRIO_BITS          5         /*!< Number of Bits used for Priority Levels          */
-#define __Vendor_SysTickConfig    0         /*!< Set to 1 if different SysTick Config is used     */
 
 
 #include "core_cm3.h"                       /* Cortex-M3 processor and core peripherals           */

@@ -27,6 +27,7 @@ PENDING
 * Format the code with specified rules(specifie those rules) 
 * fix how to get rid of swj-dp.tcl from root
 * link in openocd.cfg to files installed with open ocd, or put the note that when new version of openocd will be used this file must be updated.
+* SysTick - consider to add module
 
 
 DONE
