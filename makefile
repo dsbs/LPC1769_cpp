@@ -65,7 +65,7 @@ COBJS      = $(addprefix $(OBJDIR)/,$(CSRCS:.c=.o))
 CPPOBJS    = $(addprefix $(OBJDIR)/,$(CPPSRCS:.cpp=.o))
 ASOBJS     = $(addprefix $(OBJDIR)/,$(ASRCS:.s=.o))
 
-OBJS = $(COBJS) $(CPPOBJS) $(ASOBJS)
+OBJS = $(CPPOBJS) $(COBJS) $(ASOBJS)
 
 ###########################################################################
 # Targets

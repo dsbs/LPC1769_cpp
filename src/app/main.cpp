@@ -28,15 +28,6 @@
 
 //#define VERSION_STRING "V1.2.0 12/2009"
 
-volatile uint32_t msTicks;                            /* counts 1ms timeTicks */
-
-/*----------------------------------------------------------------------------
-  SysTick_Handler
- *----------------------------------------------------------------------------*/
-void SysTick_Handler(void)
-{
-  msTicks++;                        /* increment counter necessary in Delay() */
-}
 
 /*------------------------------------------------------------------------------
   delays number of tick Systicks (happens every 1 ms)
@@ -146,18 +137,29 @@ int main(void)
    //	  }
    //	  return 0;
 
-   //(void)SysTick_Config(1000);
    LPC_SC->PCONP |= ( 1 << 15 ); // power up GPIO
+   LPC_GPIO1->FIODIR_b24 = 1;
+   LPC_GPIO1->FIODIR_b22 = 1;
    LPC_GPIO1->FIODIR_b25 = 1;
    LPC_GPIO1->FIODIR_b26 = 1;
+   LPC_GPIO1->FIOSET_b22 = 1;
+   LPC_GPIO1->FIOSET_b24 = 1;
+
+   LPC_GPIO1->FIODIR_b27 = 1;
+   LPC_GPIO1->FIOSET_b27 = 1;
+
+
+   (void)SysTick_Config(100 * 1000);
+   LPC_GPIO1->FIOCLR_b22 = 1;
+
    while(1)
    {
       LPC_GPIO1->FIOSET_b25 = 1;
       LPC_GPIO1->FIOCLR_b26 = 1;
-      _delay( 1 << 22 );
+      Delay(100);
       LPC_GPIO1->FIOCLR_b25 = 1;
       LPC_GPIO1->FIOSET_b26 = 1;
-      _delay( 1 << 22 );
+      Delay(100);
    }
    return 0;
 }
