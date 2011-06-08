@@ -192,17 +192,6 @@ typedef struct
 } LPC_PINCON_TypeDef;
 
 /*------------- General Purpose Input/Output (GPIO) --------------------------*/
-typedef struct
-{
-   __IO uint8_t   b7;
-   __IO uint8_t   b6;
-   __IO uint8_t   b5;
-   __IO uint8_t   b4;
-   __IO uint8_t   b3;
-   __IO uint8_t   b2;
-   __IO uint8_t   b1;
-   __IO uint8_t   b0;
-} GPIO_bit_t;
 
 /** @brief General Purpose Input/Output (GPIO) register structure definition */
 typedef struct
@@ -219,6 +208,40 @@ typedef struct
       __IO uint8_t  FIODIR2;
       __IO uint8_t  FIODIR3;
     };
+    struct {
+       __IO uint32_t   FIODIR_b0  :1;
+       __IO uint32_t   FIODIR_b1  :1;
+       __IO uint32_t   FIODIR_b2  :1;
+       __IO uint32_t   FIODIR_b3  :1;
+       __IO uint32_t   FIODIR_b4  :1;
+       __IO uint32_t   FIODIR_b5  :1;
+       __IO uint32_t   FIODIR_b6  :1;
+       __IO uint32_t   FIODIR_b7  :1;
+       __IO uint32_t   FIODIR_b8  :1;
+       __IO uint32_t   FIODIR_b9  :1;
+       __IO uint32_t   FIODIR_b10 :1;
+       __IO uint32_t   FIODIR_b11 :1;
+       __IO uint32_t   FIODIR_b12 :1;
+       __IO uint32_t   FIODIR_b13 :1;
+       __IO uint32_t   FIODIR_b14 :1;
+       __IO uint32_t   FIODIR_b15 :1;
+       __IO uint32_t   FIODIR_b16 :1;
+       __IO uint32_t   FIODIR_b17 :1;
+       __IO uint32_t   FIODIR_b18 :1;
+       __IO uint32_t   FIODIR_b19 :1;
+       __IO uint32_t   FIODIR_b20 :1;
+       __IO uint32_t   FIODIR_b21 :1;
+       __IO uint32_t   FIODIR_b22 :1;
+       __IO uint32_t   FIODIR_b23 :1;
+       __IO uint32_t   FIODIR_b24 :1;
+       __IO uint32_t   FIODIR_b25 :1;
+       __IO uint32_t   FIODIR_b26 :1;
+       __IO uint32_t   FIODIR_b27 :1;
+       __IO uint32_t   FIODIR_b28 :1;
+       __IO uint32_t   FIODIR_b29 :1;
+       __IO uint32_t   FIODIR_b30 :1;
+       __IO uint32_t   FIODIR_b31 :1;
+    };
   };
   uint32_t RESERVED0[3];
   union {
@@ -233,6 +256,40 @@ typedef struct
       __IO uint8_t  FIOMASK2;
       __IO uint8_t  FIOMASK3;
     };
+    struct {
+       __IO uint32_t   FIOMASK_b0  :1;
+       __IO uint32_t   FIOMASK_b1  :1;
+       __IO uint32_t   FIOMASK_b2  :1;
+       __IO uint32_t   FIOMASK_b3  :1;
+       __IO uint32_t   FIOMASK_b4  :1;
+       __IO uint32_t   FIOMASK_b5  :1;
+       __IO uint32_t   FIOMASK_b6  :1;
+       __IO uint32_t   FIOMASK_b7  :1;
+       __IO uint32_t   FIOMASK_b8  :1;
+       __IO uint32_t   FIOMASK_b9  :1;
+       __IO uint32_t   FIOMASK_b10 :1;
+       __IO uint32_t   FIOMASK_b11 :1;
+       __IO uint32_t   FIOMASK_b12 :1;
+       __IO uint32_t   FIOMASK_b13 :1;
+       __IO uint32_t   FIOMASK_b14 :1;
+       __IO uint32_t   FIOMASK_b15 :1;
+       __IO uint32_t   FIOMASK_b16 :1;
+       __IO uint32_t   FIOMASK_b17 :1;
+       __IO uint32_t   FIOMASK_b18 :1;
+       __IO uint32_t   FIOMASK_b19 :1;
+       __IO uint32_t   FIOMASK_b20 :1;
+       __IO uint32_t   FIOMASK_b21 :1;
+       __IO uint32_t   FIOMASK_b22 :1;
+       __IO uint32_t   FIOMASK_b23 :1;
+       __IO uint32_t   FIOMASK_b24 :1;
+       __IO uint32_t   FIOMASK_b25 :1;
+       __IO uint32_t   FIOMASK_b26 :1;
+       __IO uint32_t   FIOMASK_b27 :1;
+       __IO uint32_t   FIOMASK_b28 :1;
+       __IO uint32_t   FIOMASK_b29 :1;
+       __IO uint32_t   FIOMASK_b30 :1;
+       __IO uint32_t   FIOMASK_b31 :1;
+    };
   };
   union {
     __IO uint32_t FIOPIN;
@@ -245,6 +302,40 @@ typedef struct
       __IO uint8_t  FIOPIN1;
       __IO uint8_t  FIOPIN2;
       __IO uint8_t  FIOPIN3;
+    };
+    struct {
+       __IO uint32_t   FIOPIN_b0  :1;
+       __IO uint32_t   FIOPIN_b1  :1;
+       __IO uint32_t   FIOPIN_b2  :1;
+       __IO uint32_t   FIOPIN_b3  :1;
+       __IO uint32_t   FIOPIN_b4  :1;
+       __IO uint32_t   FIOPIN_b5  :1;
+       __IO uint32_t   FIOPIN_b6  :1;
+       __IO uint32_t   FIOPIN_b7  :1;
+       __IO uint32_t   FIOPIN_b8  :1;
+       __IO uint32_t   FIOPIN_b9  :1;
+       __IO uint32_t   FIOPIN_b10 :1;
+       __IO uint32_t   FIOPIN_b11 :1;
+       __IO uint32_t   FIOPIN_b12 :1;
+       __IO uint32_t   FIOPIN_b13 :1;
+       __IO uint32_t   FIOPIN_b14 :1;
+       __IO uint32_t   FIOPIN_b15 :1;
+       __IO uint32_t   FIOPIN_b16 :1;
+       __IO uint32_t   FIOPIN_b17 :1;
+       __IO uint32_t   FIOPIN_b18 :1;
+       __IO uint32_t   FIOPIN_b19 :1;
+       __IO uint32_t   FIOPIN_b20 :1;
+       __IO uint32_t   FIOPIN_b21 :1;
+       __IO uint32_t   FIOPIN_b22 :1;
+       __IO uint32_t   FIOPIN_b23 :1;
+       __IO uint32_t   FIOPIN_b24 :1;
+       __IO uint32_t   FIOPIN_b25 :1;
+       __IO uint32_t   FIOPIN_b26 :1;
+       __IO uint32_t   FIOPIN_b27 :1;
+       __IO uint32_t   FIOPIN_b28 :1;
+       __IO uint32_t   FIOPIN_b29 :1;
+       __IO uint32_t   FIOPIN_b30 :1;
+       __IO uint32_t   FIOPIN_b31 :1;
     };
   };
   union {
@@ -259,6 +350,40 @@ typedef struct
       __IO uint8_t  FIOSET2;
       __IO uint8_t  FIOSET3;
     };
+    struct {
+       __IO uint32_t   FIOSET_b0  :1;
+       __IO uint32_t   FIOSET_b1  :1;
+       __IO uint32_t   FIOSET_b2  :1;
+       __IO uint32_t   FIOSET_b3  :1;
+       __IO uint32_t   FIOSET_b4  :1;
+       __IO uint32_t   FIOSET_b5  :1;
+       __IO uint32_t   FIOSET_b6  :1;
+       __IO uint32_t   FIOSET_b7  :1;
+       __IO uint32_t   FIOSET_b8  :1;
+       __IO uint32_t   FIOSET_b9  :1;
+       __IO uint32_t   FIOSET_b10 :1;
+       __IO uint32_t   FIOSET_b11 :1;
+       __IO uint32_t   FIOSET_b12 :1;
+       __IO uint32_t   FIOSET_b13 :1;
+       __IO uint32_t   FIOSET_b14 :1;
+       __IO uint32_t   FIOSET_b15 :1;
+       __IO uint32_t   FIOSET_b16 :1;
+       __IO uint32_t   FIOSET_b17 :1;
+       __IO uint32_t   FIOSET_b18 :1;
+       __IO uint32_t   FIOSET_b19 :1;
+       __IO uint32_t   FIOSET_b20 :1;
+       __IO uint32_t   FIOSET_b21 :1;
+       __IO uint32_t   FIOSET_b22 :1;
+       __IO uint32_t   FIOSET_b23 :1;
+       __IO uint32_t   FIOSET_b24 :1;
+       __IO uint32_t   FIOSET_b25 :1;
+       __IO uint32_t   FIOSET_b26 :1;
+       __IO uint32_t   FIOSET_b27 :1;
+       __IO uint32_t   FIOSET_b28 :1;
+       __IO uint32_t   FIOSET_b29 :1;
+       __IO uint32_t   FIOSET_b30 :1;
+       __IO uint32_t   FIOSET_b31 :1;
+    };
   };
   union {
     __O  uint32_t FIOCLR;
@@ -271,6 +396,40 @@ typedef struct
       __O  uint8_t  FIOCLR1;
       __O  uint8_t  FIOCLR2;
       __O  uint8_t  FIOCLR3;
+    };
+    struct {
+       __IO uint32_t   FIOCLR_b0  :1;
+       __IO uint32_t   FIOCLR_b1  :1;
+       __IO uint32_t   FIOCLR_b2  :1;
+       __IO uint32_t   FIOCLR_b3  :1;
+       __IO uint32_t   FIOCLR_b4  :1;
+       __IO uint32_t   FIOCLR_b5  :1;
+       __IO uint32_t   FIOCLR_b6  :1;
+       __IO uint32_t   FIOCLR_b7  :1;
+       __IO uint32_t   FIOCLR_b8  :1;
+       __IO uint32_t   FIOCLR_b9  :1;
+       __IO uint32_t   FIOCLR_b10 :1;
+       __IO uint32_t   FIOCLR_b11 :1;
+       __IO uint32_t   FIOCLR_b12 :1;
+       __IO uint32_t   FIOCLR_b13 :1;
+       __IO uint32_t   FIOCLR_b14 :1;
+       __IO uint32_t   FIOCLR_b15 :1;
+       __IO uint32_t   FIOCLR_b16 :1;
+       __IO uint32_t   FIOCLR_b17 :1;
+       __IO uint32_t   FIOCLR_b18 :1;
+       __IO uint32_t   FIOCLR_b19 :1;
+       __IO uint32_t   FIOCLR_b20 :1;
+       __IO uint32_t   FIOCLR_b21 :1;
+       __IO uint32_t   FIOCLR_b22 :1;
+       __IO uint32_t   FIOCLR_b23 :1;
+       __IO uint32_t   FIOCLR_b24 :1;
+       __IO uint32_t   FIOCLR_b25 :1;
+       __IO uint32_t   FIOCLR_b26 :1;
+       __IO uint32_t   FIOCLR_b27 :1;
+       __IO uint32_t   FIOCLR_b28 :1;
+       __IO uint32_t   FIOCLR_b29 :1;
+       __IO uint32_t   FIOCLR_b30 :1;
+       __IO uint32_t   FIOCLR_b31 :1;
     };
   };
 } LPC_GPIO_TypeDef;

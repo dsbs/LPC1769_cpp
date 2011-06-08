@@ -111,53 +111,55 @@ void _delay(uint32_t del){
  *****************************************************************************/
 int main(void)
 {
-//   int i;
-//   static int j;
-//
-//   static Bits bits;
-//   bits.all = 0xFFFFFFFF;
-//   bits.b1 = 0;
-//   bits.b5 = 0;
-//   if(1==bits.b1)
-//   {
-//      bits.b2 = 0;
-//   }
-//   else
-//   {
-//      bits.b2 = 1;
-//   }
-//
-//   fastCodeFunct();
-//	  if (SysTick_Config(12 / 1000)) { /* Setup SysTick Timer for 1 msec interrupts  */
-//	    while (1);                                  /* Capture error */
-//
-//	  }
+   //   int i;
+   //   static int j;
+   //
+   //   static Bits bits;
+   //   bits.all = 0xFFFFFFFF;
+   //   bits.b1 = 0;
+   //   bits.b5 = 0;
+   //   if(1==bits.b1)
+   //   {
+   //      bits.b2 = 0;
+   //   }
+   //   else
+   //   {
+   //      bits.b2 = 1;
+   //   }
+   //
+   //   fastCodeFunct();
+   //	  if (SysTick_Config(12 / 1000)) { /* Setup SysTick Timer for 1 msec interrupts  */
+   //	    while (1);                                  /* Capture error */
+   //
+   //	  }
 
-//	  LED_Config();
-//
-//	  while(1) {
-////	     i++;
-////	       j--;
-//	    LED_Off ();                           /* Turn on the LED. */
-//	    Delay (100);                                /* delay  100 Msec */
-//	    LED_Off ();                          /* Turn off the LED. */
-//	    Delay (100);                                /* delay  100 Msec */
-//
-//	  }
-//	  return 0;
+   //	  LED_Config();
+   //
+   //	  while(1) {
+   ////	     i++;
+   ////	       j--;
+   //	    LED_Off ();                           /* Turn on the LED. */
+   //	    Delay (100);                                /* delay  100 Msec */
+   //	    LED_Off ();                          /* Turn off the LED. */
+   //	    Delay (100);                                /* delay  100 Msec */
+   //
+   //	  }
+   //	  return 0;
 
    //(void)SysTick_Config(1000);
-    LPC_SC->PCONP |= ( 1 << 15 ); // power up GPIO
-   LPC_GPIO1->FIODIR = 0x04000000;//P1.26
-   //LPC_GPIO1->FIOMASK = 0x04000000;
-    while(1)
-    {
-       LPC_GPIO1->FIOSET = 0x04000000;
-        _delay( 1 << 22 );
-       LPC_GPIO1->FIOCLR = 0x04000000;
-        _delay( 1 << 22 );
-    }
-    return 0;
+   LPC_SC->PCONP |= ( 1 << 15 ); // power up GPIO
+   LPC_GPIO1->FIODIR_b25 = 1;
+   LPC_GPIO1->FIODIR_b26 = 1;
+   while(1)
+   {
+      LPC_GPIO1->FIOSET_b25 = 1;
+      LPC_GPIO1->FIOCLR_b26 = 1;
+      _delay( 1 << 22 );
+      LPC_GPIO1->FIOCLR_b25 = 1;
+      LPC_GPIO1->FIOSET_b26 = 1;
+      _delay( 1 << 22 );
+   }
+   return 0;
 }
 
 
