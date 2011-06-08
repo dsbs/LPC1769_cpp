@@ -146,18 +146,18 @@ int main(void)
 //	  }
 //	  return 0;
 
-   (void)SysTick_Config(1000);
-   LPC_SC->PCONP |= ( 1 << 15 ); // power up GPIO
+   //(void)SysTick_Config(1000);
+    LPC_SC->PCONP |= ( 1 << 15 ); // power up GPIO
    LPC_GPIO1->FIODIR = 0x04000000;//P1.26
-   LPC_GPIO1->FIOMASK = 0x04000000;
-   while(1)
-   {
+   //LPC_GPIO1->FIOMASK = 0x04000000;
+    while(1)
+    {
        LPC_GPIO1->FIOSET = 0x04000000;
-       Delay (100);
+        _delay( 1 << 22 );
        LPC_GPIO1->FIOCLR = 0x04000000;
-       Delay (100);
-   }
-   return 0;
+        _delay( 1 << 22 );
+    }
+    return 0;
 }
 
 

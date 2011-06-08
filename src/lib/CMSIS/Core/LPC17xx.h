@@ -219,12 +219,6 @@ typedef struct
       __IO uint8_t  FIODIR2;
       __IO uint8_t  FIODIR3;
     };
-    struct {
-       __IO GPIO_bit_t FIODIR0b;
-       __IO GPIO_bit_t FIODIR1b;
-       __IO GPIO_bit_t FIODIR2b;
-       __IO GPIO_bit_t FIODIR3b;
-    };
   };
   uint32_t RESERVED0[3];
   union {
@@ -239,12 +233,6 @@ typedef struct
       __IO uint8_t  FIOMASK2;
       __IO uint8_t  FIOMASK3;
     };
-    struct {
-       __IO GPIO_bit_t FIOMASK0b;
-       __IO GPIO_bit_t FIOMASK1b;
-       __IO GPIO_bit_t FIOMASK2b;
-       __IO GPIO_bit_t FIOMASK3b;
-    };
   };
   union {
     __IO uint32_t FIOPIN;
@@ -257,12 +245,6 @@ typedef struct
       __IO uint8_t  FIOPIN1;
       __IO uint8_t  FIOPIN2;
       __IO uint8_t  FIOPIN3;
-    };
-    struct {
-       __IO GPIO_bit_t FIOPIN0b;
-       __IO GPIO_bit_t FIOPIN1b;
-       __IO GPIO_bit_t FIOPIN2b;
-       __IO GPIO_bit_t FIOPIN3b;
     };
   };
   union {
@@ -277,12 +259,6 @@ typedef struct
       __IO uint8_t  FIOSET2;
       __IO uint8_t  FIOSET3;
     };
-    struct {
-       __IO GPIO_bit_t FIOSET0b;
-       __IO GPIO_bit_t FIOSET1b;
-       __IO GPIO_bit_t FIOSET2b;
-       __IO GPIO_bit_t FIOSET3b;
-    };
   };
   union {
     __O  uint32_t FIOCLR;
@@ -295,12 +271,6 @@ typedef struct
       __O  uint8_t  FIOCLR1;
       __O  uint8_t  FIOCLR2;
       __O  uint8_t  FIOCLR3;
-    };
-    struct {
-       __IO GPIO_bit_t FIOCLR0b;
-       __IO GPIO_bit_t FIOCLR1b;
-       __IO GPIO_bit_t FIOCLR2b;
-       __IO GPIO_bit_t FIOCLR3b;
     };
   };
 } LPC_GPIO_TypeDef;
