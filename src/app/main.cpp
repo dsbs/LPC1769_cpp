@@ -26,6 +26,8 @@
 
 #include "LPC17xx.h"
 
+extern volatile uint32_t msTicks;                            /* counts 1ms timeTicks */
+
 //#define VERSION_STRING "V1.2.0 12/2009"
 
 
