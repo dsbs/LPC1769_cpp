@@ -205,47 +205,27 @@ $(OBJDIR)/%.o: %.cpp
 ###########################################################################
 # Options for OpenOCD flash-programming
 ###########################################################################
-# Set up the JTAG interface
 
-# Specify the JTAG interface which will be used to flash
-# interface/oocdlink.cfg
+# Provide openocd configuration file for JTAG(interface) and uC(target)
 OOCD_SETUP = -f openocd.cfg
-#OOCD_SETUP = -f oocdlink.cfg
-
-# Specify target uC which will be flashed. 
-# TODO: prepare for lpc1769, send to openocd team
-# TODO: In the next openocd release this file should be included to /target group, then link directly to openocd/target/lpc1769.cfg
-# OOCD_SETUP += -f lpc1768.cfg
-
-# Debug level, 0 = do not output debug messages for openocd
-#OOCD_SETUP += -d0
-
-# Set up JTAG frequency. The interface config file set up the default frequence, here it will be overwirtten
-#OOCD_SETUP += -c "jtag_khz 1200"
-
-
-# FLASH via JTAG
 
 # Provide path and name for elf file which will be flashed to uC
 OOCD_LOADFILE = $(OUTDIR)/$(TARGET).elf
 
 # This command terminates the configuration stage and enters the run stage
-# TODO: do we need init_jtag as well?
 OOCD_FLASH = -c init
-
-# enable "fast mode" - can be disabled for tests
-# TODO: This might not be needed, read manual again, test with this option enabled and disabled 
-# OOCD_FLASH += -c "fast enable"
 
 # Show connected targets
 OOCD_FLASH+=-c targets
 
-# Immediately halt the target
-# TODO: Do we need this? Why not "reset init".  Also why this command need to use the character '"' and for e.g. command targets(above) doesn't
+# Reset and Initialize the target
 OOCD_FLASH+= -c "reset init"
 
+# Set up JTAG frequency. The openocd config file set up the default frequence, here it will be overwirtten
+OOCD_SETUP += -c "jtag_khz 1200"
+
 # Flash and verify
-# TODO: Do we need to erase mem everz time we flash? Prepare 512k flash file and perform time measurements for reference
+# TODO: Do we need to erase mem every time we flash? Prepare 512k flash file and perform time measurements for reference
 # TODO: DO we need to verify? 
 #OOCD_FLASH+=-c "flash write_image erase $(OOCD_LOADFILE)" -c " verify_image $(OOCD_LOADFILE)"
 OOCD_FLASH+=-c "flash write_image erase $(OOCD_LOADFILE)"
@@ -253,9 +233,9 @@ OOCD_FLASH+=-c "flash write_image erase $(OOCD_LOADFILE)"
 # Let the target run
 OOCD_FLASH+=-c "reset run"
 
-# Close the OpenOCD daemon, disconnecting all clients (GDB, telnet, other) TODO: Don't know if this is needed
-# OOCD_FLASH+=-c shutdown
-
+# Shut down the session (make flash only used to flash the target, 
+# for debug use commandline or/and external tools like for e.g. eclipse)
+OOCD_FLASH+=-c "shutdown"
 
 ###########################################################################
 # Include all dependences TODO: Why this must be here included? Put the explanation

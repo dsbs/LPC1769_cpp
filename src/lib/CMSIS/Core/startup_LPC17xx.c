@@ -153,7 +153,7 @@ void (* g_pfnVectors[])(void) =
 {
         /*
          * The Cortex-M3 interrupt controller (NVIC) will need stack address before
-         * it can jump to the handler. Hence, it’s put as the first thing on the interrupt table
+         * it can jump to the handler. Hence, itï¿½s put as the first thing on the interrupt table
          *
          * Interrupt function addresses sorted by Exception number
          *
@@ -278,6 +278,7 @@ void (* g_pfnVectors[])(void) =
 void Reset_Handler(void)
 {
     unsigned long *pulSrc, *pulDest;
+
 
     /* Initialize the System */
     SystemInit();
