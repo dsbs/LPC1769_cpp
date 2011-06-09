@@ -22,13 +22,13 @@ SUBDIRS = $(sort \
 CSRCS =  $(sort \
 			core_cm3.c \
 			system_LPC17xx.c \
-			startup_LPC17xx.c \
 			)
 
 # List C++ source files. File suffix must be *.cpp with case sensitive
 CPPSRCS = $(sort \
 			 main.cpp \
 			 lamp.cpp \
+			 startup_LPC17xx.cpp \
 			 )
 
 # List Assembler source files. File suffix must be *.s with case sensitive

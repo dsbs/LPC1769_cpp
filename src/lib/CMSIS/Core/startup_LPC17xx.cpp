@@ -42,7 +42,28 @@
 #include "system_LPC17xx.h"
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 #define WEAK __attribute__ ((weak))
+//*****************************************************************************
+//
+// This is the code that gets called when the processor receives an unexpected
+// interrupt.  This simply enters an infinite loop, preserving the system state
+// for examination by a debugger.
+//
+//*****************************************************************************
+void Default_Handler(void)
+{
+   LPC_GPIO1->FIOCLR_b24 = 1;
+   /* Go into an infinite loop */
+   while (1)
+   {
+
+   }
+}
+
+
 //*****************************************************************************
 //
 // Forward declaration of the default fault handlers.
@@ -220,50 +241,50 @@ void (* g_pfnVectors[])(void) =
 // this definition.
 //
 //*****************************************************************************
-#pragma weak MemManage_Handler = Default_Handler          /* MPU Fault Handler */
-#pragma weak BusFault_Handler = Default_Handler           /* Bus Fault Handler */
-#pragma weak UsageFault_Handler = Default_Handler         /* Usage Fault Handler */
-#pragma weak SVC_Handler = Default_Handler                /* SVCall Handler */
-#pragma weak DebugMon_Handler = Default_Handler           /* Debug Monitor Handler */
-#pragma weak PendSV_Handler = Default_Handler             /* PendSV Handler */
+//#pragma weak MemManage_Handler = Default_Handler          /* MPU Fault Handler */
+//#pragma weak BusFault_Handler = Default_Handler           /* Bus Fault Handler */
+//#pragma weak UsageFault_Handler = Default_Handler         /* Usage Fault Handler */
+//#pragma weak SVC_Handler = Default_Handler                /* SVCall Handler */
+//#pragma weak DebugMon_Handler = Default_Handler           /* Debug Monitor Handler */
+//#pragma weak PendSV_Handler = Default_Handler             /* PendSV Handler */
 //#pragma weak SysTick_Handler = Default_Handler            /* SysTick Handler */
 
 /* External interrupt vector handler */
-#pragma weak WDT_IRQHandler = Default_Handler            /* Watchdog Timer */
-#pragma weak TIMER0_IRQHandler = Default_Handler         /* Timer0 */
-#pragma weak TIMER1_IRQHandler = Default_Handler         /* Timer1 */
-#pragma weak TIMER2_IRQHandler = Default_Handler         /* Timer2 */
-#pragma weak TIMER3_IRQHandler = Default_Handler         /* Timer3 */
-#pragma weak UART0_IRQHandler = Default_Handler          /* UART0 */
-#pragma weak UART1_IRQHandler = Default_Handler          /* UART1 */
-#pragma weak UART2_IRQHandler = Default_Handler          /* UART2 */
-#pragma weak UART3_IRQHandler = Default_Handler          /* UART3 */
-#pragma weak PWM1_IRQHandler = Default_Handler           /* PWM1 */
-#pragma weak I2C0_IRQHandler = Default_Handler           /* I2C0 */
-#pragma weak I2C1_IRQHandler = Default_Handler           /* I2C1 */
-#pragma weak I2C2_IRQHandler = Default_Handler           /* I2C2 */
-#pragma weak SPI_IRQHandler = Default_Handler            /* SPI */
-#pragma weak SSP0_IRQHandler = Default_Handler           /* SSP0 */
-#pragma weak SSP1_IRQHandler = Default_Handler           /* SSP1 */
-#pragma weak PLL0_IRQHandler = Default_Handler           /* PLL0 (Main PLL) */
-#pragma weak RTC_IRQHandler = Default_Handler            /* Real Time Clock */
-#pragma weak EINT0_IRQHandler = Default_Handler          /* External Interrupt 0 */
-#pragma weak EINT1_IRQHandler = Default_Handler          /* External Interrupt 1 */
-#pragma weak EINT2_IRQHandler = Default_Handler          /* External Interrupt 2 */
-#pragma weak EINT3_IRQHandler = Default_Handler          /* External Interrupt 3 */
-#pragma weak ADC_IRQHandler = Default_Handler            /* A/D Converter */
-#pragma weak BOD_IRQHandler = Default_Handler            /* Brown Out Detect */
-#pragma weak USB_IRQHandler = Default_Handler            /* USB */
-#pragma weak CAN_IRQHandler = Default_Handler            /* CAN */
-#pragma weak DMA_IRQHandler = Default_Handler            /* GP DMA */
-#pragma weak I2S_IRQHandler = Default_Handler            /* I2S */
-#pragma weak ENET_IRQHandler = Default_Handler           /* Ethernet */
-#pragma weak RIT_IRQHandler = Default_Handler            /* Repetitive Interrupt Timer */
-#pragma weak MCPWM_IRQHandler = Default_Handler          /* Motor Control PWM */
-#pragma weak QEI_IRQHandler = Default_Handler            /* Quadrature Encoder Interface */
-#pragma weak PLL1_IRQHandler = Default_Handler           /* PLL1 (USB PLL) */
-#pragma weak USBActivity_IRQHandler = Default_Handler    /* USB Activity */
-#pragma weak CANActivity_IRQHandler = Default_Handler    /* CAN Activity */
+//#pragma weak WDT_IRQHandler = Default_Handler            /* Watchdog Timer */
+//#pragma weak TIMER0_IRQHandler = Default_Handler         /* Timer0 */
+//#pragma weak TIMER1_IRQHandler = Default_Handler         /* Timer1 */
+//#pragma weak TIMER2_IRQHandler = Default_Handler         /* Timer2 */
+//#pragma weak TIMER3_IRQHandler = Default_Handler         /* Timer3 */
+//#pragma weak UART0_IRQHandler = Default_Handler          /* UART0 */
+//#pragma weak UART1_IRQHandler = Default_Handler          /* UART1 */
+//#pragma weak UART2_IRQHandler = Default_Handler          /* UART2 */
+//#pragma weak UART3_IRQHandler = Default_Handler          /* UART3 */
+//#pragma weak PWM1_IRQHandler = Default_Handler           /* PWM1 */
+//#pragma weak I2C0_IRQHandler = Default_Handler           /* I2C0 */
+//#pragma weak I2C1_IRQHandler = Default_Handler           /* I2C1 */
+//#pragma weak I2C2_IRQHandler = Default_Handler           /* I2C2 */
+//#pragma weak SPI_IRQHandler = Default_Handler            /* SPI */
+//#pragma weak SSP0_IRQHandler = Default_Handler           /* SSP0 */
+//#pragma weak SSP1_IRQHandler = Default_Handler           /* SSP1 */
+//#pragma weak PLL0_IRQHandler = Default_Handler           /* PLL0 (Main PLL) */
+//#pragma weak RTC_IRQHandler = Default_Handler            /* Real Time Clock */
+//#pragma weak EINT0_IRQHandler = Default_Handler          /* External Interrupt 0 */
+//#pragma weak EINT1_IRQHandler = Default_Handler          /* External Interrupt 1 */
+//#pragma weak EINT2_IRQHandler = Default_Handler          /* External Interrupt 2 */
+//#pragma weak EINT3_IRQHandler = Default_Handler          /* External Interrupt 3 */
+//#pragma weak ADC_IRQHandler = Default_Handler            /* A/D Converter */
+//#pragma weak BOD_IRQHandler = Default_Handler            /* Brown Out Detect */
+//#pragma weak USB_IRQHandler = Default_Handler            /* USB */
+//#pragma weak CAN_IRQHandler = Default_Handler            /* CAN */
+//#pragma weak DMA_IRQHandler = Default_Handler            /* GP DMA */
+//#pragma weak I2S_IRQHandler = Default_Handler            /* I2S */
+//#pragma weak ENET_IRQHandler = Default_Handler           /* Ethernet */
+//#pragma weak RIT_IRQHandler = Default_Handler            /* Repetitive Interrupt Timer */
+//#pragma weak MCPWM_IRQHandler = Default_Handler          /* Motor Control PWM */
+//#pragma weak QEI_IRQHandler = Default_Handler            /* Quadrature Encoder Interface */
+//#pragma weak PLL1_IRQHandler = Default_Handler           /* PLL1 (USB PLL) */
+//#pragma weak USBActivity_IRQHandler = Default_Handler    /* USB Activity */
+//#pragma weak CANActivity_IRQHandler = Default_Handler    /* CAN Activity */
 
 
 /*******************************************************************************
@@ -311,22 +332,6 @@ void Reset_Handler(void)
     }
 }
 
-//*****************************************************************************
-//
-// This is the code that gets called when the processor receives an unexpected
-// interrupt.  This simply enters an infinite loop, preserving the system state
-// for examination by a debugger.
-//
-//*****************************************************************************
-void Default_Handler(void)
-{
-   LPC_GPIO1->FIOCLR_b24 = 1;
-   /* Go into an infinite loop */
-   while (1)
-   {
-
-   }
-}
 
 volatile uint32_t msTicks;                            /* counts 1ms timeTicks */
 
@@ -338,4 +343,6 @@ void SysTick_Handler(void)
    LPC_GPIO1->FIOCLR_b27 = 1;
   msTicks++;                        /* increment counter necessary in Delay() */
 }
-
+#ifdef __cplusplus
+}
+#endif

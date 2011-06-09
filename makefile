@@ -23,7 +23,7 @@ help:
 TCHAIN_PREFIX = arm-none-eabi-
 CC      = $(TCHAIN_PREFIX)gcc
 CPP     = $(TCHAIN_PREFIX)g++
-LD      = $(TCHAIN_PREFIX)ld
+LD      = $(TCHAIN_PREFIX)g++
 AR      = $(TCHAIN_PREFIX)ar
 AS      = $(TCHAIN_PREFIX)as
 OBJCOPY = $(TCHAIN_PREFIX)objcopy
@@ -161,7 +161,7 @@ $(OUTDIR)/%.bin: $(OUTDIR)/%.elf
 $(OUTDIR)/%.lss: $(OUTDIR)/%.elf
 	@echo '  OBJDUMP  $(+F) > $(@F)  - extended listing/disassembly file' $(TEE)
 	@echo '$(OBJDUMP) -h -S -C -r $< > $@' >> $(LOGFILE)
-	@$(OBJDUMP) --section-headers --source --demangle --reloc $< > $@ $(TEE)
+	@$(OBJDUMP) --section-headers --source --reloc $< > $@ $(TEE)
 
 # Create a symbol table from ELF output file.
 # -n, --numeric-sort # Sort symbols numerically by their addresses, rather

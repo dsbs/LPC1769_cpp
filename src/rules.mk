@@ -113,6 +113,6 @@ LDFLAGS = \
           --warn-shared-textrel \
           --warn-alternate-em \
           -nostartfiles \
-          -Map=$(OUTDIR)/$(TARGET).map --cref --gc-sections  \
+          -Wl,-Map=$(OUTDIR)/$(TARGET).map --cref --gc-sections  \
           -T$(LINKERSCRIPT)
 
