@@ -298,25 +298,21 @@ SECTIONS
    
    
   /* Start of heap section */
-  .heap (NOLOAD):
+  .heap (NOLOAD) :
   {
     *(.heap)
   } >ram1
    
 
   /* Stack section */
-  /* Define stack size */
-  /*STACK_SIZE = 0x200;*/
-  /*. = ORIGIN(ram1) + LENGTH(ram1) - STACK_SIZE;*/
-  /*. = 0x10007E00;*/
-  .stack (NOLOAD):
+  .stack (NOLOAD) :
   {
     /* stack */
     *(.stack)
           
     /* Provide stack end address */
-    _estack = ORIGIN(ram1) + LENGTH(ram1);
-    PROVIDE(estack = ORIGIN(ram1) + LENGTH(ram1));
+    _estack = .;
+    PROVIDE(estack = .);
   } >ram1
 
 

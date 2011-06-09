@@ -142,10 +142,11 @@ extern int main(void);
 * 0x0000.0000.
 *
 ******************************************************************************/
+
 #define STACK_SIZE                              0x00000200
 
 __attribute__ ((section(".stack")))
-/* static */ unsigned long pulStack[STACK_SIZE];
+unsigned long pulStack[STACK_SIZE];
 
 __attribute__ ((section(".isr_vector")))
 void (* g_pfnVectors[])(void) =
@@ -157,8 +158,7 @@ void (* g_pfnVectors[])(void) =
          * Interrupt function addresses sorted by Exception number
          *
          */
-        //(irqfct)(&_estack),        /* 0  - The initial stack pointer */
-        (void (*)(void))((unsigned long)pulStack + sizeof(pulStack)),  // The initial stack pointer
+        (void (*)(void))((unsigned long)pulStack + sizeof(pulStack)),
         Reset_Handler,             /* 1  - Reset Handler */
         NMI_Handler,               /* 2  - NMI Handler */
         HardFault_Handler,         /* 3  - Hard Fault Handler */
