@@ -172,7 +172,7 @@ $(OUTDIR)/%.sym: $(OUTDIR)/%.elf
 	@$(NM) -n $< > $@ $(TEE)
 
 # Link: create ELF output file from object files.
-$(OUTDIR)/%.elf: $(OBJS)
+$(OUTDIR)/%.elf: $(OBJS) $(LINKERSCRIPT)
 	@echo ' ' $(TEE)
 	@echo '  LINK     $(filter %.o,$(+F)) > $(@F)' $(TEE)
 	@echo '$(LD) $(LDFLAGS) $(OBJS) --output $@ ' >> $(LOGFILE)

@@ -38,89 +38,74 @@
  */
 
 
-#include "LPC17xx.h"
 #include "system_LPC17xx.h"
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-#define WEAK __attribute__ ((weak))
-//*****************************************************************************
-//
-// This is the code that gets called when the processor receives an unexpected
-// interrupt.  This simply enters an infinite loop, preserving the system state
-// for examination by a debugger.
-//
-//*****************************************************************************
-void Default_Handler(void)
-{
-   LPC_GPIO1->FIOCLR_b24 = 1;
-   /* Go into an infinite loop */
-   while (1)
-   {
+/* weak means "do not complain if there is no definition" */
+#define WEAK __attribute__((weak))
 
-   }
-}
+/* use isr specific assembly instructions */
+#define ISR __attribute__((__interrupt__))
+
+/* make this function a reset handler (place at start of text) */
+#define RESET __attribute__((section(".reset_handler")))
 
 
-//*****************************************************************************
-//
-// Forward declaration of the default fault handlers.
-//
-//*****************************************************************************
+/* ***************************************************************************** */
+/* */
+/* Forward declaration of the default fault handlers. */
+/* */
+/* ***************************************************************************** */
 /* System exception vector handler */
 /* Reset handler comment out because of weak attribute which do not apply to the functions used in the same c file */
-/* void WEAK 		Reset_Handler(void); */             /* Reset Handler */
-void WEAK 		NMI_Handler(void);               /* NMI Handler */
-void WEAK 		HardFault_Handler(void);         /* Hard Fault Handler */
-void WEAK 		MemManage_Handler(void);         /* MPU Fault Handler */
-void WEAK 		BusFault_Handler(void);          /* Bus Fault Handler */
-void WEAK 		UsageFault_Handler(void);        /* Usage Fault Handler */
-void WEAK 		SVC_Handler(void);               /* SVCall Handler */
-void WEAK 		DebugMon_Handler(void);          /* Debug Monitor Handler */
-void WEAK 		PendSV_Handler(void);            /* PendSV Handler */
-//void WEAK 		SysTick_Handler(void);           /* SysTick Handler */
+void WEAK ISR RESET Reset_Handler(void);                 /* Reset Handler */
+void WEAK ISR       NMI_Handler(void);                   /* NMI Handler */
+void WEAK ISR       HardFault_Handler(void);             /* Hard Fault Handler */
+void WEAK ISR       MemManage_Handler(void);             /* MPU Fault Handler */
+void WEAK ISR       BusFault_Handler(void);              /* Bus Fault Handler */
+void WEAK ISR       UsageFault_Handler(void);            /* Usage Fault Handler */
+void WEAK ISR       SVC_Handler(void);                   /* SVCall Handler */
+void WEAK ISR       DebugMon_Handler(void);              /* Debug Monitor Handler */
+void WEAK ISR       PendSV_Handler(void);                /* PendSV Handler */
+void WEAK ISR       SysTick_Handler(void);               /* SysTick Handler */
 
 
 /* External interrupt vector handler */
-void WEAK      	WDT_IRQHandler(void);            /* Watchdog Timer */
-void WEAK      	TIMER0_IRQHandler(void);         /* Timer0 */
-void WEAK      	TIMER1_IRQHandler(void);         /* Timer1 */
-void WEAK      	TIMER2_IRQHandler(void);         /* Timer2 */
-void WEAK      	TIMER3_IRQHandler(void);         /* Timer3 */
-void WEAK      	UART0_IRQHandler(void);          /* UART0 */
-void WEAK      	UART1_IRQHandler(void);          /* UART1 */
-void WEAK      	UART2_IRQHandler(void);          /* UART2 */
-void WEAK      	UART3_IRQHandler(void);          /* UART3 */
-void WEAK      	PWM1_IRQHandler(void);           /* PWM1 */
-void WEAK      	I2C0_IRQHandler(void);           /* I2C0 */
-void WEAK      	I2C1_IRQHandler(void);           /* I2C1 */
-void WEAK      	I2C2_IRQHandler(void);           /* I2C2 */
-void WEAK      	SPI_IRQHandler(void);            /* SPI */
-void WEAK      	SSP0_IRQHandler(void);           /* SSP0 */
-void WEAK      	SSP1_IRQHandler(void);           /* SSP1 */
-void WEAK      	PLL0_IRQHandler(void);           /* PLL0 (Main PLL) */
-void WEAK      	RTC_IRQHandler(void);            /* Real Time Clock */
-void WEAK      	EINT0_IRQHandler(void);          /* External Interrupt 0 */
-void WEAK      	EINT1_IRQHandler(void);          /* External Interrupt 1 */
-void WEAK      	EINT2_IRQHandler(void);          /* External Interrupt 2 */
-void WEAK      	EINT3_IRQHandler(void);          /* External Interrupt 3 */
-void WEAK      	ADC_IRQHandler(void);            /* A/D Converter */
-void WEAK      	BOD_IRQHandler(void);            /* Brown Out Detect */
-void WEAK      	USB_IRQHandler(void);            /* USB */
-void WEAK      	CAN_IRQHandler(void);            /* CAN */
-void WEAK      	DMA_IRQHandler(void);            /* GP DMA */
-void WEAK      	I2S_IRQHandler(void);            /* I2S */
-void WEAK      	ENET_IRQHandler(void);           /* Ethernet */
-void WEAK      	RIT_IRQHandler(void);            /* Repetitive Interrupt Timer */
-void WEAK      	MCPWM_IRQHandler(void);          /* Motor Control PWM */
-void WEAK      	QEI_IRQHandler(void);            /* Quadrature Encoder Interface */
-void WEAK      	PLL1_IRQHandler(void);           /* PLL1 (USB PLL) */
-void WEAK         USBActivity_IRQHandler(void);    /* USB Activity */
-void WEAK         CANActivity_IRQHandler(void);    /* CAN Activity */
-
-
+void WEAK ISR WDT_IRQHandler(void);                      /* Watchdog Timer */
+void WEAK ISR TIMER0_IRQHandler(void);                   /* Timer0 */
+void WEAK ISR TIMER1_IRQHandler(void);                   /* Timer1 */
+void WEAK ISR TIMER2_IRQHandler(void);                   /* Timer2 */
+void WEAK ISR TIMER3_IRQHandler(void);                   /* Timer3 */
+void WEAK ISR UART0_IRQHandler(void);                    /* UART0 */
+void WEAK ISR UART1_IRQHandler(void);                    /* UART1 */
+void WEAK ISR UART2_IRQHandler(void);                    /* UART2 */
+void WEAK ISR UART3_IRQHandler(void);                    /* UART3 */
+void WEAK ISR PWM1_IRQHandler(void);                     /* PWM1 */
+void WEAK ISR I2C0_IRQHandler(void);                     /* I2C0 */
+void WEAK ISR I2C1_IRQHandler(void);                     /* I2C1 */
+void WEAK ISR I2C2_IRQHandler(void);                     /* I2C2 */
+void WEAK ISR SPI_IRQHandler(void);                      /* SPI */
+void WEAK ISR SSP0_IRQHandler(void);                     /* SSP0 */
+void WEAK ISR SSP1_IRQHandler(void);                     /* SSP1 */
+void WEAK ISR PLL0_IRQHandler(void);                     /* PLL0 (Main PLL) */
+void WEAK ISR RTC_IRQHandler(void);                      /* Real Time Clock */
+void WEAK ISR EINT0_IRQHandler(void);                    /* External Interrupt 0 */
+void WEAK ISR EINT1_IRQHandler(void);                    /* External Interrupt 1 */
+void WEAK ISR EINT2_IRQHandler(void);                    /* External Interrupt 2 */
+void WEAK ISR EINT3_IRQHandler(void);                    /* External Interrupt 3 */
+void WEAK ISR ADC_IRQHandler(void);                      /* A/D Converter */
+void WEAK ISR BOD_IRQHandler(void);                      /* Brown Out Detect */
+void WEAK ISR USB_IRQHandler(void);                      /* USB */
+void WEAK ISR CAN_IRQHandler(void);                      /* CAN */
+void WEAK ISR DMA_IRQHandler(void);                      /* GP DMA */
+void WEAK ISR I2S_IRQHandler(void);                      /* I2S */
+void WEAK ISR ENET_IRQHandler(void);                     /* Ethernet */
+void WEAK ISR RIT_IRQHandler(void);                      /* Repetitive Interrupt Timer */
+void WEAK ISR MCPWM_IRQHandler(void);                    /* Motor Control PWM */
+void WEAK ISR QEI_IRQHandler(void);                      /* Quadrature Encoder Interface */
+void WEAK ISR PLL1_IRQHandler(void);                     /* PLL1 (USB PLL) */
+void WEAK ISR USBActivity_IRQHandler(void);              /* USB Activity */
+void WEAK ISR CANActivity_IRQHandler(void);              /* CAN Activity */
 
 
 /* Exported types --------------------------------------------------------------*/
@@ -135,7 +120,7 @@ extern unsigned long _ebss;      /* end address for the .bss section. defined in
 
 extern unsigned long _estack;    /* init address for the stack pointer. defined in linker script */
 
-extern unsigned long _sifastcode;/* start address for the rom code instructions copied to .fastcode section. defined in linker script */
+extern unsigned long _sifastcode; /* start address for the rom code instructions copied to .fastcode section. defined in linker script */
 extern unsigned long _sfastcode; /* start address for the .fastcode section. defined in linker script */
 extern unsigned long _efastcode; /* end address for the .fastcode section. defined in linker script */
 
@@ -146,13 +131,7 @@ extern unsigned long _sdatar3;   /* start address for the .datar3(ram3) section.
 extern unsigned long _edatar3;   /* end address for the .datar3(ram3) section. defined in linker script */
 
 
-
-/* Private typedef -----------------------------------------------------------*/
-typedef void( *const irqfct )( void );
-
 /* function prototypes ------------------------------------------------------*/
-void Reset_Handler(void) __attribute__((__interrupt__));
-void SysTick_Handler(void) __attribute__((__interrupt__));
 extern int main(void);
 
 
@@ -164,127 +143,77 @@ extern int main(void);
 *
 ******************************************************************************/
 
-#define STACK_SIZE                              0x00000200
+#define STACK_SIZE 0x00000200
 
-__attribute__ ((section(".stack")))
+__attribute__((section(".stack")))
 unsigned long pulStack[STACK_SIZE];
 
-__attribute__ ((section(".isr_vector")))
-void (* g_pfnVectors[])(void) =
+/*
+ * The Cortex-M3 interrupt controller (NVIC) will need stack address before
+ * it can jump to the handler. Hence, it’s put as the first thing on the interrupt table
+ *
+ * Interrupt function addresses sorted by Exception number
+ *
+ */
+__attribute__((section(".stack_address")))
+const unsigned long *stack_end_addr = (pulStack + sizeof(pulStack));
+
+__attribute__((section(".isr_vector")))
+const unsigned long *isr_vector_table[] =
 {
-        /*
-         * The Cortex-M3 interrupt controller (NVIC) will need stack address before
-         * it can jump to the handler. Hence, it’s put as the first thing on the interrupt table
-         *
-         * Interrupt function addresses sorted by Exception number
-         *
-         */
-        (void (*)(void))((unsigned long)pulStack + sizeof(pulStack)),
-        Reset_Handler,             /* 1  - Reset Handler */
-        NMI_Handler,               /* 2  - NMI Handler */
-        HardFault_Handler,         /* 3  - Hard Fault Handler */
-        MemManage_Handler,         /* 4  - MPU Fault Handler */
-        BusFault_Handler,          /* 5  - Bus Fault Handler */
-        UsageFault_Handler,        /* 6  - Usage Fault Handler */
-        0,                         /* 7  - Reserved */
-        0,                         /* 8  - Reserved */
-        0,                         /* 9  - Reserved */
-        0,                         /* 10 - Reserved */
-        SVC_Handler,               /* 11 - SVCall Handler */
-        DebugMon_Handler,          /* 12 - Debug Monitor Handler */
-        0,                         /* 13 - Reserved */
-        PendSV_Handler,            /* 14 - PendSV Handler */
-        SysTick_Handler,           /* 15 - SysTick Handler */
+   (unsigned long *)&Reset_Handler,                  /* 1  - Reset Handler */
+   (unsigned long *)&NMI_Handler,                    /* 2  - NMI Handler */
+   (unsigned long *)&HardFault_Handler,              /* 3  - Hard Fault Handler */
+   (unsigned long *)&MemManage_Handler,              /* 4  - MPU Fault Handler */
+   (unsigned long *)&BusFault_Handler,               /* 5  - Bus Fault Handler */
+   (unsigned long *)&UsageFault_Handler,             /* 6  - Usage Fault Handler */
+   (unsigned long *)0,                               /* 7  - Reserved */
+   (unsigned long *)0,                               /* 8  - Reserved */
+   (unsigned long *)0,                               /* 9  - Reserved */
+   (unsigned long *)0,                               /* 10 - Reserved */
+   (unsigned long *)&SVC_Handler,                    /* 11 - SVCall Handler */
+   (unsigned long *)&DebugMon_Handler,               /* 12 - Debug Monitor Handler */
+   (unsigned long *)0,                               /* 13 - Reserved */
+   (unsigned long *)&PendSV_Handler,                 /* 14 - PendSV Handler */
+   (unsigned long *)&SysTick_Handler,                /* 15 - SysTick Handler */
 
-		  /* External Interrupts */
-        WDT_IRQHandler,            /* 16 - Watchdog Timer */
-        TIMER0_IRQHandler,         /* 17 - Timer0 */
-        TIMER1_IRQHandler,         /* 18 - Timer1 */
-        TIMER2_IRQHandler,         /* 19 - Timer2 */
-        TIMER3_IRQHandler,         /* 20 - Timer3 */
-        UART0_IRQHandler,          /* 21 - UART0 */
-        UART1_IRQHandler,          /* 22 - UART1 */
-        UART2_IRQHandler,          /* 23 - UART2 */
-        UART3_IRQHandler,          /* 24 - UART3 */
-        PWM1_IRQHandler,           /* 25 - PWM1 */
-        I2C0_IRQHandler,           /* 26 - I2C0 */
-        I2C1_IRQHandler,           /* 27 - I2C1 */
-        I2C2_IRQHandler,           /* 28 - I2C2 */
-        SPI_IRQHandler,            /* 29 - SPI */
-        SSP0_IRQHandler,           /* 30 - SSP0 */
-        SSP1_IRQHandler,           /* 31 - SSP1 */
-        PLL0_IRQHandler,           /* 32 - PLL0 (Main PLL) */
-        RTC_IRQHandler,            /* 33 - Real Time Clock */
-        EINT0_IRQHandler,          /* 34 - External Interrupt 0 */
-        EINT1_IRQHandler,          /* 35 - External Interrupt 1 */
-        EINT2_IRQHandler,          /* 36 - External Interrupt 2 */
-        EINT3_IRQHandler,          /* 37 - External Interrupt 3 */
-        ADC_IRQHandler,            /* 38 - A/D Converter */
-        BOD_IRQHandler,            /* 39 - Brown Out Detect */
-        USB_IRQHandler,            /* 40 - USB */
-        CAN_IRQHandler,            /* 41 - CAN */
-        DMA_IRQHandler,            /* 42 - GP DMA */
-        I2S_IRQHandler,            /* 43 - I2S */
-        ENET_IRQHandler,           /* 44 - Ethernet */
-        RIT_IRQHandler,            /* 45 - Repetitive Interrupt Timer */
-        MCPWM_IRQHandler,          /* 46 - Motor Control PWM */
-        QEI_IRQHandler,            /* 47 - Quadrature Encoder Interface */
-        PLL1_IRQHandler,           /* 48 - PLL1 (USB PLL) */
-        USBActivity_IRQHandler,    /* 49 - USB Activity */
-        CANActivity_IRQHandler     /* 50 - CAN Activity */
+   /* External Interrupts */
+   (unsigned long *)&WDT_IRQHandler,                 /* 16 - Watchdog Timer */
+   (unsigned long *)&TIMER0_IRQHandler,              /* 17 - Timer0 */
+   (unsigned long *)&TIMER1_IRQHandler,              /* 18 - Timer1 */
+   (unsigned long *)&TIMER2_IRQHandler,              /* 19 - Timer2 */
+   (unsigned long *)&TIMER3_IRQHandler,              /* 20 - Timer3 */
+   (unsigned long *)&UART0_IRQHandler,               /* 21 - UART0 */
+   (unsigned long *)&UART1_IRQHandler,               /* 22 - UART1 */
+   (unsigned long *)&UART2_IRQHandler,               /* 23 - UART2 */
+   (unsigned long *)&UART3_IRQHandler,               /* 24 - UART3 */
+   (unsigned long *)&PWM1_IRQHandler,                /* 25 - PWM1 */
+   (unsigned long *)&I2C0_IRQHandler,                /* 26 - I2C0 */
+   (unsigned long *)&I2C1_IRQHandler,                /* 27 - I2C1 */
+   (unsigned long *)&I2C2_IRQHandler,                /* 28 - I2C2 */
+   (unsigned long *)&SPI_IRQHandler,                 /* 29 - SPI */
+   (unsigned long *)&SSP0_IRQHandler,                /* 30 - SSP0 */
+   (unsigned long *)&SSP1_IRQHandler,                /* 31 - SSP1 */
+   (unsigned long *)&PLL0_IRQHandler,                /* 32 - PLL0 (Main PLL) */
+   (unsigned long *)&RTC_IRQHandler,                 /* 33 - Real Time Clock */
+   (unsigned long *)&EINT0_IRQHandler,               /* 34 - External Interrupt 0 */
+   (unsigned long *)&EINT1_IRQHandler,               /* 35 - External Interrupt 1 */
+   (unsigned long *)&EINT2_IRQHandler,               /* 36 - External Interrupt 2 */
+   (unsigned long *)&EINT3_IRQHandler,               /* 37 - External Interrupt 3 */
+   (unsigned long *)&ADC_IRQHandler,                 /* 38 - A/D Converter */
+   (unsigned long *)&BOD_IRQHandler,                 /* 39 - Brown Out Detect */
+   (unsigned long *)&USB_IRQHandler,                 /* 40 - USB */
+   (unsigned long *)&CAN_IRQHandler,                 /* 41 - CAN */
+   (unsigned long *)&DMA_IRQHandler,                 /* 42 - GP DMA */
+   (unsigned long *)&I2S_IRQHandler,                 /* 43 - I2S */
+   (unsigned long *)&ENET_IRQHandler,                /* 44 - Ethernet */
+   (unsigned long *)&RIT_IRQHandler,                 /* 45 - Repetitive Interrupt Timer */
+   (unsigned long *)&MCPWM_IRQHandler,               /* 46 - Motor Control PWM */
+   (unsigned long *)&QEI_IRQHandler,                 /* 47 - Quadrature Encoder Interface */
+   (unsigned long *)&PLL1_IRQHandler,                /* 48 - PLL1 (USB PLL) */
+   (unsigned long *)&USBActivity_IRQHandler,         /* 49 - USB Activity */
+   (unsigned long *)&CANActivity_IRQHandler          /* 50 - CAN Activity */
 };
-
-//*****************************************************************************
-//
-// Provide weak aliases for each Exception handler to the Default_Handler.
-// As they are weak aliases, any function with the same name will override
-// this definition.
-//
-//*****************************************************************************
-//#pragma weak MemManage_Handler = Default_Handler          /* MPU Fault Handler */
-//#pragma weak BusFault_Handler = Default_Handler           /* Bus Fault Handler */
-//#pragma weak UsageFault_Handler = Default_Handler         /* Usage Fault Handler */
-//#pragma weak SVC_Handler = Default_Handler                /* SVCall Handler */
-//#pragma weak DebugMon_Handler = Default_Handler           /* Debug Monitor Handler */
-//#pragma weak PendSV_Handler = Default_Handler             /* PendSV Handler */
-//#pragma weak SysTick_Handler = Default_Handler            /* SysTick Handler */
-
-/* External interrupt vector handler */
-//#pragma weak WDT_IRQHandler = Default_Handler            /* Watchdog Timer */
-//#pragma weak TIMER0_IRQHandler = Default_Handler         /* Timer0 */
-//#pragma weak TIMER1_IRQHandler = Default_Handler         /* Timer1 */
-//#pragma weak TIMER2_IRQHandler = Default_Handler         /* Timer2 */
-//#pragma weak TIMER3_IRQHandler = Default_Handler         /* Timer3 */
-//#pragma weak UART0_IRQHandler = Default_Handler          /* UART0 */
-//#pragma weak UART1_IRQHandler = Default_Handler          /* UART1 */
-//#pragma weak UART2_IRQHandler = Default_Handler          /* UART2 */
-//#pragma weak UART3_IRQHandler = Default_Handler          /* UART3 */
-//#pragma weak PWM1_IRQHandler = Default_Handler           /* PWM1 */
-//#pragma weak I2C0_IRQHandler = Default_Handler           /* I2C0 */
-//#pragma weak I2C1_IRQHandler = Default_Handler           /* I2C1 */
-//#pragma weak I2C2_IRQHandler = Default_Handler           /* I2C2 */
-//#pragma weak SPI_IRQHandler = Default_Handler            /* SPI */
-//#pragma weak SSP0_IRQHandler = Default_Handler           /* SSP0 */
-//#pragma weak SSP1_IRQHandler = Default_Handler           /* SSP1 */
-//#pragma weak PLL0_IRQHandler = Default_Handler           /* PLL0 (Main PLL) */
-//#pragma weak RTC_IRQHandler = Default_Handler            /* Real Time Clock */
-//#pragma weak EINT0_IRQHandler = Default_Handler          /* External Interrupt 0 */
-//#pragma weak EINT1_IRQHandler = Default_Handler          /* External Interrupt 1 */
-//#pragma weak EINT2_IRQHandler = Default_Handler          /* External Interrupt 2 */
-//#pragma weak EINT3_IRQHandler = Default_Handler          /* External Interrupt 3 */
-//#pragma weak ADC_IRQHandler = Default_Handler            /* A/D Converter */
-//#pragma weak BOD_IRQHandler = Default_Handler            /* Brown Out Detect */
-//#pragma weak USB_IRQHandler = Default_Handler            /* USB */
-//#pragma weak CAN_IRQHandler = Default_Handler            /* CAN */
-//#pragma weak DMA_IRQHandler = Default_Handler            /* GP DMA */
-//#pragma weak I2S_IRQHandler = Default_Handler            /* I2S */
-//#pragma weak ENET_IRQHandler = Default_Handler           /* Ethernet */
-//#pragma weak RIT_IRQHandler = Default_Handler            /* Repetitive Interrupt Timer */
-//#pragma weak MCPWM_IRQHandler = Default_Handler          /* Motor Control PWM */
-//#pragma weak QEI_IRQHandler = Default_Handler            /* Quadrature Encoder Interface */
-//#pragma weak PLL1_IRQHandler = Default_Handler           /* PLL1 (USB PLL) */
-//#pragma weak USBActivity_IRQHandler = Default_Handler    /* USB Activity */
-//#pragma weak CANActivity_IRQHandler = Default_Handler    /* CAN Activity */
 
 
 /*******************************************************************************
@@ -298,51 +227,58 @@ void (* g_pfnVectors[])(void) =
 *******************************************************************************/
 void Reset_Handler(void)
 {
-    unsigned long *pulSrc, *pulDest;
+   unsigned long *pulSrc, *pulDest;
 
-    /* Initialize the System */
-    SystemInit();
+   /* Initialize the System */
+   SystemInit();
 
-    /* Copy the data segment initializers from flash to SRAM in ROM mode */
-    pulSrc = &_sidata;
-    for( pulDest = &_sdata; pulDest < &_edata; )
-    {
-        *(pulDest++) = *(pulSrc++);
-    }
+   /* Copy the data segment initializers from flash to SRAM in ROM mode */
+   pulSrc = &_sidata;
+   for (pulDest = &_sdata; pulDest < &_edata;)
+   {
+      *(pulDest++) = *(pulSrc++);
+   }
 
-    /* Zero fill the bss segment */
-    for( pulDest = &_sbss; pulDest < &_ebss; )
-    {
-        *(pulDest++) = 0;
-    }
+   /* Zero fill the bss segment */
+   for (pulDest = &_sbss; pulDest < &_ebss;)
+   {
+      *(pulDest++) = 0;
+   }
 
-    /* Copy the fastcode which shall be executed from ROM to SRAM */
-    pulSrc = &_sifastcode;
-    for( pulDest = &_sfastcode; pulDest < &_efastcode; )
-    {
-        *(pulDest++) = *(pulSrc++);
-    }
+   /* Copy the fastcode which shall be executed from ROM to SRAM */
+   pulSrc = &_sifastcode;
+   for (pulDest = &_sfastcode; pulDest < &_efastcode;)
+   {
+      *(pulDest++) = *(pulSrc++);
+   }
 
-    /* Call the application's entry point */
-    main();
+   /* Call the application's entry point */
+   main();
 
-    while(1)
-    {
-       /* The application entry point shall not be left, in case it did ten go into an infinite loop */
-    }
-}
-
+   while (1)
+   {
+      /* The application entry point shall not be left, in case it did ten go into an infinite loop */
+   }
+} /* Reset_Handler */
 
 volatile uint32_t msTicks;                            /* counts 1ms timeTicks */
 
 /*----------------------------------------------------------------------------
-  SysTick_Handler
+   SysTick_Handler
  *----------------------------------------------------------------------------*/
 void SysTick_Handler(void)
+{}
+
+/* ***************************************************************************** */
+/* */
+/* This is the code that gets called when the processor receives an unexpected */
+/* interrupt.  This simply enters an infinite loop, preserving the system state */
+/* for examination by a debugger. */
+/* */
+/* ***************************************************************************** */
+void Default_Handler(void)
 {
-   LPC_GPIO1->FIOCLR_b27 = 1;
-  msTicks++;                        /* increment counter necessary in Delay() */
+   /* Go into an infinite loop */
+   while (1)
+   {}
 }
-#ifdef __cplusplus
-}
-#endif
