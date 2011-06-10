@@ -26,9 +26,17 @@
 
 #include "LPC17xx.h"
 
-extern volatile uint32_t msTicks;                            /* counts 1ms timeTicks */
+volatile uint32_t msTicks;                            /* counts 1ms timeTicks */
 
 //#define VERSION_STRING "V1.2.0 12/2009"
+
+void Default_Handler(void)
+{
+   LPC_GPIO1->FIOCLR_b25 = 1;
+   /* Go into an infinite loop */
+   while (1)
+   {}
+}
 
 void SysTick_Handler(void)
 {

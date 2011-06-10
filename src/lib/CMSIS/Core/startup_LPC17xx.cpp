@@ -51,13 +51,14 @@
 #define RESET __attribute__((section(".reset_handler")))
 
 
-/* ***************************************************************************** */
-/* */
-/* Forward declaration of the default fault handlers. */
-/* */
-/* ***************************************************************************** */
+/******************************************************************************
+ *
+ *Forward declaration of the default interrupt handlers.
+ *
+ ******************************************************************************/
+void WEAK           Default_Handler(void);               /* User cat implement his own Default_Handler*/
+
 /* System exception vector handler */
-/* Reset handler comment out because of weak attribute which do not apply to the functions used in the same c file */
 void WEAK ISR RESET Reset_Handler(void);                 /* Reset Handler */
 void WEAK ISR       NMI_Handler(void);                   /* NMI Handler */
 void WEAK ISR       HardFault_Handler(void);             /* Hard Fault Handler */
@@ -151,13 +152,13 @@ unsigned long pulStack[STACK_SIZE];
 /*
  * The Cortex-M3 interrupt controller (NVIC) will need stack address before
  * it can jump to the handler. Hence, it’s put as the first thing on the interrupt table
- *
- * Interrupt function addresses sorted by Exception number
- *
  */
 __attribute__((section(".stack_address")))
 const unsigned long *stack_end_addr = (pulStack + sizeof(pulStack));
 
+/*
+ * Interrupt function addresses sorted by Exception number
+ */
 __attribute__((section(".isr_vector")))
 const unsigned long *isr_vector_table[] =
 {
@@ -261,24 +262,67 @@ void Reset_Handler(void)
    }
 } /* Reset_Handler */
 
-volatile uint32_t msTicks;                            /* counts 1ms timeTicks */
-
-/*----------------------------------------------------------------------------
-   SysTick_Handler
- *----------------------------------------------------------------------------*/
-void SysTick_Handler(void)
-{}
-
-/* ***************************************************************************** */
-/* */
-/* This is the code that gets called when the processor receives an unexpected */
-/* interrupt.  This simply enters an infinite loop, preserving the system state */
-/* for examination by a debugger. */
-/* */
-/* ***************************************************************************** */
+/*******************************************************************************
+ *
+ * This is the code that gets called when the processor receives an unexpected
+ * interrupt.  This simply enters an infinite loop, preserving the system state
+ * for examination by a debugger.
+ *
+ *******************************************************************************/
 void Default_Handler(void)
 {
    /* Go into an infinite loop */
    while (1)
    {}
 }
+
+/*
+ * Dummy implementations of all handlers;
+ */
+
+void NMI_Handler(void)            { Default_Handler(); }
+void HardFault_Handler(void)      { Default_Handler(); }
+void MemManage_Handler(void)      { Default_Handler(); }
+void BusFault_Handler(void)       { Default_Handler(); }
+void UsageFault_Handler(void)     { Default_Handler(); }
+void SVC_Handler(void)            { Default_Handler(); }
+void DebugMon_Handler(void)       { Default_Handler(); }
+void PendSV_Handler(void)         { Default_Handler(); }
+void SysTick_Handler(void)        { Default_Handler(); }
+void WDT_IRQHandler(void)         { Default_Handler(); }
+void TIMER0_IRQHandler(void)      { Default_Handler(); }
+void TIMER1_IRQHandler(void)      { Default_Handler(); }
+void TIMER2_IRQHandler(void)      { Default_Handler(); }
+void TIMER3_IRQHandler(void)      { Default_Handler(); }
+void UART0_IRQHandler(void)       { Default_Handler(); }
+void UART1_IRQHandler(void)       { Default_Handler(); }
+void UART2_IRQHandler(void)       { Default_Handler(); }
+void UART3_IRQHandler(void)       { Default_Handler(); }
+void PWM1_IRQHandler(void)        { Default_Handler(); }
+void I2C0_IRQHandler(void)        { Default_Handler(); }
+void I2C1_IRQHandler(void)        { Default_Handler(); }
+void I2C2_IRQHandler(void)        { Default_Handler(); }
+void SPI_IRQHandler(void)         { Default_Handler(); }
+void SSP0_IRQHandler(void)        { Default_Handler(); }
+void SSP1_IRQHandler(void)        { Default_Handler(); }
+void PLL0_IRQHandler(void)        { Default_Handler(); }
+void RTC_IRQHandler(void)         { Default_Handler(); }
+void EINT0_IRQHandler(void)       { Default_Handler(); }
+void EINT1_IRQHandler(void)       { Default_Handler(); }
+void EINT2_IRQHandler(void)       { Default_Handler(); }
+void EINT3_IRQHandler(void)       { Default_Handler(); }
+void ADC_IRQHandler(void)         { Default_Handler(); }
+void BOD_IRQHandler(void)         { Default_Handler(); }
+void USB_IRQHandler(void)         { Default_Handler(); }
+void CAN_IRQHandler(void)         { Default_Handler(); }
+void DMA_IRQHandler(void)         { Default_Handler(); }
+void I2S_IRQHandler(void)         { Default_Handler(); }
+void ENET_IRQHandler(void)        { Default_Handler(); }
+void RIT_IRQHandler(void)         { Default_Handler(); }
+void MCPWM_IRQHandler(void)       { Default_Handler(); }
+void QEI_IRQHandler(void)         { Default_Handler(); }
+void PLL1_IRQHandler(void)        { Default_Handler(); }
+void USBActivity_IRQHandler(void) { Default_Handler(); }
+void CANActivity_IRQHandler(void) { Default_Handler(); }
+
+

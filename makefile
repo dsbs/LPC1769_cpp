@@ -181,21 +181,21 @@ $(OUTDIR)/%.elf: $(OBJS) $(LINKERSCRIPT)
 ###########################################################################
 # Compile
 ###########################################################################
-$(OBJDIR)/%.o: %.s
+$(OBJDIR)/%.o: %.s makefile src/sources.mk src/rules.mk
 	@echo '  AS  $(<F) > $(@F)' $(TEE)
 	@echo '$(AS) $(ASFLAGS) $< -o $@' >> $(LOGFILE)
 	@$(AS) $(ASFLAGS) $< -o $@ $(TEE)
 	@sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
 	$(RM) -f $(*F).tmp $(TEE)
 
-$(OBJDIR)/%.o: %.c
+$(OBJDIR)/%.o: %.c makefile src/sources.mk src/rules.mk
 	@echo '  CC  $(<F) > $(@F)' $(TEE)
 	@echo '$(CC) -c $(CFLAGS) $< -o $@' >> $(LOGFILE)
 	@$(CC) -c $(CFLAGS) $< -o $@ $(TEE)
 	@sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
 	$(RM) -f $(*F).tmp $(TEE)
 
-$(OBJDIR)/%.o: %.cpp
+$(OBJDIR)/%.o: %.cpp makefile src/sources.mk src/rules.mk
 	@echo '  CPP $(<F) > $(@F)' $(TEE)
 	@echo '$(CPP) -c $(CPPFLAGS) $< -o $@' >> $(LOGFILE)
 	@$(CPP) -c $(CPPFLAGS) $< -o $@ $(TEE)
@@ -265,7 +265,7 @@ OOCD_FLASH+=-c "reset run"
 ###########################################################################
 # Listing of phony targets and default target.
 ###########################################################################
-.PHONY : all help size gccversion build elf hex bin lss sym clean createdirs
+.PHONY : all help size gccversion build elf hex bin lss sym clean createdirs 
 .DEFAULT_GOAL := all
 # prevent make from deleting *.obj files
 .SECONDARY: $(OBJS)
