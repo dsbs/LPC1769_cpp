@@ -23,6 +23,7 @@ CSRCS =  $(sort \
 			core_cm3.c \
 			system_LPC17xx.c \
 			startup_LPC17xx.c \
+			dummy.c \
 			)
 
 # List C++ source files. File suffix must be *.cpp with case sensitive

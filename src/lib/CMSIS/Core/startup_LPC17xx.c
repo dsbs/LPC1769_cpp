@@ -59,7 +59,7 @@ void WEAK 		UsageFault_Handler(void);        /* Usage Fault Handler */
 void WEAK 		SVC_Handler(void);               /* SVCall Handler */
 void WEAK 		DebugMon_Handler(void);          /* Debug Monitor Handler */
 void WEAK 		PendSV_Handler(void);            /* PendSV Handler */
-//void WEAK 		SysTick_Handler(void);           /* SysTick Handler */
+void WEAK 		SysTick_Handler(void);           /* SysTick Handler */
 
 
 /* External interrupt vector handler */
@@ -131,7 +131,7 @@ typedef void( *const irqfct )( void );
 
 /* function prototypes ------------------------------------------------------*/
 void Reset_Handler(void) __attribute__((__interrupt__));
-void SysTick_Handler(void) __attribute__((__interrupt__));
+
 extern int main(void);
 
 
@@ -226,7 +226,7 @@ void (* g_pfnVectors[])(void) =
 #pragma weak SVC_Handler = Default_Handler                /* SVCall Handler */
 #pragma weak DebugMon_Handler = Default_Handler           /* Debug Monitor Handler */
 #pragma weak PendSV_Handler = Default_Handler             /* PendSV Handler */
-//#pragma weak SysTick_Handler = Default_Handler            /* SysTick Handler */
+#pragma weak SysTick_Handler = Default_Handler            /* SysTick Handler */
 
 /* External interrupt vector handler */
 #pragma weak WDT_IRQHandler = Default_Handler            /* Watchdog Timer */
@@ -329,14 +329,5 @@ void Default_Handler(void)
    }
 }
 
-volatile uint32_t msTicks;                            /* counts 1ms timeTicks */
 
-/*----------------------------------------------------------------------------
-  SysTick_Handler
- *----------------------------------------------------------------------------*/
-void SysTick_Handler(void)
-{
-   LPC_GPIO1->FIOCLR_b27 = 1;
-  msTicks++;                        /* increment counter necessary in Delay() */
-}
 
