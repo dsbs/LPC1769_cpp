@@ -26,15 +26,17 @@
 
 #include "LPC17xx.h"
 
-//extern volatile uint32_t msTicks;                            /* counts 1ms timeTicks */
 volatile uint32_t msTicks;                            /* counts 1ms timeTicks */
 
 //#define VERSION_STRING "V1.2.0 12/2009"
 
-
-#ifdef __cplusplus
- extern "C" {
-#endif
+void Default_Handler(void)
+{
+   LPC_GPIO1->FIOCLR_b25 = 1;
+   /* Go into an infinite loop */
+   while (1)
+   {}
+}
 
 /*----------------------------------------------------------------------------
   SysTick_Handler
@@ -44,10 +46,6 @@ void SysTick_Handler(void)
    LPC_GPIO1->FIOCLR_b27 = 1;
   msTicks++;                        /* increment counter necessary in Delay() */
 }
-
-#ifdef __cplusplus
-}
-#endif
 
 /*------------------------------------------------------------------------------
   delays number of tick Systicks (happens every 1 ms)

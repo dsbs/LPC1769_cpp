@@ -23,7 +23,7 @@ help:
 TCHAIN_PREFIX = arm-none-eabi-
 CC      = $(TCHAIN_PREFIX)gcc
 CPP     = $(TCHAIN_PREFIX)g++
-LD      = $(TCHAIN_PREFIX)ld
+LD      = $(TCHAIN_PREFIX)g++
 AR      = $(TCHAIN_PREFIX)ar
 AS      = $(TCHAIN_PREFIX)as
 OBJCOPY = $(TCHAIN_PREFIX)objcopy
@@ -161,7 +161,7 @@ $(OUTDIR)/%.bin: $(OUTDIR)/%.elf
 $(OUTDIR)/%.lss: $(OUTDIR)/%.elf
 	@echo '  OBJDUMP  $(+F) > $(@F)  - extended listing/disassembly file' $(TEE)
 	@echo '$(OBJDUMP) -h -S -C -r $< > $@' >> $(LOGFILE)
-	@$(OBJDUMP) --section-headers --source --demangle --reloc $< > $@ $(TEE)
+	@$(OBJDUMP) --section-headers --source --reloc $< > $@ $(TEE)
 
 # Create a symbol table from ELF output file.
 # -n, --numeric-sort # Sort symbols numerically by their addresses, rather
@@ -172,7 +172,7 @@ $(OUTDIR)/%.sym: $(OUTDIR)/%.elf
 	@$(NM) -n $< > $@ $(TEE)
 
 # Link: create ELF output file from object files.
-$(OUTDIR)/%.elf: $(OBJS)
+$(OUTDIR)/%.elf: $(OBJS) $(LINKERSCRIPT)
 	@echo ' ' $(TEE)
 	@echo '  LINK     $(filter %.o,$(+F)) > $(@F)' $(TEE)
 	@echo '$(LD) $(LDFLAGS) $(OBJS) --output $@ ' >> $(LOGFILE)
@@ -181,21 +181,21 @@ $(OUTDIR)/%.elf: $(OBJS)
 ###########################################################################
 # Compile
 ###########################################################################
-$(OBJDIR)/%.o: %.s
+$(OBJDIR)/%.o: %.s makefile src/sources.mk src/rules.mk
 	@echo '  AS  $(<F) > $(@F)' $(TEE)
 	@echo '$(AS) $(ASFLAGS) $< -o $@' >> $(LOGFILE)
 	@$(AS) $(ASFLAGS) $< -o $@ $(TEE)
 	@sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
 	$(RM) -f $(*F).tmp $(TEE)
 
-$(OBJDIR)/%.o: %.c
+$(OBJDIR)/%.o: %.c makefile src/sources.mk src/rules.mk
 	@echo '  CC  $(<F) > $(@F)' $(TEE)
 	@echo '$(CC) -c $(CFLAGS) $< -o $@' >> $(LOGFILE)
 	@$(CC) -c $(CFLAGS) $< -o $@ $(TEE)
 	@sed -e 's,\($*\)\.o[ :]*,\1.o $(*F).d : ,g' < $(*F).tmp > $(DEPDIR)/$(*F).d; \
 	$(RM) -f $(*F).tmp $(TEE)
 
-$(OBJDIR)/%.o: %.cpp
+$(OBJDIR)/%.o: %.cpp makefile src/sources.mk src/rules.mk
 	@echo '  CPP $(<F) > $(@F)' $(TEE)
 	@echo '$(CPP) -c $(CPPFLAGS) $< -o $@' >> $(LOGFILE)
 	@$(CPP) -c $(CPPFLAGS) $< -o $@ $(TEE)
@@ -245,7 +245,7 @@ OOCD_FLASH += -c "shutdown"
 ###########################################################################
 # Listing of phony targets and default target.
 ###########################################################################
-.PHONY : all help size gccversion build elf hex bin lss sym clean createdirs
+.PHONY : all help size gccversion build elf hex bin lss sym clean createdirs 
 .DEFAULT_GOAL := all
 # prevent make from deleting *.obj files
 .SECONDARY: $(OBJS)

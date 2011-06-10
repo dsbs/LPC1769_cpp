@@ -14,9 +14,6 @@
  */
 OUTPUT_FORMAT("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
 
-/* The first instruction to execute in a program */
-ENTRY(Reset_Handler)
-
 /* MPU - defining regions of memory */
 MEMORY
 {
@@ -44,6 +41,18 @@ SECTIONS
 
   /* This section holds the text, or executable instructions, of a program */
   . = ORIGIN(rom);
+
+  .stack_address :
+  {
+     *(*.stack_address .stack_address*)
+  } >rom
+
+  .isr_vector :
+  {
+    KEEP(*(*.isr_vector .isr_vector.*))
+  } >rom
+
+  /* ENTRY is by default base address of .text section */
   .text :
   {
     /* CREATE_OBJECT_SYMBOLS - The command tells the linker to create a symbol for each input file */
@@ -52,7 +61,8 @@ SECTIONS
      * KEEP the interrupt vector section: When link-time garbage collection is in use ("--gc-sections"), 
      * it is often useful to mark sections that should not be eliminated
      */
-    KEEP(*(.isr_vector .isr_vector.*))
+    KEEP(*(*.reset_handler .reset_handler.*))
+   
     /* ROM sections */
     *(.rom)
     *(.rom.b)
