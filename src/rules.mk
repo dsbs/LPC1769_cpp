@@ -26,6 +26,7 @@ DEPGEN = -MD -MP -MF $(*F).tmp
 
 # C/C++ compiler common flags
 # -mcpu=cortex-m3                  # CPU name
+# -march=armv7-m                   # CPU architecture        
 # -mthumb                          # Generate code for the Thumb instruction set.  The default is to use the 32-bit
 #                                  # ARM instruction set. This option automatically enables either 16-bit Thumb-
 #                                  # 1 or mixed 16/32-bit Thumb-2 instructions based on the '-mcpu=name' and
@@ -34,6 +35,7 @@ DEPGEN = -MD -MP -MF $(*F).tmp
 #                                  # directive to the source or pass the '-mthumb' option directly to the assembler
 #                                  # by prefixin gi twit '-Wa'
 # -gdwarf-2                        # Debugging format
+# -mhard-float                     # allows generation of floating-point instructions and uses FPU-specific calling conventions
 # -O2                              # Optimalization level
 # -fpromote-loop-indices           # Convert loop indices to word-sized quantities
 # -Wall -Wextra                    # Turn all optional warnings plus extra optional
@@ -44,10 +46,12 @@ C_COMMONFLAGS = \
                 $(patsubst %,-I%,$(SUBDIRS)) \
                 -I. \
                 -mcpu=cortex-m3 \
+                -march=armv7-m \
                 -mthumb \
                 -gdwarf-2 \
                 -O2 \
                 -fpromote-loop-indices \
+                -mhard-float \
                 -Wall \
                 -Wextra \
                 -Wimplicit \
@@ -57,7 +61,8 @@ C_COMMONFLAGS = \
                 -Wshadow \
                 -Wcast-qual \
                 -Wcast-align \
-                -fno-exceptions 
+                -fno-exceptions \
+                -Wfatal-errors
 
 # C only compiler flags
 # -Wnested-externs                 # Warn if an extern declaration is encountered within a function
@@ -70,9 +75,11 @@ CFLAGS = \
 # C++ only compiler flags
 # -fno-rtti -fno-exceptions        # If you will not use virtual functions 
 #                                  # those setting flags will optimalize the code
+# -World-style-cast                # Warn if an old-style (C-style) cast to a non-void type is used within a C++ program
 CPPFLAGS = \
            $(C_COMMONFLAGS) \
-           -fno-rtti
+           -fno-rtti \
+           -Wold-style-cast 
 
 # Assembler compliler flags
 # -mcpu=cortex-m3 \                # CPU name

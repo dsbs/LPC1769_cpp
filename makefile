@@ -205,7 +205,6 @@ $(OBJDIR)/%.o: %.cpp makefile src/sources.mk src/rules.mk
 ###########################################################################
 # Options for OpenOCD flash-programming
 ###########################################################################
-
 # Provide openocd configuration file for JTAG(interface) and uC(target)
 OOCD_SETUP = -f openocd.cfg
 
@@ -238,7 +237,7 @@ OOCD_FLASH += -c "reset run"
 OOCD_FLASH += -c "shutdown"
 
 ###########################################################################
-# Include all dependences TODO: Why this must be here included? Put the explanation
+# Include all dependences
 ###########################################################################
 -include $(DEPDIR)/*
 

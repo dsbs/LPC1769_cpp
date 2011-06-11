@@ -30,6 +30,7 @@
  * - Minor fixes: comments, this header description
  * - Added missing CAN and USB interrupt vectors, updated descriptions
  * - Removed unnecessary include
+ * - file ported from c to cpp
  *
  * Dawid Bazan <dawidbazan@gmail.com>
  * Dariusz Synowiec <devemouse@gmail.com>
@@ -50,10 +51,9 @@
 /* make this function a reset handler (place at start of text) */
 #define RESET __attribute__((section(".reset_handler")))
 
-
 /******************************************************************************
  *
- *Forward declaration of the default interrupt handlers.
+ * Forward declaration of the default interrupt handlers.
  *
  ******************************************************************************/
 void WEAK           Default_Handler(void);               /* User cat implement his own Default_Handler*/
@@ -151,10 +151,14 @@ unsigned long pulStack[STACK_SIZE];
 
 /*
  * The Cortex-M3 interrupt controller (NVIC) will need stack address before
- * it can jump to the handler. Hence, it’s put as the first thing on the interrupt table
+ * it can jump to the handler. Hence, it's put as the first thing on the interrupt table
  */
 __attribute__((section(".stack_address")))
 const unsigned long *stack_end_addr = (pulStack + sizeof(pulStack));
+
+//#define USR_U2SCUM  ( &stack_end_addr + &Reset_Handler )
+#define USR_U2SCUM  ( &stack_end_addr)
+//static const unsigned long *u2cs = *USR_U2SCUM;
 
 /*
  * Interrupt function addresses sorted by Exception number
@@ -168,7 +172,7 @@ const unsigned long *isr_vector_table[] =
    (unsigned long *)&MemManage_Handler,              /* 4  - MPU Fault Handler */
    (unsigned long *)&BusFault_Handler,               /* 5  - Bus Fault Handler */
    (unsigned long *)&UsageFault_Handler,             /* 6  - Usage Fault Handler */
-   (unsigned long *)0,                               /* 7  - Reserved */
+   (unsigned long *)USR_U2SCUM,                      /* 7  - User Code Checksum */
    (unsigned long *)0,                               /* 8  - Reserved */
    (unsigned long *)0,                               /* 9  - Reserved */
    (unsigned long *)0,                               /* 10 - Reserved */
