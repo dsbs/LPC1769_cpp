@@ -156,13 +156,16 @@ unsigned long pulStack[STACK_SIZE];
 __attribute__((section(".stack_address")))
 const unsigned long *stack_end_addr = (pulStack + sizeof(pulStack));
 
-#define USR_U2SCUM  ( (long)&Reset_Handler + (long)&NMI_Handler )
-//#define USR_U2SCUM  (long)( (long)(~( (long)&stack_end_addr + \
-//                          (long)&Reset_Handler + \
-//                          (long)&NMI_Handler + \
-//                          (long)&HardFault_Handler + \
-//                          (long)&MemManage_Handler + \
-//                          (long)&BusFault_Handler ) ) +(long)1 )
+#define USR_U2SCUM  ( reinterpret_cast<unsigned long>(&Reset_Handler) + reinterpret_cast<unsigned long>(&NMI_Handler) )
+
+#if 0
+#define USR_U2SCUM  (long)( (long)(~( (long)&stack_end_addr + \
+                          (long)&Reset_Handler + \
+                          (long)&NMI_Handler + \
+                          (long)&HardFault_Handler + \
+                          (long)&MemManage_Handler + \
+                          (long)&BusFault_Handler ) ) +(long)1 )
+#endif
 
 
 static long u2cs = USR_U2SCUM;
@@ -173,58 +176,58 @@ static long u2cs = USR_U2SCUM;
 __attribute__((section(".isr_vector")))
 const unsigned long *isr_vector_table[] =
 {
-   (unsigned long *)&Reset_Handler,                  /* 1  - Reset Handler */
-   (unsigned long *)&NMI_Handler,                    /* 2  - NMI Handler */
-   (unsigned long *)&HardFault_Handler,              /* 3  - Hard Fault Handler */
-   (unsigned long *)&MemManage_Handler,              /* 4  - MPU Fault Handler */
-   (unsigned long *)&BusFault_Handler,               /* 5  - Bus Fault Handler */
-   (unsigned long *)&UsageFault_Handler,             /* 6  - Usage Fault Handler */
-   (unsigned long *)&u2cs,                      /* 7  - User Code Checksum */
-   (unsigned long *)0,                               /* 8  - Reserved */
-   (unsigned long *)0,                               /* 9  - Reserved */
-   (unsigned long *)0,                               /* 10 - Reserved */
-   (unsigned long *)&SVC_Handler,                    /* 11 - SVCall Handler */
-   (unsigned long *)&DebugMon_Handler,               /* 12 - Debug Monitor Handler */
-   (unsigned long *)0,                               /* 13 - Reserved */
-   (unsigned long *)&PendSV_Handler,                 /* 14 - PendSV Handler */
-   (unsigned long *)&SysTick_Handler,                /* 15 - SysTick Handler */
+   reinterpret_cast<unsigned long *>(&Reset_Handler),                  /* 1  - Reset Handler */
+   reinterpret_cast<unsigned long *>(&NMI_Handler),                    /* 2  - NMI Handler */
+   reinterpret_cast<unsigned long *>(&HardFault_Handler),              /* 3  - Hard Fault Handler */
+   reinterpret_cast<unsigned long *>(&MemManage_Handler),              /* 4  - MPU Fault Handler */
+   reinterpret_cast<unsigned long *>(&BusFault_Handler),               /* 5  - Bus Fault Handler */
+   reinterpret_cast<unsigned long *>(&UsageFault_Handler),             /* 6  - Usage Fault Handler */
+   reinterpret_cast<unsigned long *>(&u2cs),                      /* 7  - User Code Checksum */
+   reinterpret_cast<unsigned long *>(0),                               /* 8  - Reserved */
+   reinterpret_cast<unsigned long *>(0),                               /* 9  - Reserved */
+   reinterpret_cast<unsigned long *>(0),                               /* 10 - Reserved */
+   reinterpret_cast<unsigned long *>(&SVC_Handler),                    /* 11 - SVCall Handler */
+   reinterpret_cast<unsigned long *>(&DebugMon_Handler),               /* 12 - Debug Monitor Handler */
+   reinterpret_cast<unsigned long *>(0),                               /* 13 - Reserved */
+   reinterpret_cast<unsigned long *>(&PendSV_Handler),                 /* 14 - PendSV Handler */
+   reinterpret_cast<unsigned long *>(&SysTick_Handler),                /* 15 - SysTick Handler */
 
    /* External Interrupts */
-   (unsigned long *)&WDT_IRQHandler,                 /* 16 - Watchdog Timer */
-   (unsigned long *)&TIMER0_IRQHandler,              /* 17 - Timer0 */
-   (unsigned long *)&TIMER1_IRQHandler,              /* 18 - Timer1 */
-   (unsigned long *)&TIMER2_IRQHandler,              /* 19 - Timer2 */
-   (unsigned long *)&TIMER3_IRQHandler,              /* 20 - Timer3 */
-   (unsigned long *)&UART0_IRQHandler,               /* 21 - UART0 */
-   (unsigned long *)&UART1_IRQHandler,               /* 22 - UART1 */
-   (unsigned long *)&UART2_IRQHandler,               /* 23 - UART2 */
-   (unsigned long *)&UART3_IRQHandler,               /* 24 - UART3 */
-   (unsigned long *)&PWM1_IRQHandler,                /* 25 - PWM1 */
-   (unsigned long *)&I2C0_IRQHandler,                /* 26 - I2C0 */
-   (unsigned long *)&I2C1_IRQHandler,                /* 27 - I2C1 */
-   (unsigned long *)&I2C2_IRQHandler,                /* 28 - I2C2 */
-   (unsigned long *)&SPI_IRQHandler,                 /* 29 - SPI */
-   (unsigned long *)&SSP0_IRQHandler,                /* 30 - SSP0 */
-   (unsigned long *)&SSP1_IRQHandler,                /* 31 - SSP1 */
-   (unsigned long *)&PLL0_IRQHandler,                /* 32 - PLL0 (Main PLL) */
-   (unsigned long *)&RTC_IRQHandler,                 /* 33 - Real Time Clock */
-   (unsigned long *)&EINT0_IRQHandler,               /* 34 - External Interrupt 0 */
-   (unsigned long *)&EINT1_IRQHandler,               /* 35 - External Interrupt 1 */
-   (unsigned long *)&EINT2_IRQHandler,               /* 36 - External Interrupt 2 */
-   (unsigned long *)&EINT3_IRQHandler,               /* 37 - External Interrupt 3 */
-   (unsigned long *)&ADC_IRQHandler,                 /* 38 - A/D Converter */
-   (unsigned long *)&BOD_IRQHandler,                 /* 39 - Brown Out Detect */
-   (unsigned long *)&USB_IRQHandler,                 /* 40 - USB */
-   (unsigned long *)&CAN_IRQHandler,                 /* 41 - CAN */
-   (unsigned long *)&DMA_IRQHandler,                 /* 42 - GP DMA */
-   (unsigned long *)&I2S_IRQHandler,                 /* 43 - I2S */
-   (unsigned long *)&ENET_IRQHandler,                /* 44 - Ethernet */
-   (unsigned long *)&RIT_IRQHandler,                 /* 45 - Repetitive Interrupt Timer */
-   (unsigned long *)&MCPWM_IRQHandler,               /* 46 - Motor Control PWM */
-   (unsigned long *)&QEI_IRQHandler,                 /* 47 - Quadrature Encoder Interface */
-   (unsigned long *)&PLL1_IRQHandler,                /* 48 - PLL1 (USB PLL) */
-   (unsigned long *)&USBActivity_IRQHandler,         /* 49 - USB Activity */
-   (unsigned long *)&CANActivity_IRQHandler          /* 50 - CAN Activity */
+   reinterpret_cast<unsigned long *>(&WDT_IRQHandler),                 /* 16 - Watchdog Timer */
+   reinterpret_cast<unsigned long *>(&TIMER0_IRQHandler),              /* 17 - Timer0 */
+   reinterpret_cast<unsigned long *>(&TIMER1_IRQHandler),              /* 18 - Timer1 */
+   reinterpret_cast<unsigned long *>(&TIMER2_IRQHandler),              /* 19 - Timer2 */
+   reinterpret_cast<unsigned long *>(&TIMER3_IRQHandler),              /* 20 - Timer3 */
+   reinterpret_cast<unsigned long *>(&UART0_IRQHandler),               /* 21 - UART0 */
+   reinterpret_cast<unsigned long *>(&UART1_IRQHandler),               /* 22 - UART1 */
+   reinterpret_cast<unsigned long *>(&UART2_IRQHandler),               /* 23 - UART2 */
+   reinterpret_cast<unsigned long *>(&UART3_IRQHandler),               /* 24 - UART3 */
+   reinterpret_cast<unsigned long *>(&PWM1_IRQHandler),                /* 25 - PWM1 */
+   reinterpret_cast<unsigned long *>(&I2C0_IRQHandler),                /* 26 - I2C0 */
+   reinterpret_cast<unsigned long *>(&I2C1_IRQHandler),                /* 27 - I2C1 */
+   reinterpret_cast<unsigned long *>(&I2C2_IRQHandler),                /* 28 - I2C2 */
+   reinterpret_cast<unsigned long *>(&SPI_IRQHandler),                 /* 29 - SPI */
+   reinterpret_cast<unsigned long *>(&SSP0_IRQHandler),                /* 30 - SSP0 */
+   reinterpret_cast<unsigned long *>(&SSP1_IRQHandler),                /* 31 - SSP1 */
+   reinterpret_cast<unsigned long *>(&PLL0_IRQHandler),                /* 32 - PLL0 (Main PLL) */
+   reinterpret_cast<unsigned long *>(&RTC_IRQHandler),                 /* 33 - Real Time Clock */
+   reinterpret_cast<unsigned long *>(&EINT0_IRQHandler),               /* 34 - External Interrupt 0 */
+   reinterpret_cast<unsigned long *>(&EINT1_IRQHandler),               /* 35 - External Interrupt 1 */
+   reinterpret_cast<unsigned long *>(&EINT2_IRQHandler),               /* 36 - External Interrupt 2 */
+   reinterpret_cast<unsigned long *>(&EINT3_IRQHandler),               /* 37 - External Interrupt 3 */
+   reinterpret_cast<unsigned long *>(&ADC_IRQHandler),                 /* 38 - A/D Converter */
+   reinterpret_cast<unsigned long *>(&BOD_IRQHandler),                 /* 39 - Brown Out Detect */
+   reinterpret_cast<unsigned long *>(&USB_IRQHandler),                 /* 40 - USB */
+   reinterpret_cast<unsigned long *>(&CAN_IRQHandler),                 /* 41 - CAN */
+   reinterpret_cast<unsigned long *>(&DMA_IRQHandler),                 /* 42 - GP DMA */
+   reinterpret_cast<unsigned long *>(&I2S_IRQHandler),                 /* 43 - I2S */
+   reinterpret_cast<unsigned long *>(&ENET_IRQHandler),                /* 44 - Ethernet */
+   reinterpret_cast<unsigned long *>(&RIT_IRQHandler),                 /* 45 - Repetitive Interrupt Timer */
+   reinterpret_cast<unsigned long *>(&MCPWM_IRQHandler),               /* 46 - Motor Control PWM */
+   reinterpret_cast<unsigned long *>(&QEI_IRQHandler),                 /* 47 - Quadrature Encoder Interface */
+   reinterpret_cast<unsigned long *>(&PLL1_IRQHandler),                /* 48 - PLL1 (USB PLL) */
+   reinterpret_cast<unsigned long *>(&USBActivity_IRQHandler),         /* 49 - USB Activity */
+   reinterpret_cast<unsigned long *>(&CANActivity_IRQHandler)          /* 50 - CAN Activity */
 };
 
 
