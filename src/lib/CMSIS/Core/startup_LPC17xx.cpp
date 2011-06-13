@@ -156,9 +156,16 @@ unsigned long pulStack[STACK_SIZE];
 __attribute__((section(".stack_address")))
 const unsigned long *stack_end_addr = (pulStack + sizeof(pulStack));
 
-//#define USR_U2SCUM  ( &stack_end_addr + &Reset_Handler )
-#define USR_U2SCUM  ( &stack_end_addr)
-//static const unsigned long *u2cs = *USR_U2SCUM;
+#define USR_U2SCUM  ( (long)&Reset_Handler + (long)&NMI_Handler )
+//#define USR_U2SCUM  (long)( (long)(~( (long)&stack_end_addr + \
+//                          (long)&Reset_Handler + \
+//                          (long)&NMI_Handler + \
+//                          (long)&HardFault_Handler + \
+//                          (long)&MemManage_Handler + \
+//                          (long)&BusFault_Handler ) ) +(long)1 )
+
+
+static long u2cs = USR_U2SCUM;
 
 /*
  * Interrupt function addresses sorted by Exception number
@@ -172,7 +179,7 @@ const unsigned long *isr_vector_table[] =
    (unsigned long *)&MemManage_Handler,              /* 4  - MPU Fault Handler */
    (unsigned long *)&BusFault_Handler,               /* 5  - Bus Fault Handler */
    (unsigned long *)&UsageFault_Handler,             /* 6  - Usage Fault Handler */
-   (unsigned long *)USR_U2SCUM,                      /* 7  - User Code Checksum */
+   (unsigned long *)&u2cs,                      /* 7  - User Code Checksum */
    (unsigned long *)0,                               /* 8  - Reserved */
    (unsigned long *)0,                               /* 9  - Reserved */
    (unsigned long *)0,                               /* 10 - Reserved */
@@ -283,6 +290,11 @@ void Default_Handler(void)
 /*
  * Dummy implementations of all handlers;
  */
+//void NMI_Handler(void)
+//{
+//  static int i =3;
+//  Reset_Handler();
+//}
 
 void NMI_Handler(void)            { Default_Handler(); }
 void HardFault_Handler(void)      { Default_Handler(); }
