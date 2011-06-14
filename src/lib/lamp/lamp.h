@@ -12,8 +12,17 @@
  * Include files
  *****************************************************************************/
 #include "inttypes.h"
+#include "LPC17xx.h"
 
-typedef uint32_t Pin;
+/******************************************************************************
+ * Forward declarations
+ *****************************************************************************/
+struct Pin
+{
+   volatile LPC_GPIO_TypeDef * port;
+   uint8_t pin; // which pin
+};
+
 
 /**
  * Lamp provides abstraction for a lamp connected to uC.
@@ -35,7 +44,7 @@ class Lamp {
        * @param[in] initial_state off when false (default), on when true.
        * @param[in] inverted true when lamp is inverted, fale (default) otherwise
        */
-      Lamp(Pin pin, bool initial_state /* = false */, bool inverted /* = false */);
+      Lamp(Pin &pin, bool initial_state /* = false */, bool inverted /* = false */);
 
       /**
        * Default destructor
@@ -49,17 +58,22 @@ class Lamp {
        * Function used for verifying if a lamp is on or not.
        * @return true if lamp is on, false otherwise.
        */
-      bool is_on() {return _is_on;};
+      bool is_on() {return ((_pin->port->FIOSET & (1 << _pin->pin)) > 0);}
 
       /**
        * Turns the lap on
        */
-      void on(void) {_is_on = true;};
+      void __INLINE on(void) {_pin->port->FIOSET = (1 << _pin->pin);}
 
       /**
        * Turns the lap off
        */
-      void off(void) {_is_on = false;};
+      void __INLINE off(void) {_pin->port->FIOCLR = (1 << _pin->pin);}
+
+      /**
+       * Toggles the lap
+       */
+      void __INLINE toggle(void) {_pin->port->FIOPIN ^= (1 << _pin->pin);}
 
       /*****************************************************
        * Iterators
@@ -86,7 +100,8 @@ class Lamp {
       /*****************************************************
        * Private attributes
        *****************************************************/
-      Pin _pin; /**< Microcontroler pin lamp is connected to. */
+      Pin *_pin; /**< Microcontroler pin lamp is connected to. */
       bool _is_on; /**< Whether a lamp is on. */
       bool _inverted; /**< Whether a lamp is inverted. */
+      uint32_t on_mask;
 };
