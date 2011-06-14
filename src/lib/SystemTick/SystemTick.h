@@ -64,7 +64,7 @@ class SystemTick {
        * ISR inline Handler increments counter necessary in wait()
        * Shall be called inside usual ISR handler
        */
-      __INLINE static void SysTick_Handler(void) { msTicks++;}
+      static void SysTick_Handler(void) { msTicks++; }
 
       /*****************************************************
        * Public attributes

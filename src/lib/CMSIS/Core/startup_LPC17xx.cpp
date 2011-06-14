@@ -40,6 +40,7 @@
 
 
 #include "system_LPC17xx.h"
+#include "SystemTick.h"
 
 
 /* weak means "do not complain if there is no definition" */
@@ -68,7 +69,6 @@ void WEAK ISR       UsageFault_Handler(void);            /* Usage Fault Handler 
 void WEAK ISR       SVC_Handler(void);                   /* SVCall Handler */
 void WEAK ISR       DebugMon_Handler(void);              /* Debug Monitor Handler */
 void WEAK ISR       PendSV_Handler(void);                /* PendSV Handler */
-void WEAK ISR       SysTick_Handler(void);               /* SysTick Handler */
 
 
 /* External interrupt vector handler */
@@ -182,7 +182,7 @@ const unsigned long *isr_vector_table[] =
    reinterpret_cast<unsigned long *>(&MemManage_Handler),              /* 4  - MPU Fault Handler */
    reinterpret_cast<unsigned long *>(&BusFault_Handler),               /* 5  - Bus Fault Handler */
    reinterpret_cast<unsigned long *>(&UsageFault_Handler),             /* 6  - Usage Fault Handler */
-   reinterpret_cast<unsigned long *>(&u2cs),                      /* 7  - User Code Checksum */
+   reinterpret_cast<unsigned long *>(&u2cs),                           /* 7  - User Code Checksum */
    reinterpret_cast<unsigned long *>(0),                               /* 8  - Reserved */
    reinterpret_cast<unsigned long *>(0),                               /* 9  - Reserved */
    reinterpret_cast<unsigned long *>(0),                               /* 10 - Reserved */
@@ -190,7 +190,7 @@ const unsigned long *isr_vector_table[] =
    reinterpret_cast<unsigned long *>(&DebugMon_Handler),               /* 12 - Debug Monitor Handler */
    reinterpret_cast<unsigned long *>(0),                               /* 13 - Reserved */
    reinterpret_cast<unsigned long *>(&PendSV_Handler),                 /* 14 - PendSV Handler */
-   reinterpret_cast<unsigned long *>(&SysTick_Handler),                /* 15 - SysTick Handler */
+   reinterpret_cast<unsigned long *>(&SystemTick::SysTick_Handler),    /* 15 - SysTick Handler */
 
    /* External Interrupts */
    reinterpret_cast<unsigned long *>(&WDT_IRQHandler),                 /* 16 - Watchdog Timer */
@@ -307,7 +307,6 @@ void UsageFault_Handler(void)     { Default_Handler(); }
 void SVC_Handler(void)            { Default_Handler(); }
 void DebugMon_Handler(void)       { Default_Handler(); }
 void PendSV_Handler(void)         { Default_Handler(); }
-void SysTick_Handler(void)        { Default_Handler(); }
 void WDT_IRQHandler(void)         { Default_Handler(); }
 void TIMER0_IRQHandler(void)      { Default_Handler(); }
 void TIMER1_IRQHandler(void)      { Default_Handler(); }

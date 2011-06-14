@@ -41,14 +41,6 @@ void Default_Handler(void)
    while (1) {}
 }
 
-/**************************************************************************//**
- * SysTick_Handler is an ISR handler for SysTick interrupt
- *****************************************************************************/
-void SysTick_Handler(void)
-{
-   SystemTick::SysTick_Handler();
-}
-
 __attribute__((section(".fastcode")))
 void fastCodeFunct(void);
 
