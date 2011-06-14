@@ -11,9 +11,3 @@ Lamp::Lamp(Pin &pin, bool initial_state = false, bool inverted = false)
    else off();
 }
 
-
-bool Lamp::is_on(void) 
-{
-   return ((_pin->port->FIOSET & (1 << _pin->pin)) > 0);
-}
-

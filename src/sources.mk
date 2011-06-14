@@ -13,6 +13,7 @@ SUBDIRS = $(sort \
 			 src/app \
 			 src/lib/CMSIS/Core \
 			 src/lib/lamp \
+			 src/lib/SystemTick \
 			 )
 
 ###########################################################################
@@ -28,6 +29,7 @@ CSRCS =  $(sort \
 CPPSRCS = $(sort \
 			 main.cpp \
 			 lamp.cpp \
+			 SystemTick.cpp \
 			 startup_LPC17xx.cpp \
 			 )
 
