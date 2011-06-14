@@ -429,10 +429,7 @@
 /** @addtogroup LPC17xx_System_Public_Variables  LPC17xx System Public Variables
   @{
  */
-/*----------------------------------------------------------------------------
-  Clock Variable definitions
- *----------------------------------------------------------------------------*/
-uint32_t SystemCoreClock = __CORE_CLK;/*!< System Clock Frequency (Core Clock)*/
+
 
 /**
  * @}
@@ -447,27 +444,37 @@ uint32_t SystemCoreClock = __CORE_CLK;/*!< System Clock Frequency (Core Clock)*/
   Clock functions
  *----------------------------------------------------------------------------*/
 
-
-void SystemCoreClockUpdate (void)            /* Get Core Clock Frequency      */
+/**
+ * Get SystemCoreClock variable
+ *
+ * @param  none
+ * @return current system clock
+ *
+ * @brief  Updates the SystemCoreClock with current core Clock
+ *         retrieved from cpu registers and returns its value.
+ */
+uint32_t GetSystemCoreClock (void)            /* Get Core Clock Frequency      */
 {
+  uint32_t systemCoreClock = __CORE_CLK;    /* System Clock Frequency (Core Clock) set to default */
+
   /* Determine clock frequency according to clock register values             */
   if (((LPC_SC->PLL0STAT >> 24) & 3) == 3) { /* If PLL0 enabled and connected */
     switch (LPC_SC->CLKSRCSEL & 0x03) {
       case 0:                                /* Int. RC oscillator => PLL0    */
       case 3:                                /* Reserved, default to Int. RC  */
-        SystemCoreClock = (IRC_OSC *
+        systemCoreClock = (IRC_OSC *
                           ((2 * ((LPC_SC->PLL0STAT & 0x7FFF) + 1)))  /
                           (((LPC_SC->PLL0STAT >> 16) & 0xFF) + 1)    /
                           ((LPC_SC->CCLKCFG & 0xFF)+ 1));
         break;
       case 1:                                /* Main oscillator => PLL0       */
-        SystemCoreClock = (OSC_CLK *
+        systemCoreClock = (OSC_CLK *
                           ((2 * ((LPC_SC->PLL0STAT & 0x7FFF) + 1)))  /
                           (((LPC_SC->PLL0STAT >> 16) & 0xFF) + 1)    /
                           ((LPC_SC->CCLKCFG & 0xFF)+ 1));
         break;
       case 2:                                /* RTC oscillator => PLL0        */
-        SystemCoreClock = (RTC_CLK *
+        systemCoreClock = (RTC_CLK *
                           ((2 * ((LPC_SC->PLL0STAT & 0x7FFF) + 1)))  /
                           (((LPC_SC->PLL0STAT >> 16) & 0xFF) + 1)    /
                           ((LPC_SC->CCLKCFG & 0xFF)+ 1));
@@ -477,17 +484,18 @@ void SystemCoreClockUpdate (void)            /* Get Core Clock Frequency      */
     switch (LPC_SC->CLKSRCSEL & 0x03) {
       case 0:                                /* Int. RC oscillator => PLL0    */
       case 3:                                /* Reserved, default to Int. RC  */
-        SystemCoreClock = IRC_OSC / ((LPC_SC->CCLKCFG & 0xFF)+ 1);
+        systemCoreClock = IRC_OSC / ((LPC_SC->CCLKCFG & 0xFF)+ 1);
         break;
       case 1:                                /* Main oscillator => PLL0       */
-        SystemCoreClock = OSC_CLK / ((LPC_SC->CCLKCFG & 0xFF)+ 1);
+        systemCoreClock = OSC_CLK / ((LPC_SC->CCLKCFG & 0xFF)+ 1);
         break;
       case 2:                                /* RTC oscillator => PLL0        */
-        SystemCoreClock = RTC_CLK / ((LPC_SC->CCLKCFG & 0xFF)+ 1);
+        systemCoreClock = RTC_CLK / ((LPC_SC->CCLKCFG & 0xFF)+ 1);
         break;
     }
   }
 
+  return systemCoreClock;
 }
 
 /**
@@ -504,7 +512,7 @@ void SystemInit (void)
    //TODO: bitfields for control registers
 #if (CLOCK_SETUP)                        /* Clock Setup */
   LPC_SC->SCS       = SCS_Val;           /* Enable Main Oscillator and start up if HW crystal is placed */
-  //TBD: see  OSCRANGE bit in SCS register. The Main Oscillator can be speed upt to 25MHz
+  //TODO: see  OSCRANGE bit in SCS register. The Main Oscillator can be speed upt to 25MHz
   if (LPC_SC->SCS & (1 << 5))            /* If Main Oscillator is enabled  */
   {
     while ((LPC_SC->SCS & (1<<6)) == 0); /* Wait for Oscillator to be ready */
@@ -521,7 +529,7 @@ void SystemInit (void)
 #if (PLL0_SETUP)
   LPC_SC->CLKSRCSEL = CLKSRCSEL_Val;    /* Select Clock Source for PLL0 - Selects the main oscillator as the PLL0 clock source */
 
-  LPC_SC->PLL0CFG   = PLL0CFG_Val;      /* configure PLL0 *///TBD: bitfields so needed here! This sets up M and N value for PLL0
+  LPC_SC->PLL0CFG   = PLL0CFG_Val;      /* configure PLL0 *///TODO: bitfields so needed here! This sets up M and N value for PLL0
   LPC_SC->PLL0FEED  = 0xAA;
   LPC_SC->PLL0FEED  = 0x55;
 
@@ -550,7 +558,7 @@ void SystemInit (void)
  * possibility of generating the USB clock from PLL0
  */
 #if (PLL1_SETUP)
-  LPC_SC->PLL1CFG   = PLL1CFG_Val; //TBD: bitfields so needed here! This sets up M and N value for PLL1
+  LPC_SC->PLL1CFG   = PLL1CFG_Val; //TODO: bitfields so needed here! This sets up M and N value for PLL1
   LPC_SC->PLL1FEED  = 0xAA;
   LPC_SC->PLL1FEED  = 0x55;
 
@@ -579,7 +587,7 @@ void SystemInit (void)
 /*
  * The CLKOUTCFG register controls the selection of the internal clock that appears on the
  * CLKOUT pin(P1.27) and allows dividing the clock by an integer value up to 16
- * TBD: bitfileds would be very nice.
+ * TODO: bitfileds would be very nice.
  */
   LPC_SC->CLKOUTCFG = CLKOUTCFG_Val;    /* Clock Output Configuration */
 #endif

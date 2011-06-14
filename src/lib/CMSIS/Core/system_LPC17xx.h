@@ -25,6 +25,7 @@
 /*
  * Updated for LPC1769:
  * - Added __RAM_MODE__ definition which is used in system_LPC17xx.h file
+ * - GetSystemCoreClock used instead SystemCoreClockUpdate
  *
  * Dawid Bazan <dawidbazan@gmail.com>
  * Dariusz Synowiec <devemouse@gmail.com>
@@ -46,10 +47,11 @@ extern "C" {
  * @{
  */
 
+/*
+ * 0 - Code is loaded and run from ROM
+ * 1 - Code is loaded and run from RAM
+ */
 #define __RAM_MODE__ 0
-
-extern uint32_t SystemCoreClock;     /*!< System Clock Frequency (Core Clock)  */
-
 
 /**
  * Initialize the system
@@ -63,15 +65,16 @@ extern uint32_t SystemCoreClock;     /*!< System Clock Frequency (Core Clock)  *
 extern void SystemInit (void);
 
 /**
- * Update SystemCoreClock variable
+ * Get SystemCoreClock variable
  *
  * @param  none
- * @return none
+ * @return current system clock
  *
  * @brief  Updates the SystemCoreClock with current core Clock
- *         retrieved from cpu registers.
+ *         retrieved from cpu registers and returns its value.
  */
-extern void SystemCoreClockUpdate (void);
+extern uint32_t GetSystemCoreClock (void);
+
 #ifdef __cplusplus
 }
 #endif
