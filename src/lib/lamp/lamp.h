@@ -5,7 +5,6 @@
  * @author  Dariusz Synowiec <devemouse@gmail.com>
  * @version 0.1.0
  * @date    May 2011
- * @warning This was never programmed to the uC yet.
  *****************************************************************************/
 
 /******************************************************************************
@@ -26,7 +25,6 @@ struct Pin
 
 /**
  * Lamp provides abstraction for a lamp connected to uC.
- * @todo Connect this class to hardware pins.
  */
 class Lamp {
    public:

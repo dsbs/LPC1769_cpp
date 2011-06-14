@@ -1,11 +1,10 @@
 /**************************************************************************//**
- * @file    Lamp.h
- * @brief   File contains class declaration of Lamp class.
+ * @file    SystemTick.h
+ * @brief   File contains declaration of SystemTick class.
  * @author  Dawid Bazan <dawidbazan@gmail.com>
  * @author  Dariusz Synowiec <devemouse@gmail.com>
  * @version 0.1.0
  * @date    May 2011
- * @warning This was never programmed to the uC yet.
  *****************************************************************************/
 
 /******************************************************************************

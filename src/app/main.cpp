@@ -6,7 +6,6 @@
  * @version 0.0
  * @date    May 2011
  * @bug There is no bug. left this to have a reference.
- * @warning This was never programmed to the uC yet.
  *****************************************************************************/
 
 /**
@@ -75,6 +74,7 @@ int main(void)
    Lamp the_inverted_blinker(p1_26, false, true);
 
    SystemTick systick;
+
    (void)systick.initialize(100 * 1000);
 
    while (1)
