@@ -3,8 +3,8 @@
  * @brief   File contains declaration of SystemTick class.
  * @author  Dawid Bazan <dawidbazan@gmail.com>
  * @author  Dariusz Synowiec <devemouse@gmail.com>
- * @version 0.1.0
- * @date    May 2011
+ * @version 0.1.0dev
+ * @date    June 2011
  *****************************************************************************/
 
 /******************************************************************************
@@ -48,15 +48,14 @@ class SystemTick {
        *****************************************************/
 
       /**
-       * Waits for dlyTicks amount of time
-       * @param[in] dlyTicks amount of ticks to wait
-       * @todo in SystemTick::wait change dlyTicks to us.
+       * Waits for delay_ms amount of time
+       * @param[in] delay_ms amount of miliseconds to wait
        */
-      __INLINE static void wait(uint32_t dlyTicks) {
+      __INLINE static void wait_ms(uint32_t delay_ms) {
          if (initialized) {
             uint32_t curTicks;
             curTicks = msTicks;
-            while ((msTicks - curTicks) < dlyTicks) {}
+            while ((msTicks - curTicks) < delay_ms) {}
          }
       }
 

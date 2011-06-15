@@ -10,10 +10,11 @@ compile and run:
    - libusb 0.1.8 Library for talking to USB devices from user-space. 
      Needed by libftdi, libusb-devel must be installed as well
 
-If you are using Linux( as we use Ubutu 11.04 :) ) additional action is required to get the access to USB(no needed for root)
-1. create file "45-ft2232-libftdi.rules"
-2. print in to the file following content:
-BUS=="usb", ACTION=="add", SUBSYSTEM!="usb_device", SYSFS{idProduct}=="baf8", SYSFS{idVendor}=="0403", MODE:="0666", GROUP:="users"
-3. move the file 45-ft2232-libftdi.rules under /etc/udev/rules.d 
-4. re-log
+If you are using Linux ( as we use Ubutu 11.04 ) additional action is required to get the access to USB (no needed for root)
+
+   1. create file "45-ft2232-libftdi.rules"
+   2. print in to the file following content:
+      BUS=="usb", ACTION=="add", SUBSYSTEM!="usb_device", SYSFS{idProduct}=="baf8", SYSFS{idVendor}=="0403", MODE:="0666", GROUP:="users"
+   3. move the file 45-ft2232-libftdi.rules under /etc/udev/rules.d 
+   4. re-log
 
