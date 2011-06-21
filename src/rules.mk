@@ -49,7 +49,7 @@ C_COMMONFLAGS = \
                 -march=armv7-m \
                 -mthumb \
                 -gdwarf-2 \
-                -O2 \
+                -O0 \
                 -fpromote-loop-indices \
                 -mhard-float \
                 -Wall \
