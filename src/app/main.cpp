@@ -3,7 +3,7 @@
  * @brief This file contains main loop
  * @author Dawid Bazan <dawidbazan@gmail.com>
  * @author Dariusz Synowiec <devemouse@gmail.com>
- * @version 0.1.0dev
+ * @version 0.1.0
  * @date    May 2011
  * @bug There is no bug. left this to have a reference.
  *****************************************************************************/
@@ -18,7 +18,7 @@
  *
  */
 
-#define VERSION_STRING "v0.1.0dev"
+#define VERSION_STRING "v0.1.0"
 
 #include "lamp.h"
 #include "SystemTick.h"

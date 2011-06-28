@@ -3,7 +3,7 @@
  * @brief   File contains declaration of SystemTick class.
  * @author  Dawid Bazan <dawidbazan@gmail.com>
  * @author  Dariusz Synowiec <devemouse@gmail.com>
- * @version 0.1.0dev
+ * @version 0.1.0
  * @date    June 2011
  *****************************************************************************/
 
