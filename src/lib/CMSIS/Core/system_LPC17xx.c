@@ -452,7 +452,7 @@
  * Get SystemCoreClock variable
  *
  * @param  none
- * @return current system clock
+ * @return current system clock in Hz
  *
  * @brief  Updates the SystemCoreClock with current core Clock
  *         retrieved from cpu registers and returns its value.
