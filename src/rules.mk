@@ -78,8 +78,7 @@ CFLAGS = \
 # -World-style-cast                # Warn if an old-style (C-style) cast to a non-void type is used within a C++ program
 CPPFLAGS = \
            $(C_COMMONFLAGS) \
-           -fno-rtti \
-           -Wold-style-cast 
+           -fno-rtti 
 
 # Assembler compliler flags
 # -mcpu=cortex-m3 \                # CPU name

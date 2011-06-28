@@ -9,8 +9,6 @@ ABBREVIATIONS
 IN PROGRESS
 ==============
 * template files for c, cpp and h (remember about doxygen)
-* __DS:__ add SysTick module
-* __DB:__ Test fastcode if this is working properly
 * __DB:__ Test that stack is properly set up and is working fine. In map file it's look OK, but need to be tested
 
 
@@ -24,6 +22,7 @@ PENDING
 * Format the code with specified rules (specify those rules) 
 * fix how to get rid of swj-dp.tcl from root
 * link in openocd.cfg to files installed with open ocd, or put the note that when new version of openocd will be used this file must be updated.
+* Test fastcode if this is working properly
 
 
 DONE
@@ -49,4 +48,5 @@ DONE
 * __DB:__ Linker script recognize all sections check which are needed
 * __DB:__ Update LPC17xx.h with bitfields for GPIO to get access to single PINs
 * __DB:__ Update Interrupt vector: missing definitions
+* __DS:__ add SysTick module
 

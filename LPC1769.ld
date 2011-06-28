@@ -256,11 +256,14 @@ SECTIONS
     /* RAM data */
     *(.ram)
 
-    _edata = .; 
     /* Provide to the code the end of RAM1 address */
     _edata = .;
     PROVIDE(edata = .);
-  } >ram1
+    /* 
+     * >ram1 AT>rom - the VMA(Virtual Memory Address) is in ram1, the LMA(Load Memory Address) is in rom
+     * This feature is designed to make it easy to build a ROM image 
+     */    
+  } >ram1 AT>rom
   
   /* 
    * This section holds data that contributes to the program's memory image. 
@@ -299,12 +302,7 @@ SECTIONS
     /* Provide to the code the end of RAM address where italized data is stored */
     _ebss = .;
     PROVIDE(ebss = .);
-    
-    /* 
-     * >ram1 AT>rom - the VMA(Virtual Memory Address) is in ram1, the LMA(Load Memory Address) is in rom
-     * This feature is designed to make it easy to build a ROM image 
-     */
-  } >ram1 AT>rom
+  } >ram1
    
    
   /* Start of heap section */

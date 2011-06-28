@@ -248,8 +248,8 @@ void Reset_Handler(void)
    SystemInit();
 
    /* Copy the data segment initializers from flash to SRAM in ROM mode */
-   pulSrc = &_sidata;
-   for (pulDest = &_sdata; pulDest < &_edata;)
+   pulSrc = &_etext;
+   for (pulDest = &_sidata; pulDest < &_edata;)
    {
       *(pulDest++) = *(pulSrc++);
    }
@@ -289,15 +289,6 @@ void Default_Handler(void)
    while (1)
    {}
 }
-
-/*
- * Dummy implementations of all handlers;
- */
-//void NMI_Handler(void)
-//{
-//  static int i =3;
-//  Reset_Handler();
-//}
 
 void NMI_Handler(void)            { Default_Handler(); }
 void HardFault_Handler(void)      { Default_Handler(); }

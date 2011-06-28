@@ -48,6 +48,9 @@ void SysTick_Handler(void)
 __attribute__((section(".fastcode")))
 void fastCodeFunct(void);
 
+
+uint32_t dawid = 999999;
+
 /**************************************************************************//**
  * enableCLKOUT
  * After calling this function you will have cpu clock divided by 10 on pin 1.27 
@@ -68,16 +71,12 @@ void enableCLKOUT(void)
  *****************************************************************************/
 int main(void)
 {
-   // fastCodeFunct();
-   // if (SysTick_Config(12 / 1000)) { / * Setup SysTick Timer for 1 msec interrupts  * /
-   // while (1);                                  / * Capture error * /
-   //
-   // }
-
    enableCLKOUT();
 
    Pin p1_25 = {LPC_GPIO1, 25};
    Pin p1_26 = {LPC_GPIO1, 26};
+
+   dawid = 5555;
 
    Lamp the_blinker(p1_25, false, false);
    Lamp the_inverted_blinker(p1_26, false, true);
@@ -96,18 +95,3 @@ int main(void)
    }
    return(0);
 } /* main */
-
-/**************************************************************************//**
- * fastCodeFunct
- * Dummy function running from RAM.
- * It is placed here only to show how to use such thing.
- *****************************************************************************/
-void fastCodeFunct(void)
-{
-   // int dd = SysTick_Config(12 / 1000);
-   // LED_Config();
-   // LED_On ();                           / * Turn on the LED. * /
-   // Delay (100);                                / * delay  100 Msec * /
-   // LED_Off ();                          / * Turn off the LED. * /
-   // Delay (100);                                / * delay  100 Msec * /
-}
