@@ -19,7 +19,6 @@ PENDING
   or the additional sections are needed to use bitfield operations
 * Investigate if when creating output file we can fill out empty flash space with some pattern like for e.g. 0x00
   Do we need this? will it be useful somehow?
-* Format the code with specified rules (specify those rules) 
 * fix how to get rid of swj-dp.tcl from root
 * link in openocd.cfg to files installed with open ocd, or put the note that when new version of openocd will be used this file must be updated.
 * Test fastcode if this is working properly
@@ -51,4 +50,4 @@ DONE
 * __DB:__ Update Interrupt vector: missing definitions
 * __DS:__ add SysTick module
 * __DB:__ Compare linker script with the default provided by CMSIS for LPC17xx, see if wee need to update some sections 
-
+* __DS:__ Format the code with specified rules (specify those rules)

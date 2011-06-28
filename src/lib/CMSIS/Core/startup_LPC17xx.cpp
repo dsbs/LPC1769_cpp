@@ -144,11 +144,6 @@ extern int main(void);
 *
 ******************************************************************************/
 
-//#define STACK_SIZE 0x00000200
-
-//__attribute__((section(".stack")))
-//unsigned long pulStack[STACK_SIZE];
-
 /*
  * The Cortex-M3 interrupt controller (NVIC) will need stack address before
  * it can jump to the handler. Hence, it's put as the first thing on the interrupt table
