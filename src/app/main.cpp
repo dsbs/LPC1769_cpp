@@ -25,7 +25,6 @@
 
 #include "LPC17xx.h"
 
-
 /**************************************************************************//**
  * Default_Handler is an ISR handler for every unknown interrupt.
  * This one is optional and placed here as an example. User might want to e.g.
@@ -45,11 +44,12 @@ void SysTick_Handler(void)
    SystemTick::SysTick_Handler();
 }
 
+/**************************************************************************//**
+ * This function is run from RAM not from ROM
+ *****************************************************************************/
 __attribute__((section(".fastcode")))
 void fastCodeFunct(void);
 
-
-uint32_t dawid = 999999;
 
 /**************************************************************************//**
  * enableCLKOUT
@@ -75,8 +75,6 @@ int main(void)
 
    Pin p1_25 = {LPC_GPIO1, 25};
    Pin p1_26 = {LPC_GPIO1, 26};
-
-   dawid = 5555;
 
    Lamp the_blinker(p1_25, false, false);
    Lamp the_inverted_blinker(p1_26, false, true);
