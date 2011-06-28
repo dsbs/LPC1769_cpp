@@ -1,13 +1,15 @@
 
 #include "SystemTick.h"
+#include "system_LPC17xx.h"
 
 bool SystemTick::initialized = false;
 volatile uint32_t SystemTick::msTicks = 0; /* counts 1ms timeTicks */
 
-int SystemTick::initialize(uint32_t ticks) 
+int SystemTick::initialize() 
 {
    if (!initialized)
    {
+      uint32_t ticks = GetSystemCoreClock() / 1000;                /* Hard coded at 1000Hz (1ms) */
       if (ticks > SysTick_LOAD_RELOAD_Msk)  return (1);            /* Reload value impossible */
 
       SysTick->LOAD  = (ticks & SysTick_LOAD_RELOAD_Msk) - 1;      /* set reload register */

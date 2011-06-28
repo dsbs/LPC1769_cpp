@@ -28,12 +28,11 @@ class SystemTick {
       SystemTick() { initialized = false; msTicks = 0;}
 
       /**
-       * Initialize funcion shall be called as soon as clocks are set.
-       * @param[in] ticks value for cpu register.
+       * Initializes Systick counter at fixed 1ms. 
+       * This method shall be called as soon as clocks are set.
        * @return non-zero if failed to initialize
-       * @todo in SystemTick::initialize change ticks to us.
        */
-      int initialize(uint32_t ticks) ;
+      int initialize();
 
       /*****************************************************
        * Functions: modifiers (set), selectors (get)

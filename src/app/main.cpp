@@ -81,7 +81,7 @@ int main(void)
 
    SystemTick systick;
 
-   (void)systick.initialize(100 * 1000);
+   (void)systick.initialize();
 
    while (1)
    {

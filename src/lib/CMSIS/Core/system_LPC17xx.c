@@ -402,6 +402,10 @@
 #define __FCCO(__F_IN)    ((2 * __M * __F_IN) / __N)
 #define __CCLK_DIV        (((CCLKCFG_Val      ) & 0x00FF) + 1)
 
+#define getM()            ((LPC_SC->PLL0STAT & 0x7FFF) + 1)
+#define getN()            (((LPC_SC->PLL0STAT >> 16) & 0xFF) + 1)
+#define getCLKSEL()       ((LPC_SC->CCLKCFG & 0xFF)+ 1)
+
 /* Determine core clock frequency according to settings */
  #if (PLL0_SETUP)
     #if   ((CLKSRCSEL_Val & 0x03) == 1)
@@ -462,35 +466,26 @@ uint32_t GetSystemCoreClock (void)            /* Get Core Clock Frequency      *
     switch (LPC_SC->CLKSRCSEL & 0x03) {
       case 0:                                /* Int. RC oscillator => PLL0    */
       case 3:                                /* Reserved, default to Int. RC  */
-        systemCoreClock = (IRC_OSC *
-                          ((2 * ((LPC_SC->PLL0STAT & 0x7FFF) + 1)))  /
-                          (((LPC_SC->PLL0STAT >> 16) & 0xFF) + 1)    /
-                          ((LPC_SC->CCLKCFG & 0xFF)+ 1));
+        systemCoreClock = (IRC_OSC * 2 * getM() / getN() / getCLKSEL());
         break;
       case 1:                                /* Main oscillator => PLL0       */
-        systemCoreClock = (OSC_CLK *
-                          ((2 * ((LPC_SC->PLL0STAT & 0x7FFF) + 1)))  /
-                          (((LPC_SC->PLL0STAT >> 16) & 0xFF) + 1)    /
-                          ((LPC_SC->CCLKCFG & 0xFF)+ 1));
+        systemCoreClock = (OSC_CLK * 2 * getM() / getN() / getCLKSEL());
         break;
       case 2:                                /* RTC oscillator => PLL0        */
-        systemCoreClock = (RTC_CLK *
-                          ((2 * ((LPC_SC->PLL0STAT & 0x7FFF) + 1)))  /
-                          (((LPC_SC->PLL0STAT >> 16) & 0xFF) + 1)    /
-                          ((LPC_SC->CCLKCFG & 0xFF)+ 1));
+        systemCoreClock = (RTC_CLK * 2 * getM() / getN() / getCLKSEL());
         break;
     }
   } else {
     switch (LPC_SC->CLKSRCSEL & 0x03) {
       case 0:                                /* Int. RC oscillator => PLL0    */
       case 3:                                /* Reserved, default to Int. RC  */
-        systemCoreClock = IRC_OSC / ((LPC_SC->CCLKCFG & 0xFF)+ 1);
+        systemCoreClock = IRC_OSC / getCLKSEL();
         break;
       case 1:                                /* Main oscillator => PLL0       */
-        systemCoreClock = OSC_CLK / ((LPC_SC->CCLKCFG & 0xFF)+ 1);
+        systemCoreClock = OSC_CLK / getCLKSEL();
         break;
       case 2:                                /* RTC oscillator => PLL0        */
-        systemCoreClock = RTC_CLK / ((LPC_SC->CCLKCFG & 0xFF)+ 1);
+        systemCoreClock = RTC_CLK / getCLKSEL();
         break;
     }
   }
