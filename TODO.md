@@ -9,6 +9,7 @@ ABBREVIATIONS
 IN PROGRESS
 ==============
 * template files for c, cpp and h (remember about doxygen)
+* keep updating uncrustify.cfg so source files look nice
 * __DB:__ Test that stack is properly set up and is working fine. In map file it's look OK, but need to be tested
 
 
