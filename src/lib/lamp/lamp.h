@@ -18,8 +18,8 @@
  *****************************************************************************/
 struct Pin
 {
-   volatile LPC_GPIO_TypeDef * port;
-   uint8_t pin; // which pin
+   volatile LPC_GPIO_TypeDef *port;
+   uint8_t                   pin; // which pin
 };
 
 

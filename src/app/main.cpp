@@ -33,7 +33,8 @@
 void Default_Handler(void)
 {
    /* Go into an infinite loop */
-   while (1) {}
+   while (1)
+   {}
 }
 
 /**************************************************************************//**
@@ -53,15 +54,14 @@ void fastCodeFunct(void);
 
 /**************************************************************************//**
  * enableCLKOUT
- * After calling this function you will have cpu clock divided by 10 on pin 1.27 
+ * After calling this function you will have cpu clock divided by 10 on pin 1.27
  *****************************************************************************/
 void enableCLKOUT(void)
 {
-   LPC_GPIO1->FIODIR_b27 = 1;        // 1 - output
-   LPC_SC->CLKOUTCFG = 0x00000190;   //  0x0100 - enable, 0x00A0 - divide by 10
-   LPC_PINCON->PINSEL3 = 0x00400000; // set pin as CLKOUT
+   LPC_GPIO1->FIODIR_b27 = 1;          // 1 - output
+   LPC_SC->CLKOUTCFG     = 0x00000190; // 0x0100 - enable, 0x00A0 - divide by 10
+   LPC_PINCON->PINSEL3   = 0x00400000; // set pin as CLKOUT
 }
-
 
 /**************************************************************************//**
  * main
