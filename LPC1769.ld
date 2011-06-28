@@ -312,17 +312,10 @@ SECTIONS
   } >ram1
    
 
-  /* Stack section */
-  .stack (NOLOAD) :
-  {
-    /* stack */
-    *(.stack)
-          
-    /* Provide stack end address */
-    _estack = .;
-    PROVIDE(estack = .);
-  } >ram1
 
+  
+  _estack = ORIGIN(ram1) + LENGTH(ram1) - 16;
+  /*PROVIDE(estack = ORIGIN(ram1) + LENGTH(ram1) - 16);*/
 
   /* These section hold initialized data that contribute to the program's memory image */
   . = ORIGIN(ram2);

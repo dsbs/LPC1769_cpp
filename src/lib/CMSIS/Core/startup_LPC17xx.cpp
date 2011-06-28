@@ -111,25 +111,25 @@ void WEAK ISR CANActivity_IRQHandler(void);              /* CAN Activity */
 
 /* Exported types --------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
-extern unsigned long _etext;     /* end address for the .text section. defined in linker script */
-extern unsigned long _sidata;    /* start address for the initialization values of the .data section. defined in linker script */
-extern unsigned long _sdata;     /* start address for the .data section. defined in linker script */
-extern unsigned long _edata;     /* end address for the .data section. defined in linker script */
+extern unsigned long _etext;      /* end address for the .text section. defined in linker script */
+extern unsigned long _sidata;     /* start address for the initialization values of the .data section. defined in linker script */
+extern unsigned long _sdata;      /* start address for the .data section. defined in linker script */
+extern unsigned long _edata;      /* end address for the .data section. defined in linker script */
 
-extern unsigned long _sbss;      /* start address for the .bss section. defined in linker script */
-extern unsigned long _ebss;      /* end address for the .bss section. defined in linker script */
+extern unsigned long _sbss;       /* start address for the .bss section. defined in linker script */
+extern unsigned long _ebss;       /* end address for the .bss section. defined in linker script */
 
-extern unsigned long _estack;    /* init address for the stack pointer. defined in linker script */
+extern unsigned long _estack;     /* init address for the stack pointer. defined in linker script */
 
 extern unsigned long _sifastcode; /* start address for the rom code instructions copied to .fastcode section. defined in linker script */
-extern unsigned long _sfastcode; /* start address for the .fastcode section. defined in linker script */
-extern unsigned long _efastcode; /* end address for the .fastcode section. defined in linker script */
+extern unsigned long _sfastcode;  /* start address for the .fastcode section. defined in linker script */
+extern unsigned long _efastcode;  /* end address for the .fastcode section. defined in linker script */
 
-extern unsigned long _sdatar2;   /* start address for the .datar2(ram2) section. defined in linker script */
-extern unsigned long _edatar2;   /* end address for the .datar2(ram2) section. defined in linker script */
+extern unsigned long _sdatar2;    /* start address for the .datar2(ram2) section. defined in linker script */
+extern unsigned long _edatar2;    /* end address for the .datar2(ram2) section. defined in linker script */
 
-extern unsigned long _sdatar3;   /* start address for the .datar3(ram3) section. defined in linker script */
-extern unsigned long _edatar3;   /* end address for the .datar3(ram3) section. defined in linker script */
+extern unsigned long _sdatar3;    /* start address for the .datar3(ram3) section. defined in linker script */
+extern unsigned long _edatar3;    /* end address for the .datar3(ram3) section. defined in linker script */
 
 
 /* function prototypes ------------------------------------------------------*/
@@ -144,29 +144,25 @@ extern int main(void);
 *
 ******************************************************************************/
 
-#define STACK_SIZE 0x00000200
+//#define STACK_SIZE 0x00000200
 
-__attribute__((section(".stack")))
-unsigned long pulStack[STACK_SIZE];
+//__attribute__((section(".stack")))
+//unsigned long pulStack[STACK_SIZE];
 
 /*
  * The Cortex-M3 interrupt controller (NVIC) will need stack address before
  * it can jump to the handler. Hence, it's put as the first thing on the interrupt table
  */
 __attribute__((section(".stack_address")))
-const unsigned long *stack_end_addr = (pulStack + sizeof(pulStack));
+unsigned long *stackaddr = &_estack;
 
-#define USR_U2SCUM  ( reinterpret_cast<unsigned long>(&Reset_Handler) + reinterpret_cast<unsigned long>(&NMI_Handler) )
-
-#if 0
-#define USR_U2SCUM  (long)( (long)(~( (long)&stack_end_addr + \
-                          (long)&Reset_Handler + \
-                          (long)&NMI_Handler + \
-                          (long)&HardFault_Handler + \
-                          (long)&MemManage_Handler + \
-                          (long)&BusFault_Handler ) ) +(long)1 )
-#endif
-
+/* Calculate user code checksum */
+#define USR_U2SCUM  (unsigned long)( (unsigned long)(~( (unsigned long)&stackaddr + \
+                          (unsigned long)&Reset_Handler + \
+                          (unsigned long)&NMI_Handler + \
+                          (unsigned long)&HardFault_Handler + \
+                          (unsigned long)&MemManage_Handler + \
+                          (unsigned long)&BusFault_Handler ) ) + 1 )
 
 static long u2cs = USR_U2SCUM;
 
@@ -182,7 +178,7 @@ const unsigned long *isr_vector_table[] =
    reinterpret_cast<unsigned long *>(&MemManage_Handler),              /* 4  - MPU Fault Handler */
    reinterpret_cast<unsigned long *>(&BusFault_Handler),               /* 5  - Bus Fault Handler */
    reinterpret_cast<unsigned long *>(&UsageFault_Handler),             /* 6  - Usage Fault Handler */
-   reinterpret_cast<unsigned long *>(&u2cs),                      /* 7  - User Code Checksum */
+   reinterpret_cast<unsigned long *>(&u2cs),                           /* 7  - User Code Checksum */
    reinterpret_cast<unsigned long *>(0),                               /* 8  - Reserved */
    reinterpret_cast<unsigned long *>(0),                               /* 9  - Reserved */
    reinterpret_cast<unsigned long *>(0),                               /* 10 - Reserved */
