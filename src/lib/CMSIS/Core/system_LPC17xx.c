@@ -301,9 +301,21 @@
 #define PLL1CFG_Val           0x00000023
 #define CCLKCFG_Val           0x00000003
 #define USBCLKCFG_Val         0x00000000
-#define PCLKSEL0_Val          0x00000000
-#define PCLKSEL1_Val          0x00000000
 #define CLKOUTCFG_Val         0x00000000
+
+/*--------------------- PCLKSEL default values ----------------------*/
+
+#define PCLKSEL0_DEFULT  PCLKSEL0_WDT_DEFAULT    | PCLKSEL0_TIMER0_DEFAULT | \
+                         PCLKSEL0_TIMER1_DEFAULT | PCLKSEL0_UART0_DEFAULT  | PCLKSEL0_UART1_DEFAULT | \
+                         PCLKSEL0_PWM1_DEFAULT   | PCLKSEL0_I2C0_DEFAULT   | PCLKSEL0_SPI_DEFAULT   | \
+                         PCLKSEL0_SSP1_DEFAULT   | PCLKSEL0_DAC_DEFAULT    | PCLKSEL0_ADC_DEFAULT   | \
+                         PCLKSEL0_CAN1_DEFAULT   | PCLKSEL0_CAN2_DEFAULT   | PCLKSEL0_ACF_DEFAULT
+
+#define PCLKSEL1_DEFAULT PCLKSEL1_QEI_DEFAULT     | PCLKSEL1_GPIOINT_DEFAULT | \
+                         PCLKSEL1_PCB_DEFAULT     | PCLKSEL1_I2C1_DEFAULT    | PCLKSEL1_SSP0_DEFAULT    | \
+                         PCLKSEL1_TIMER2_DEFAULT  | PCLKSEL1_TIMER3_DEFAULT  | PCLKSEL1_UART2_DEFAULT   | \
+                         PCLKSEL1_UART3_DEFAULT   | PCLKSEL1_I2C2_DEFAULT    | PCLKSEL1_I2S_DEFAULT     | \
+                         PCLKSEL1_RIT_DEFAULT     | PCLKSEL1_SYSCON_DEFAULT  | PCLKSEL1_MC_DEFAULT      
 
 /*--------------------- PCONP MASKS and values ----------------------*/
 
@@ -368,15 +380,15 @@
    #error "USBCLKCFG: Invalid values of reserved bits!"
 #endif
 
-#if (CHECK_RSVD((PCLKSEL0_Val),   0x000C0C00))
+#if (CHECK_RSVD((PCLKSEL0_DEFULT),   0x000C0C00))
    #error "PCLKSEL0: Invalid values of reserved bits!"
 #endif
 
-#if (CHECK_RSVD((PCLKSEL1_Val),   0x03000300))
+#if (CHECK_RSVD((PCLKSEL1_DEFAULT),   0x03000300))
    #error "PCLKSEL1: Invalid values of reserved bits!"
 #endif
 
-#if (CHECK_RSVD((PCONP_Val),      0x10100821))
+#if (CHECK_RSVD((PCONP_DEFAULT),      0x10100821))
    #error "PCONP: Invalid values of reserved bits!"
 #endif
 
@@ -528,8 +540,8 @@ void SystemInit (void)
    * Peripheral clock must be selected before PLL0 enabling and connecting
    * - according errata.lpc1768-16.March.2010 -
    */
-  LPC_SC->PCLKSEL0  = PCLKSEL0_Val;     /* Peripheral Clock Selection - Reset all to 0 */
-  LPC_SC->PCLKSEL1  = PCLKSEL1_Val;
+  LPC_SC->PCLKSEL0  = PCLKSEL0_DEFULT;     /* Peripheral Clock Selection - Reset all to 0 */
+  LPC_SC->PCLKSEL1  = PCLKSEL1_DEFAULT;
 
 #if (PLL0_SETUP)
   LPC_SC->CLKSRCSEL = CLKSRCSEL_Val;    /* Select Clock Source for PLL0 - Selects the main oscillator as the PLL0 clock source */

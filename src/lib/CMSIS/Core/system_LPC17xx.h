@@ -47,7 +47,70 @@ extern "C" {
  * @{
  */
 
-/*--------------------- PCONP MASKS and values ----------------------*/
+/*--------------------- PCLK masks and default values ----------------------*/
+   
+#define PCLKSEL0_WDT_MASK    (0x03 << 0 ) /*  Peripheral clock selection for WDT.                          */
+#define PCLKSEL0_TIMER0_MASK (0x03 << 2 ) /*  Peripheral clock selection for TIMER0.                       */
+#define PCLKSEL0_TIMER1_MASK (0x03 << 4 ) /*  Peripheral clock selection for TIMER1.                       */
+#define PCLKSEL0_UART0_MASK  (0x03 << 6 ) /*  Peripheral clock selection for UART0.                        */
+#define PCLKSEL0_UART1_MASK  (0x03 << 8 ) /*  Peripheral clock selection for UART1.                        */
+#define PCLKSEL0_PWM1_MASK   (0x03 << 12) /*  Peripheral clock selection for PWM1.                         */
+#define PCLKSEL0_I2C0_MASK   (0x03 << 14) /*  Peripheral clock selection for I2C0.                         */
+#define PCLKSEL0_SPI_MASK    (0x03 << 16) /*  Peripheral clock selection for SPI.                          */
+#define PCLKSEL0_SSP1_MASK   (0x03 << 20) /*  Peripheral clock selection for SSP1.                         */
+#define PCLKSEL0_DAC_MASK    (0x03 << 22) /*  Peripheral clock selection for DAC.                          */
+#define PCLKSEL0_ADC_MASK    (0x03 << 24) /*  Peripheral clock selection for ADC.                          */
+#define PCLKSEL0_CAN1_MASK   (0x03 << 26) /*  Peripheral clock selection for CAN1.[1]                      */
+#define PCLKSEL0_CAN2_MASK   (0x03 << 28) /*  Peripheral clock selection for CAN2.[1]                      */
+#define PCLKSEL0_ACF_MASK    (0x03 << 30) /*  Peripheral clock selection for CAN acceptance filtering.[1]  */
+
+#define PCLKSEL0_WDT_DEFAULT    (0x00) /*  Peripheral clock selection for WDT.                          */
+#define PCLKSEL0_TIMER0_DEFAULT (0x00) /*  Peripheral clock selection for TIMER0.                       */
+#define PCLKSEL0_TIMER1_DEFAULT (0x00) /*  Peripheral clock selection for TIMER1.                       */
+#define PCLKSEL0_UART0_DEFAULT  (0x00) /*  Peripheral clock selection for UART0.                        */
+#define PCLKSEL0_UART1_DEFAULT  (0x00) /*  Peripheral clock selection for UART1.                        */
+#define PCLKSEL0_PWM1_DEFAULT   (0x00) /*  Peripheral clock selection for PWM1.                         */
+#define PCLKSEL0_I2C0_DEFAULT   (0x00) /*  Peripheral clock selection for I2C0.                         */
+#define PCLKSEL0_SPI_DEFAULT    (0x00) /*  Peripheral clock selection for SPI.                          */
+#define PCLKSEL0_SSP1_DEFAULT   (0x00) /*  Peripheral clock selection for SSP1.                         */
+#define PCLKSEL0_DAC_DEFAULT    (0x00) /*  Peripheral clock selection for DAC.                          */
+#define PCLKSEL0_ADC_DEFAULT    (0x00) /*  Peripheral clock selection for ADC.                          */
+#define PCLKSEL0_CAN1_DEFAULT   (0x00) /*  Peripheral clock selection for CAN1.[1]                      */
+#define PCLKSEL0_CAN2_DEFAULT   (0x00) /*  Peripheral clock selection for CAN2.[1]                      */
+#define PCLKSEL0_ACF_DEFAULT    (0x00) /*  Peripheral clock selection for CAN acceptance filtering.[1]  */
+
+
+#define PCLKSEL1_QEI_MASK     (0x03 << 0 ) /* Peripheral clock selection for the Quadrature Encoder Interface. */
+#define PCLKSEL1_GPIOINT_MASK (0x03 << 2 ) /* Peripheral clock selection for GPIO interrupts.                  */
+#define PCLKSEL1_PCB_MASK     (0x03 << 4 ) /* Peripheral clock selection for the Pin Connect block.            */
+#define PCLKSEL1_I2C1_MASK    (0x03 << 6 ) /* Peripheral clock selection for I2C1.                             */
+#define PCLKSEL1_SSP0_MASK    (0x03 << 10) /* Peripheral clock selection for SSP0.                             */
+#define PCLKSEL1_TIMER2_MASK  (0x03 << 12) /* Peripheral clock selection for TIMER2.                           */
+#define PCLKSEL1_TIMER3_MASK  (0x03 << 14) /* Peripheral clock selection for TIMER3.                           */
+#define PCLKSEL1_UART2_MASK   (0x03 << 16) /* Peripheral clock selection for UART2.                            */
+#define PCLKSEL1_UART3_MASK   (0x03 << 18) /* Peripheral clock selection for UART3.                            */
+#define PCLKSEL1_I2C2_MASK    (0x03 << 20) /* Peripheral clock selection for I2C2.                             */
+#define PCLKSEL1_I2S_MASK     (0x03 << 22) /* Peripheral clock selection for I2S.                              */
+#define PCLKSEL1_RIT_MASK     (0x03 << 26) /* Peripheral clock selection for Repetitive Interrupt Timer.       */
+#define PCLKSEL1_SYSCON_MASK  (0x03 << 28) /* Peripheral clock selection for the System Control block.         */
+#define PCLKSEL1_MC_MASK      (0x03 << 30) /* Peripheral clock selection for the Motor Control PWM.            */
+
+#define PCLKSEL1_QEI_DEFAULT     (0x00) /* Peripheral clock selection for the Quadrature Encoder Interface. */
+#define PCLKSEL1_GPIOINT_DEFAULT (0x00) /* Peripheral clock selection for GPIO interrupts.                  */
+#define PCLKSEL1_PCB_DEFAULT     (0x00) /* Peripheral clock selection for the Pin Connect block.            */
+#define PCLKSEL1_I2C1_DEFAULT    (0x00) /* Peripheral clock selection for I2C1.                             */
+#define PCLKSEL1_SSP0_DEFAULT    (0x00) /* Peripheral clock selection for SSP0.                             */
+#define PCLKSEL1_TIMER2_DEFAULT  (0x00) /* Peripheral clock selection for TIMER2.                           */
+#define PCLKSEL1_TIMER3_DEFAULT  (0x00) /* Peripheral clock selection for TIMER3.                           */
+#define PCLKSEL1_UART2_DEFAULT   (0x00) /* Peripheral clock selection for UART2.                            */
+#define PCLKSEL1_UART3_DEFAULT   (0x00) /* Peripheral clock selection for UART3.                            */
+#define PCLKSEL1_I2C2_DEFAULT    (0x00) /* Peripheral clock selection for I2C2.                             */
+#define PCLKSEL1_I2S_DEFAULT     (0x00) /* Peripheral clock selection for I2S.                              */
+#define PCLKSEL1_RIT_DEFAULT     (0x00) /* Peripheral clock selection for Repetitive Interrupt Timer.       */
+#define PCLKSEL1_SYSCON_DEFAULT  (0x00) /* Peripheral clock selection for the System Control block.         */
+#define PCLKSEL1_MC_DEFAULT      (0x00) /* Peripheral clock selection for the Motor Control PWM.            */
+
+/*--------------------- PCONP masks and default values ----------------------*/
 
 #define PCONP_PCTIM0_MASK  (1 << 1 ) /* Timer/Counter 0 power/clock control bit.                       */
 #define PCONP_PCTIM1_MASK  (1 << 2 ) /* Timer/Counter 1 power/clock control bit.                       */
