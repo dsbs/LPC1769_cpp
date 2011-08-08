@@ -134,14 +134,18 @@ SECTIONS
     /* Set the location counter to the next 4 aligned boundary */
     . = ALIGN(4);
     __preinit_array_start = .;
+    PROVIDE_HIDDEN (__preinit_array_start = .);
     KEEP (*(.preinit_array))
     __preinit_array_end = .;
+    PROVIDE_HIDDEN (__preinit_array_end = .);
     /* Set the location counter to the next 4 aligned boundary */
     . = ALIGN(4);
     __init_array_start = .;
+    PROVIDE_HIDDEN (__init_array_start = .);
     KEEP (*(SORT(.init_array.*)))
     KEEP (*(.init_array))
     __init_array_end = .;
+    PROVIDE_HIDDEN (__init_array_end = .);
     /* Set the location counter to the next 4 aligned boundary */
     . = ALIGN(4);
     KEEP(*(.fini))
@@ -302,6 +306,7 @@ SECTIONS
     /* Provide to the code the end of RAM address where italized data is stored */
     _ebss = .;
     PROVIDE(ebss = .);
+    _end = .;
   } >ram1
    
    

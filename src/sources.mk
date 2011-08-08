@@ -12,6 +12,7 @@
 SUBDIRS = $(sort \
 			 src/app \
 			 src/lib/CMSIS/Core \
+			 src/lib/system \
 			 src/lib/lamp \
 			 src/lib/SystemTick \
 			 )
@@ -23,6 +24,7 @@ SUBDIRS = $(sort \
 CSRCS =  $(sort \
 			core_cm3.c \
 			system_LPC17xx.c \
+			 syscalls.c \
 			)
 
 # List C++ source files. File suffix must be *.cpp with case sensitive

@@ -41,6 +41,19 @@
 
 #include "system_LPC17xx.h"
 
+#ifdef __cplusplus
+extern "C" 
+{
+#endif
+/* These magic symbols are provided by the linker.  */
+extern void (*__preinit_array_start []) (void) __attribute__((weak));
+extern void (*__preinit_array_end []) (void) __attribute__((weak));
+extern void (*__init_array_start []) (void) __attribute__((weak));
+extern void (*__init_array_end []) (void) __attribute__((weak));
+extern void __libc_init_array(void);
+#ifdef __cplusplus
+}
+#endif
 
 /* weak means "do not complain if there is no definition" */
 #define WEAK __attribute__((weak))
@@ -257,6 +270,9 @@ void Reset_Handler(void)
    {
       *(pulDest++) = *(pulSrc++);
    }
+
+   /* Call CTORS of static objects */
+   __libc_init_array();
 
    /* Call the application's entry point */
    main();

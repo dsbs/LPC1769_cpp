@@ -62,6 +62,7 @@ C_COMMONFLAGS = \
                 -Wcast-qual \
                 -Wcast-align \
                 -fno-exceptions \
+                -mfloat-abi=soft \
                 -Wfatal-errors
 
 # C only compiler flags
@@ -118,7 +119,8 @@ LDFLAGS = \
           --warn-section-align \
           --warn-shared-textrel \
           --warn-alternate-em \
-          -nostartfiles \
-          -Wl,-Map=$(OUTDIR)/$(TARGET).map --cref --gc-sections  \
+          -mcpu=cortex-m3 \
+          -mthumb \
+          -Wl,-Map=$(OUTDIR)/$(TARGET).map,--cref,--gc-sections,-lc,-lgcc,-lstdc++,-lcs3,-lcs3unhosted,-lcs3arm \
           -T$(LINKERSCRIPT)
 

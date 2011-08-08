@@ -42,7 +42,7 @@ class Lamp {
        * @param[in] initial_state false=lamp off(default), true=lamp on.
        * @param[in] inverted false=lamp is ON by setting pin to "0", true=lamp is OFF by setting pin to "1".
        */
-      Lamp(Pin &pin, bool initial_state /* = false */, bool inverted /* = false */);
+      Lamp(Pin &pin, bool initial_state = false , bool inverted = false );
 
       /**
        * Default destructor
